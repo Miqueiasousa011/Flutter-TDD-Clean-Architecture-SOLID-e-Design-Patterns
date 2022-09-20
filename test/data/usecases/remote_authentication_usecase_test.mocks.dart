@@ -5,9 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:fordev/data/http/http_client.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-
-import 'remote_authentication_usecase_test.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -29,7 +28,7 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
   }
 
   @override
-  _i3.Future<dynamic> request({
+  _i3.Future<Map<String, dynamic>?> request({
     required String? url,
     required String? method,
     Map<String, dynamic>? body,
@@ -44,6 +43,6 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
             #body: body,
           },
         ),
-        returnValue: _i3.Future<dynamic>.value(),
-      ) as _i3.Future<dynamic>);
+        returnValue: _i3.Future<Map<String, dynamic>?>.value(),
+      ) as _i3.Future<Map<String, dynamic>?>);
 }

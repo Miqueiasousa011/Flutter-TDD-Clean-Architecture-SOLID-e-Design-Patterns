@@ -1,40 +1,14 @@
-import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 import 'package:faker/faker.dart';
 
+import 'package:fordev/domain/usecases/usecases.dart';
+
+import 'package:fordev/data/usecases/usecases.dart';
+import 'package:fordev/data/http/http.dart';
+
 import 'remote_authentication_usecase_test.mocks.dart';
-
-class RemoteAuthenticationUsecase {
-  final String _url;
-  final HttpClient _httpClient;
-
-  RemoteAuthenticationUsecase({
-    required String url,
-    required HttpClient httpClient,
-  })  : _url = url,
-        _httpClient = httpClient;
-
-  Future auth(AuthenticationParams params) async {
-    await _httpClient.request(
-      url: _url,
-      method: 'post',
-      body: {
-        'email': params.email,
-        'password': params.password,
-      },
-    );
-  }
-}
-
-abstract class HttpClient {
-  Future request({
-    required String url,
-    required String method,
-    Map<String, dynamic>? body,
-  });
-}
 
 @GenerateMocks([HttpClient])
 void main() {
@@ -45,6 +19,7 @@ void main() {
   late String email;
   late String password;
   late Map<String, dynamic> requestBody;
+  late Map<String, dynamic> response;
 
   setUp(() {
     url = faker.internet.httpUrl();
@@ -54,6 +29,8 @@ void main() {
     params = AuthenticationParams(email: email, password: password);
 
     requestBody = {'email': params.email, 'password': params.password};
+    response = {'accessToken': faker.guid.guid()};
+
     client = MockHttpClient();
     sut = RemoteAuthenticationUsecase(url: url, httpClient: client);
   });
@@ -63,7 +40,7 @@ void main() {
       url: anyNamed('url'),
       method: anyNamed('method'),
       body: anyNamed('body'),
-    )).thenAnswer((_) async => {});
+    )).thenAnswer((_) async => response);
 
     await sut.auth(params);
 
