@@ -16,12 +16,12 @@ class RemoteAuthenticationUsecase {
         _httpClient = httpClient;
 
   Future auth() async {
-    await _httpClient.request(url: _url);
+    await _httpClient.request(url: _url, method: 'post');
   }
 }
 
 abstract class HttpClient {
-  Future request({required String url});
+  Future request({required String url, required String method});
 }
 
 @GenerateMocks([HttpClient])
@@ -36,11 +36,11 @@ void main() {
     sut = RemoteAuthenticationUsecase(url: url, httpClient: client);
   });
 
-  test('Should call HttpClient with correct url', () async {
+  test('Should call HttpClient with correct method', () async {
     when(sut.auth()).thenAnswer((_) async => {});
 
     await sut.auth();
 
-    verify(client.request(url: url));
+    verify(client.request(url: url, method: 'post'));
   });
 }
