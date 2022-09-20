@@ -1,3 +1,4 @@
+import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
@@ -15,32 +16,57 @@ class RemoteAuthenticationUsecase {
   })  : _url = url,
         _httpClient = httpClient;
 
-  Future auth() async {
-    await _httpClient.request(url: _url, method: 'post');
+  Future auth(AuthenticationParams params) async {
+    await _httpClient.request(
+      url: _url,
+      method: 'post',
+      body: {
+        'email': params.email,
+        'password': params.password,
+      },
+    );
   }
 }
 
 abstract class HttpClient {
-  Future request({required String url, required String method});
+  Future request({
+    required String url,
+    required String method,
+    Map<String, dynamic>? body,
+  });
 }
 
 @GenerateMocks([HttpClient])
 void main() {
   late RemoteAuthenticationUsecase sut;
   late MockHttpClient client;
+  late AuthenticationParams params;
   late String url;
+  late String email;
+  late String password;
+  late Map<String, dynamic> requestBody;
 
   setUp(() {
     url = faker.internet.httpUrl();
+
+    email = faker.internet.email();
+    password = faker.internet.password();
+    params = AuthenticationParams(email: email, password: password);
+
+    requestBody = {'email': params.email, 'password': params.password};
     client = MockHttpClient();
     sut = RemoteAuthenticationUsecase(url: url, httpClient: client);
   });
 
-  test('Should call HttpClient with correct method', () async {
-    when(sut.auth()).thenAnswer((_) async => {});
+  test('Should call HttpClient with correct values', () async {
+    when(client.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+    )).thenAnswer((_) async => {});
 
-    await sut.auth();
+    await sut.auth(params);
 
-    verify(client.request(url: url, method: 'post'));
+    verify(client.request(url: url, method: 'post', body: requestBody));
   });
 }
