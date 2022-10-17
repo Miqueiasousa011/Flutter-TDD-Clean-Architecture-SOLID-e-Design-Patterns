@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 import 'package:faker/faker.dart';
 
 import 'package:fordev/domain/usecases/usecases.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 
 import 'package:fordev/data/usecases/usecases.dart';
 import 'package:fordev/data/http/http.dart';
@@ -45,5 +46,17 @@ void main() {
     await sut.auth(params);
 
     verify(client.request(url: url, method: 'post', body: requestBody));
+  });
+
+  test('Should throw UnexpectedError if httpClient returns 400', () {
+    when(client.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenThrow(HttpError.badRequest);
+
+    final result = sut.auth(params);
+
+    expect(result, throwsA(DomainError.unexpected));
   });
 }
