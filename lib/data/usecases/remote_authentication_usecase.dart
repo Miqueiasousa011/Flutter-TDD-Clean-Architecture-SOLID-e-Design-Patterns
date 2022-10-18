@@ -1,12 +1,11 @@
-import 'package:fordev/data/models/models.dart';
-
 import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../domain/entities/entities.dart';
 
 import '../http/http.dart';
+import '../models/models.dart';
 
-class RemoteAuthenticationUsecase {
+class RemoteAuthenticationUsecase implements AuthenticationUsecase {
   final String _url;
   final HttpClient _httpClient;
 
@@ -16,6 +15,7 @@ class RemoteAuthenticationUsecase {
   })  : _url = url,
         _httpClient = httpClient;
 
+  @override
   Future<AccountEntity> auth(AuthenticationParams params) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toMap();
 
