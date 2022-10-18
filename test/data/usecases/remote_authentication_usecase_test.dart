@@ -59,4 +59,54 @@ void main() {
 
     expect(result, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if httpClient returns 404', () {
+    when(client.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenThrow(HttpError.notFound);
+
+    final result = sut.auth(params);
+
+    expect(result, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw ServerError if HttpClient returns 500', () {
+    when(client.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenThrow(HttpError.serverError);
+
+    final result = sut.auth(params);
+
+    expect(result, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw InvalidCredentials if HttpClient returns 4001 ', () {
+    when(client.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenThrow(HttpError.unauthorized);
+
+    final result = sut.auth(params);
+
+    expect(result, throwsA(DomainError.invalidCredentialsError));
+  });
+
+  test('Should return Account if HttpClient returns 200', () async {
+    final accessToken = faker.guid.guid();
+
+    when(client.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((_) async => {'accessToken': accessToken});
+
+    final account = await sut.auth(params);
+
+    expect(account.token, equals(accessToken));
+  });
 }

@@ -1,6 +1,8 @@
-import '../../domain/helpers/helpers.dart';
+import 'package:fordev/data/models/models.dart';
 
+import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
+import '../../domain/entities/entities.dart';
 
 import '../http/http.dart';
 
@@ -14,17 +16,31 @@ class RemoteAuthenticationUsecase {
   })  : _url = url,
         _httpClient = httpClient;
 
-  Future auth(AuthenticationParams params) async {
+  Future<AccountEntity> auth(AuthenticationParams params) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toMap();
 
     try {
-      return await _httpClient.request(
+      final result = await _httpClient.request(
         url: _url,
         method: 'post',
         body: body,
       );
-    } on HttpError {
-      throw DomainError.unexpected;
+
+      return RemoteAccountModel.fromJson(result!).toEntity;
+    } on HttpError catch (e) {
+      throw handleError(e);
+    }
+  }
+
+  DomainError handleError(HttpError error) {
+    switch (error) {
+      case HttpError.unauthorized:
+        return DomainError.invalidCredentialsError;
+      case HttpError.badRequest:
+      case HttpError.notFound:
+      case HttpError.serverError:
+      default:
+        return DomainError.unexpected;
     }
   }
 }
