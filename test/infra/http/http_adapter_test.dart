@@ -16,8 +16,11 @@ class HttpAdapter {
     required String method,
     Map<String, dynamic>? body,
   }) async {
-    await _client.post(Uri.parse(url));
+    await _client.post(Uri.parse(url), headers: _headers);
   }
+
+  Map<String, String> get _headers =>
+      {'content-type': 'application/json', 'accept': 'application/json'};
 }
 
 @GenerateMocks([Client])
@@ -26,8 +29,13 @@ void main() {
   late MockClient httpClient;
   late String url;
   late Uri uri;
+  late Map<String, String> headers;
 
   setUp(() {
+    headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json',
+    };
     url = faker.internet.httpUrl();
     uri = Uri.parse(url);
     httpClient = MockClient();
@@ -36,11 +44,12 @@ void main() {
 
   group('post', () {
     test('Should call post with correct values', () async {
-      when(httpClient.post(uri)).thenAnswer((_) async => Response('{}', 200));
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{}', 200));
 
       await sut.request(url: url, method: 'post');
 
-      verify(httpClient.post(uri));
+      verify(httpClient.post(uri, headers: headers));
     });
   });
 }
