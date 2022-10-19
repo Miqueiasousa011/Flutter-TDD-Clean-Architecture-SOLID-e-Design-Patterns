@@ -19,11 +19,13 @@ class HttpAdapter {
     Map<String, dynamic>? body,
   }) async {
     final requestBody = body != null ? jsonEncode(body) : null;
-    await _client.post(
+    final response = await _client.post(
       Uri.parse(url),
       headers: _headers,
       body: requestBody,
     );
+
+    return jsonDecode(response.body);
   }
 
   Map<String, String> get _headers =>
@@ -80,6 +82,15 @@ void main() {
       await sut.request(url: url, method: 'post');
 
       verify(httpClient.post(uri, headers: headers));
+    });
+
+    test('should return data if post returns 200', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response(jsonEncode({'any': 'any'}), 200));
+
+      final result = await sut.request(url: url, method: 'post');
+
+      expect(result, {'any': 'any'});
     });
   });
 }
