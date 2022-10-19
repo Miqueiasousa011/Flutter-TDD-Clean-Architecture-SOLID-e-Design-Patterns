@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
@@ -16,7 +18,12 @@ class HttpAdapter {
     required String method,
     Map<String, dynamic>? body,
   }) async {
-    await _client.post(Uri.parse(url), headers: _headers);
+    final requestBody = body != null ? jsonEncode(body) : null;
+    await _client.post(
+      Uri.parse(url),
+      headers: _headers,
+      body: requestBody,
+    );
   }
 
   Map<String, String> get _headers =>
@@ -30,12 +37,16 @@ void main() {
   late String url;
   late Uri uri;
   late Map<String, String> headers;
+  late Map<String, dynamic> body;
 
   setUp(() {
     headers = {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
+
+    body = {'any': 'any'};
+
     url = faker.internet.httpUrl();
     uri = Uri.parse(url);
     httpClient = MockClient();
@@ -44,6 +55,25 @@ void main() {
 
   group('post', () {
     test('Should call post with correct values', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{}', 200));
+
+      await sut.request(url: url, method: 'post');
+
+      verify(httpClient.post(uri, headers: headers));
+    });
+
+    test('Should call post with correct body', () async {
+      when(httpClient.post(any,
+              headers: anyNamed('headers'), body: anyNamed('body')))
+          .thenAnswer((_) async => Response('{}', 200));
+
+      await sut.request(url: url, method: 'post', body: body);
+
+      verify(httpClient.post(uri, headers: headers, body: jsonEncode(body)));
+    });
+
+    test('Should call post without body', () async {
       when(httpClient.post(any, headers: anyNamed('headers')))
           .thenAnswer((_) async => Response('{}', 200));
 
