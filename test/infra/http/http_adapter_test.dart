@@ -25,11 +25,13 @@ class HttpAdapter {
       body: requestBody,
     );
 
-    return jsonDecode(response.body);
+    return response.body.isNotEmpty ? jsonDecode(response.body) : null;
   }
 
-  Map<String, String> get _headers =>
-      {'content-type': 'application/json', 'accept': 'application/json'};
+  Map<String, String> get _headers => {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+      };
 }
 
 @GenerateMocks([Client])
@@ -91,6 +93,15 @@ void main() {
       final result = await sut.request(url: url, method: 'post');
 
       expect(result, {'any': 'any'});
+    });
+
+    test('Should return null if post returns 200 without data', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 200));
+
+      final result = await sut.request(url: url, method: 'post');
+
+      expect(result, isNull);
     });
   });
 }
