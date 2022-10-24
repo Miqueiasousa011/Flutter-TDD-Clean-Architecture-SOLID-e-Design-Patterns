@@ -25,6 +25,10 @@ class HttpAdapter {
       body: requestBody,
     );
 
+    if (response.statusCode == 204) {
+      return null;
+    }
+
     return response.body.isNotEmpty ? jsonDecode(response.body) : null;
   }
 
@@ -103,5 +107,23 @@ void main() {
 
       expect(result, isNull);
     });
+  });
+
+  test('should return null if post returns 204', () async {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('', 204));
+
+    final result = await sut.request(url: url, method: 'post');
+
+    expect(result, isNull);
+  });
+
+  test('should return null id post returns 204 with data', () async {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('{any: "any"}', 204));
+
+    final result = await sut.request(url: url, method: 'post');
+
+    expect(result, isNull);
   });
 }
