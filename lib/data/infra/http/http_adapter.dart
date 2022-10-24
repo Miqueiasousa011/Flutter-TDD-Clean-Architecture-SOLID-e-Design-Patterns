@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fordev/data/http/http_error.dart';
 import 'package:http/http.dart';
 
 class HttpAdapter {
@@ -19,11 +20,18 @@ class HttpAdapter {
       body: requestBody,
     );
 
-    if (response.statusCode == 204) {
-      return null;
-    }
+    return _handleResponse(response);
+  }
 
-    return response.body.isNotEmpty ? jsonDecode(response.body) : null;
+  Map<String, dynamic>? _handleResponse(Response response) {
+    switch (response.statusCode) {
+      case 200:
+        return response.body.isNotEmpty ? jsonDecode(response.body) : null;
+      case 204:
+        return null;
+      default:
+        throw HttpError.badRequest;
+    }
   }
 
   Map<String, String> get _headers => {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:faker/faker.dart';
+import 'package:fordev/data/http/http_error.dart';
 import 'package:fordev/data/infra/http/http.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
@@ -96,5 +97,23 @@ void main() {
     final result = await sut.request(url: url, method: 'post');
 
     expect(result, isNull);
+  });
+
+  test('should return BadRequestError if post returns 400', () async {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('any', 400));
+
+    final future = sut.request(url: url, method: 'post');
+
+    expect(future, throwsA(HttpError.badRequest));
+  });
+
+  test('should throw BadRequestError if post returns 400 with data', () async {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('', 400));
+
+    final future = sut.request(url: url, method: 'post');
+
+    expect(future, throwsA(HttpError.badRequest));
   });
 }
