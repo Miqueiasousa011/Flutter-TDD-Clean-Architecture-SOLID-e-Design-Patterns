@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:fordev/data/http/http_error.dart';
 import 'package:http/http.dart';
+
+import '../../http/http.dart';
 
 class HttpAdapter {
   final Client _client;
@@ -31,6 +32,10 @@ class HttpAdapter {
         return null;
       case 401:
         throw HttpError.unauthorized;
+      case 403:
+        throw HttpError.forbiddenError;
+      case 404:
+        throw HttpError.notFound;
       case 500:
         throw HttpError.serverError;
       default:

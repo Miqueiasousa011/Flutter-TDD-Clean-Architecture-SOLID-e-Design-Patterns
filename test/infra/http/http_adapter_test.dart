@@ -134,4 +134,21 @@ void main() {
 
     expect(future, throwsA(HttpError.unauthorized));
   });
+
+  test('should throw ForbiddenError if httpAdapter returns 403', () {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('', 403));
+
+    final future = sut.request(url: url, method: 'post');
+    expect(future, throwsA(HttpError.forbiddenError));
+  });
+
+  test('should throw notFoundError if httpAdapter returns 404', () {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('', 404));
+
+    final future = sut.request(url: url, method: 'post');
+
+    expect(future, throwsA(HttpError.notFound));
+  });
 }
