@@ -29,6 +29,10 @@ class HttpAdapter {
         return response.body.isNotEmpty ? jsonDecode(response.body) : null;
       case 204:
         return null;
+      case 401:
+        throw HttpError.unauthorized;
+      case 500:
+        throw HttpError.serverError;
       default:
         throw HttpError.badRequest;
     }

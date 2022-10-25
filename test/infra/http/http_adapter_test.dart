@@ -116,4 +116,22 @@ void main() {
 
     expect(future, throwsA(HttpError.badRequest));
   });
+
+  test('should throw ServerError if httpAdapter retuns 500', () {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('', 500));
+
+    final future = sut.request(url: url, method: 'post');
+
+    expect(future, throwsA(HttpError.serverError));
+  });
+
+  test('should throw unauthorized if httpAdapter returns 401', () {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('any', 401));
+
+    final future = sut.request(url: url, method: 'post');
+
+    expect(future, throwsA(HttpError.unauthorized));
+  });
 }
