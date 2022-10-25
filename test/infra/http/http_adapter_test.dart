@@ -33,6 +33,14 @@ void main() {
     sut = HttpAdapter(httpClient);
   });
 
+  group('shared', () {
+    test('should throw ServerError if invalid method is provided', () async {
+      final future = sut.request(url: url, method: 'invalid');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
+
   group('post', () {
     test('Should call post with correct values', () async {
       when(httpClient.post(any, headers: anyNamed('headers')))

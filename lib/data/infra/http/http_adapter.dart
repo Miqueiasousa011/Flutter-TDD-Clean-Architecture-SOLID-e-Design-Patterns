@@ -15,11 +15,16 @@ class HttpAdapter {
     Map<String, dynamic>? body,
   }) async {
     final requestBody = body != null ? jsonEncode(body) : null;
-    final response = await _client.post(
-      Uri.parse(url),
-      headers: _headers,
-      body: requestBody,
-    );
+
+    var response = Response('', 500);
+
+    if (method == 'post') {
+      response = await _client.post(
+        Uri.parse(url),
+        headers: _headers,
+        body: requestBody,
+      );
+    }
 
     return _handleResponse(response);
   }
