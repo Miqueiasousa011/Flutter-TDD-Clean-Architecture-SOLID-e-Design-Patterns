@@ -14,19 +14,23 @@ class HttpAdapter {
     required String method,
     Map<String, dynamic>? body,
   }) async {
-    final requestBody = body != null ? jsonEncode(body) : null;
+    try {
+      final requestBody = body != null ? jsonEncode(body) : null;
 
-    var response = Response('', 500);
+      var response = Response('', 500);
 
-    if (method == 'post') {
-      response = await _client.post(
-        Uri.parse(url),
-        headers: _headers,
-        body: requestBody,
-      );
+      if (method == 'post') {
+        response = await _client.post(
+          Uri.parse(url),
+          headers: _headers,
+          body: requestBody,
+        );
+      }
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw HttpError.serverError;
     }
-
-    return _handleResponse(response);
   }
 
   Map<String, dynamic>? _handleResponse(Response response) {

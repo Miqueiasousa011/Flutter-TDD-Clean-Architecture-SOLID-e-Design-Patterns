@@ -159,4 +159,13 @@ void main() {
 
     expect(future, throwsA(HttpError.notFound));
   });
+
+  test('should throw ServerError if post returns 500', () async {
+    when(httpClient.post(any, headers: anyNamed('headers')))
+        .thenThrow(Exception());
+
+    final future = sut.request(url: url, method: 'post');
+
+    expect(future, throwsA(HttpError.serverError));
+  });
 }
