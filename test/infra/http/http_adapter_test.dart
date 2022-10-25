@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:faker/faker.dart';
 import 'package:fordev/data/http/http_error.dart';
-import 'package:fordev/data/infra/http/http.dart';
+import 'package:fordev/infra/http/http.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
