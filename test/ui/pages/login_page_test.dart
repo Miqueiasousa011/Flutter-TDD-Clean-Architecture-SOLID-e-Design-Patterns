@@ -30,6 +30,11 @@ void main() {
         .thenAnswer((realInvocation) => passwordErrorController.stream);
   });
 
+  tearDown(() {
+    emailErrorController.close();
+    passwordErrorController.close();
+  });
+
   testWidgets('Should load with correct initial state',
       (WidgetTester tester) async {
     /// Crio uma instancia de LoginPage
@@ -122,5 +127,39 @@ void main() {
     await tester.pump();
 
     expect(find.text('password error'), findsOneWidget);
+  });
+
+  testWidgets('should presents no error if email is valid', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    emailErrorController.add(null);
+
+    expect(
+      find.descendant(
+        of: find.bySemanticsLabel('Email'),
+        matching: find.byType(Text),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('should presents no error if password is valid', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    passwordErrorController.add(null);
+
+    await tester.pump();
+
+    expect(
+      find.descendant(
+        of: find.bySemanticsLabel('Senha'),
+        matching: find.byType(Text),
+      ),
+      findsOneWidget,
+    );
   });
 }
