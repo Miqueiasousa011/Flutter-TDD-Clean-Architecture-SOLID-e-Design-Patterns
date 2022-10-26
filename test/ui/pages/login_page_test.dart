@@ -1,14 +1,30 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
 import 'package:fordev/ui/pages/pages.dart';
 
+import 'login_page_test.mocks.dart';
+
+@GenerateMocks([LoginPresenter])
 void main() {
+  late MockLoginPresenter presenter;
+
+  setUp(() {
+    presenter = MockLoginPresenter();
+  });
+
   testWidgets('Should load with correct initial state',
       (WidgetTester tester) async {
     /// Crio uma instancia de LoginPage
     /// Como o componente utiliza componentes do Material Design,
     /// o mesmo deve estar envolvido em um MaterialApp()
-    const loginPage = MaterialApp(home: LoginPage());
+    final loginPage = MaterialApp(
+        home: LoginPage(
+      loginPresenter: presenter,
+    ));
 
     ///MANDO RENDERIZAR O COMPONENTE
     await tester.pumpWidget(loginPage);
@@ -37,5 +53,31 @@ void main() {
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
 
     expect(button.onPressed, isNull);
+  });
+
+  testWidgets('Should call validate with correct values', (tester) async {
+    final loginPage = MaterialApp(
+        home: LoginPage(
+      loginPresenter: presenter,
+    ));
+
+    await tester.pumpWidget(loginPage);
+
+    final email = faker.internet.email();
+
+    ///Adicionando o texto ao textformfield do email
+    await tester.enterText(find.bySemanticsLabel('Email'), email);
+
+    ///SEMPRE QUE O CAMPO DE EMAIL FOR MODIFICADO, O MÉTODO validateEmail deve ser chamado
+    verify(presenter.validateEmail(email));
+
+    final password = faker.internet.password();
+
+    ///Adicionando uma senha ao input de senha
+    await tester.enterText(find.bySemanticsLabel('Senha'), password);
+
+    ///Verificando se o método de validação de senha está sendo chamado
+    ///Sempre que o campo é alterado
+    verify(presenter.validatePassword(password));
   });
 }

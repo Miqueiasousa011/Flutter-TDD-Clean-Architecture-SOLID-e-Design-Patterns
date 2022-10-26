@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/pages/pages.dart';
 
-import '../components/components.dart';
+import '../../components/components.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.loginPresenter});
+
+  final LoginPresenter? loginPresenter;
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +24,16 @@ class LoginPage extends StatelessWidget {
                     TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(hintText: 'Email'),
+                      onChanged: (value) =>
+                          loginPresenter!.validateEmail(value),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: TextFormField(
                         obscureText: true,
                         decoration: const InputDecoration(hintText: 'Senha'),
+                        onChanged: (value) =>
+                            loginPresenter!.validatePassword(value),
                       ),
                     ),
                     ElevatedButton(
