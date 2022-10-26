@@ -15,6 +15,7 @@ void main() {
   late MockLoginPresenter presenter;
 
   late StreamController<String?> emailErrorController;
+  late StreamController<String?> passwordErrorController;
 
   setUp(() {
     presenter = MockLoginPresenter();
@@ -23,6 +24,10 @@ void main() {
     when(presenter.emailErrorStream).thenAnswer(
       (_) => emailErrorController.stream,
     );
+
+    passwordErrorController = StreamController();
+    when(presenter.passwordErrorStream)
+        .thenAnswer((realInvocation) => passwordErrorController.stream);
   });
 
   testWidgets('Should load with correct initial state',
@@ -105,5 +110,17 @@ void main() {
     await tester.pump();
 
     expect(find.text('email error'), findsOneWidget);
+  });
+
+  testWidgets('Should present error if password is invalid', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    passwordErrorController.add('password error');
+
+    await tester.pump();
+
+    expect(find.text('password error'), findsOneWidget);
   });
 }
