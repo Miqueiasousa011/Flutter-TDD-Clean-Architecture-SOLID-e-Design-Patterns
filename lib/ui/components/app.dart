@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../pages/pages.dart';
 
@@ -7,18 +8,19 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Color.fromRGBO(136, 14, 79, 1);
-    final primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
-    final primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
+    const primaryColor = Color.fromRGBO(136, 14, 79, 1);
+    const primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
+    const primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
 
     return MaterialApp(
       theme: ThemeData(
         primaryColor: primaryColor,
         primaryColorDark: primaryColorDark,
         primaryColorLight: primaryColorLight,
-        accentColor: primaryColor,
         backgroundColor: Colors.white,
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           headline1: TextStyle(
             fontSize: 30,
             color: primaryColorDark,
@@ -28,7 +30,7 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: '4Dev',
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
