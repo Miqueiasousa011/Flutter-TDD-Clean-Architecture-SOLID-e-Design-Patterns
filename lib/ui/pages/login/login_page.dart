@@ -21,11 +21,19 @@ class LoginPage extends StatelessWidget {
               child: Form(
                 child: Column(
                   children: [
-                    TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(hintText: 'Email'),
-                      onChanged: (value) =>
-                          loginPresenter!.validateEmail(value),
+                    StreamBuilder<String?>(
+                      stream: loginPresenter!.emailErrorStream,
+                      builder: (context, snapshot) {
+                        return TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            errorText: snapshot.data,
+                            hintText: 'Email',
+                          ),
+                          onChanged: (value) =>
+                              loginPresenter!.validateEmail(value),
+                        );
+                      },
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),

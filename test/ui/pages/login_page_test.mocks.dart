@@ -3,6 +3,8 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:async' as _i3;
+
 import 'package:fordev/ui/pages/login/login_presenter.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -25,6 +27,11 @@ class MockLoginPresenter extends _i1.Mock implements _i2.LoginPresenter {
     _i1.throwOnMissingStub(this);
   }
 
+  @override
+  _i3.Stream<String?> get emailErrorStream => (super.noSuchMethod(
+        Invocation.getter(#emailErrorStream),
+        returnValue: _i3.Stream<String?>.empty(),
+      ) as _i3.Stream<String?>);
   @override
   void validateEmail(String? email) => super.noSuchMethod(
         Invocation.method(

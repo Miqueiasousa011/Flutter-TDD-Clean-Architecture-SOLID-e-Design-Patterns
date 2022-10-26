@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,8 +14,15 @@ import 'login_page_test.mocks.dart';
 void main() {
   late MockLoginPresenter presenter;
 
+  late StreamController<String?> emailErrorController;
+
   setUp(() {
     presenter = MockLoginPresenter();
+
+    emailErrorController = StreamController();
+    when(presenter.emailErrorStream).thenAnswer(
+      (_) => emailErrorController.stream,
+    );
   });
 
   testWidgets('Should load with correct initial state',
@@ -79,5 +88,22 @@ void main() {
     ///Verificando se o método de validação de senha está sendo chamado
     ///Sempre que o campo é alterado
     verify(presenter.validatePassword(password));
+  });
+
+  testWidgets('Should present error if email is invalid', (tester) async {
+    final loginPage = MaterialApp(
+      home: LoginPage(loginPresenter: presenter),
+    );
+
+    ///RENDERIZO A TELA
+    await tester.pumpWidget(loginPage);
+
+    ///altera estado
+    emailErrorController.add('email error');
+
+    ///Renderiza a tela novamente
+    await tester.pump();
+
+    expect(find.text('email error'), findsOneWidget);
   });
 }
