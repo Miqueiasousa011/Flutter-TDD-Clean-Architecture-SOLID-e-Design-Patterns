@@ -196,4 +196,24 @@ void main() {
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNull);
   });
+
+  testWidgets('shoul call authentication on form submit', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    ///FORMULÁRIO ESTÁ VÁLIDO, LOGO O BOTÃO SERÁ ATIVADO
+    isFormValidController.add(true);
+
+    /// tela reage
+    await tester.pump();
+
+    ///CLICANDO NO BOTÃO DE LOGIN
+    await tester.tap(find.byType(ElevatedButton));
+
+    /// tela reage
+    await tester.pump();
+
+    verify(presenter.auth()).called(1);
+  });
 }
