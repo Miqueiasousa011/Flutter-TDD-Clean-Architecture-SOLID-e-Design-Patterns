@@ -235,4 +235,22 @@ void main() {
     //Deve ser encontrado um CircularProgressIndicator
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
+
+  testWidgets('Should hiden loading', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    //Loading está sendo exibido
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    //Fechando loading
+    isLoadingController.add(false);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
 }
