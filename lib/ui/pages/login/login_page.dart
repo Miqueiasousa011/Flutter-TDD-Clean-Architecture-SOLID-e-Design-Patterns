@@ -51,17 +51,22 @@ class LoginPage extends StatelessWidget {
                             );
                           }),
                     ),
-                    ElevatedButton(
-                      onPressed: null,
-                      child: Text(
-                        'Entrar'.toUpperCase(),
-                      ),
+                    StreamBuilder<bool>(
+                      stream: loginPresenter!.isFormValidController,
+                      builder: (context, snapshot) {
+                        return ElevatedButton(
+                          onPressed: snapshot.data == true ? () {} : null,
+                          child: Text(
+                            'Entrar'.toUpperCase(),
+                          ),
+                        );
+                      },
                     ),
                     TextButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.person),
                       label: const Text('Criar conta'),
-                    ),
+                    )
                   ],
                 ),
               ),
