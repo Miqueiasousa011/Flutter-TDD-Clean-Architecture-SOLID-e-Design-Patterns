@@ -183,4 +183,17 @@ void main() {
 
     expect(button.onPressed, isNotNull);
   });
+
+  testWidgets('should desable button if form is invalid', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    isFormValidController.add(false);
+
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, isNull);
+  });
 }
