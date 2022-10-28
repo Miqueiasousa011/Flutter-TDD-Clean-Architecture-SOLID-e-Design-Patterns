@@ -274,4 +274,16 @@ void main() {
       expect(find.text('Error message'), findsOneWidget);
     },
   );
+
+  testWidgets('should close streams on dispose', (tester) async {
+    final loginPage = MaterialApp(home: LoginPage(loginPresenter: presenter));
+
+    await tester.pumpWidget(loginPage);
+
+    ///Recurso que é chamado depois que o widget é destruido
+    ///Simula o dispose
+    addTearDown(() {
+      verify(presenter.dispose()).called(1);
+    });
+  });
 }
