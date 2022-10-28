@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/ui/pages/pages.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
+import 'components/components.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, this.loginPresenter});
@@ -45,60 +47,38 @@ class _LoginPageState extends State<LoginPage> {
               const Headline1(text: 'login'),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  child: Column(
-                    children: [
-                      StreamBuilder<String?>(
-                        stream: widget.loginPresenter!.emailErrorStream,
-                        builder: (context, snapshot) {
-                          return TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              errorText: snapshot.data,
-                              hintText: 'Email',
-                            ),
-                            onChanged: (value) =>
-                                widget.loginPresenter!.validateEmail(value),
-                          );
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: StreamBuilder<String?>(
-                            stream: widget.loginPresenter!.passwordErrorStream,
-                            builder: (context, snapshot) {
-                              return TextFormField(
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  hintText: 'Senha',
-                                  errorText: snapshot.data,
-                                ),
-                                onChanged: (value) => widget.loginPresenter!
-                                    .validatePassword(value),
-                              );
-                            }),
-                      ),
-                      StreamBuilder<bool>(
-                        stream: widget.loginPresenter!.isFormValidController,
-                        builder: (context, snapshot) {
-                          return ElevatedButton(
-                            onPressed: snapshot.data == true
-                                ? () {
-                                    widget.loginPresenter!.auth();
-                                  }
-                                : null,
-                            child: Text(
-                              'Entrar'.toUpperCase(),
-                            ),
-                          );
-                        },
-                      ),
-                      TextButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.person),
-                        label: const Text('Criar conta'),
-                      )
-                    ],
+                child: Provider(
+                  create: (context) => widget.loginPresenter,
+                  child: Form(
+                    child: Column(
+                      children: [
+                        const EmailInput(),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: PasswordInput(),
+                        ),
+                        StreamBuilder<bool>(
+                          stream: widget.loginPresenter!.isFormValidController,
+                          builder: (context, snapshot) {
+                            return ElevatedButton(
+                              onPressed: snapshot.data == true
+                                  ? () {
+                                      widget.loginPresenter!.auth();
+                                    }
+                                  : null,
+                              child: Text(
+                                'Entrar'.toUpperCase(),
+                              ),
+                            );
+                          },
+                        ),
+                        TextButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.person),
+                          label: const Text('Criar conta'),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
