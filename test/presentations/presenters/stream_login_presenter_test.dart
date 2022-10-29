@@ -114,4 +114,24 @@ void main() {
     sut.validatePassword(password);
     sut.validatePassword(password);
   });
+
+  test('Should emits form is not valid if has error', () {
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn('error');
+
+    when(validation.validate(field: 'password', value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.emailErrorStream
+        .listen(expectAsync1((error) => expect(error, equals('error'))));
+
+    sut.passwordErrorStream
+        .listen(expectAsync1((error) => expect(error, isNull)));
+
+    sut.isFormValidController
+        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+  });
 }

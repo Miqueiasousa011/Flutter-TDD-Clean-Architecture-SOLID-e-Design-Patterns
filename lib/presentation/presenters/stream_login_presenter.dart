@@ -38,5 +38,5 @@ class LoginState {
   String? emailError;
   String? passwordError;
 
-  bool isFormValid = false;
+  bool get isFormValid => emailError == null && passwordError == null;
 }
