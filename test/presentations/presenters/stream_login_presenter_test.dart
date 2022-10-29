@@ -84,4 +84,19 @@ void main() {
 
     verify(validation.validate(field: 'password', value: password)).called(1);
   });
+
+  test('should password error if Validation fails', () {
+    when(validation.validate(
+            field: anyNamed('field'), value: anyNamed('value')))
+        .thenReturn('error');
+
+    sut.passwordErrorStream
+        .listen(expectAsync1((error) => expect(error, 'error')));
+
+    sut.isFormValidController
+        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+  });
 }
