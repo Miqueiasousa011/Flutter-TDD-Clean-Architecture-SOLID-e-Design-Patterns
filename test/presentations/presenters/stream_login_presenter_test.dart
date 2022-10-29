@@ -43,8 +43,14 @@ void main() {
             field: anyNamed('field'), value: anyNamed('value')))
         .thenReturn('error');
 
-    expectLater(sut.emailErrorStream, emits('error'));
+    /// GARANTIR QUE A TELA SEJA RENDERIZADA APENAS UMA VEZ,
+    /// CASO O MESMO ERRO SEJA EMITIDO VARIAS VEZES
+    sut.emailErrorStream
+        .listen(expectAsync1((error) => expect(error, 'error')));
 
+    sut.validateEmail(email);
+
+    ///ESTÁ REPETIDO PARA SIMULAR O MESMO ERRO OCORRENDO MAIS DE UMA VEZ
     sut.validateEmail(email);
   });
 }
