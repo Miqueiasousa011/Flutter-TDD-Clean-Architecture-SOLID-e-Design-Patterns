@@ -48,9 +48,30 @@ void main() {
     sut.emailErrorStream
         .listen(expectAsync1((error) => expect(error, 'error')));
 
+    /// Notificando que o formulário não está válido
+    sut.isFormValidController
+        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
     sut.validateEmail(email);
 
     ///ESTÁ REPETIDO PARA SIMULAR O MESMO ERRO OCORRENDO MAIS DE UMA VEZ
+    sut.validateEmail(email);
+  });
+
+  test('Should emit null if email is valid', () {
+    when(validation.validate(
+            field: anyNamed('field'), value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.emailErrorStream.listen(expectAsync1(
+      (error) => expect(error, isNull),
+    ));
+
+    ///O formulário ainda emit false, pois o password ainda não foi validado
+    sut.isFormValidController
+        .listen(expectAsync1((error) => expect(error, isFalse)));
+
+    sut.validateEmail(email);
     sut.validateEmail(email);
   });
 }
