@@ -26,6 +26,9 @@ class StreamLoginPresenter {
   Stream<bool> get isFormValidController =>
       _controller.stream.map((state) => state.isFormValid).distinct();
 
+  Stream<bool> get isLoadingController =>
+      _controller.stream.map((state) => state.isLoading);
+
   void validateEmail(String? email) {
     _state.email = email;
     _state.emailError = _validation.validate(field: 'email', value: email);
@@ -44,7 +47,13 @@ class StreamLoginPresenter {
       email: _state.email!,
       password: _state.password!,
     );
+    _state.isLoading = true;
+    _controller.add(_state);
+
     await _authenticationUsecase.auth(params);
+
+    _state.isLoading = false;
+    _controller.add(_state);
   }
 }
 
@@ -54,6 +63,8 @@ class LoginState {
 
   String? emailError;
   String? passwordError;
+
+  bool isLoading = false;
 
   bool get isFormValid =>
       email != null &&

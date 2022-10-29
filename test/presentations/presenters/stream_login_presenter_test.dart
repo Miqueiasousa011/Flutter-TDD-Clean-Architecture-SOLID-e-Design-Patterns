@@ -23,6 +23,8 @@ void main() {
   late String password;
   late AuthenticationParams authenticationParams;
 
+  late AccountEntity accountEntity;
+
   setUp(() {
     email = faker.internet.email();
     password = faker.internet.password();
@@ -31,6 +33,8 @@ void main() {
       email: email,
       password: password,
     );
+
+    accountEntity = AccountEntity(token: faker.guid.guid());
 
     validation = MockValidation();
     authentication = MockAuthenticationUsecase();
@@ -168,15 +172,12 @@ void main() {
   });
 
   test('Should call Authentication with correct values', () async {
-    when(authentication.auth(any))
-        .thenAnswer((_) async => AccountEntity(token: 'token'));
+    when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
 
-    when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+    when(validation.validate(field: 'email', value: anyNamed('value')))
         .thenReturn(null);
 
-    when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+    when(validation.validate(field: 'password', value: anyNamed('value')))
         .thenReturn(null);
 
     sut.validateEmail(email);
@@ -186,5 +187,22 @@ void main() {
 
     ///Aqui é feita uma comparação entre os objetos enviados no parâmetros. Por isso é necessário adicionar o equatable
     verify(authentication.auth(authenticationParams)).called(1);
+  });
+
+  test('Should emit correct events on Authentication success', () async {
+    when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
+
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn(null);
+
+    when(validation.validate(field: 'password', value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingController, emitsInOrder([isTrue, isFalse]));
+
+    await sut.auth();
   });
 }
