@@ -1,4 +1,6 @@
 import 'package:faker/faker.dart';
+import 'package:fordev/domain/entities/account_entity.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -11,21 +13,32 @@ import 'stream_login_presenter_test.mocks.dart';
 
 ///A RESPONSABILIDADE DO PRESENTER É GERENCIAMENTO DE ESTADO
 
-@GenerateMocks([Validation])
+@GenerateMocks([Validation, AuthenticationUsecase])
 void main() {
   late StreamLoginPresenter sut;
   late MockValidation validation;
+  late MockAuthenticationUsecase authentication;
 
   late String email;
   late String password;
+  late AuthenticationParams authenticationParams;
 
   setUp(() {
     email = faker.internet.email();
     password = faker.internet.password();
 
-    validation = MockValidation();
+    authenticationParams = AuthenticationParams(
+      email: email,
+      password: password,
+    );
 
-    sut = StreamLoginPresenter(validation: validation);
+    validation = MockValidation();
+    authentication = MockAuthenticationUsecase();
+
+    sut = StreamLoginPresenter(
+      validation: validation,
+      authenticationUsecase: authentication,
+    );
   });
 
   test('Should call Validation with correct email', () {
@@ -152,5 +165,26 @@ void main() {
     sut.validateEmail(email);
     await Future.delayed(Duration.zero);
     sut.validatePassword(password);
+  });
+
+  test('Should call Authentication with correct values', () async {
+    when(authentication.auth(any))
+        .thenAnswer((_) async => AccountEntity(token: 'token'));
+
+    when(validation.validate(
+            field: anyNamed('field'), value: anyNamed('value')))
+        .thenReturn(null);
+
+    when(validation.validate(
+            field: anyNamed('field'), value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    ///Aqui é feita uma comparação entre os objetos enviados no parâmetros. Por isso é necessário adicionar o equatable
+    verify(authentication.auth(authenticationParams)).called(1);
   });
 }

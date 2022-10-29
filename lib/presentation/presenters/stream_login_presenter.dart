@@ -1,13 +1,17 @@
 import 'dart:async';
 
+import '../../domain/usecases/usecases.dart';
 import '../protocols/protocols.dart';
 
 class StreamLoginPresenter {
   StreamLoginPresenter({
     required Validation validation,
-  }) : _validation = validation;
+    required AuthenticationUsecase authenticationUsecase,
+  })  : _validation = validation,
+        _authenticationUsecase = authenticationUsecase;
 
   final Validation _validation;
+  final AuthenticationUsecase _authenticationUsecase;
 
   final _controller = StreamController<LoginState>.broadcast();
 
@@ -33,6 +37,14 @@ class StreamLoginPresenter {
     _state.passwordError =
         _validation.validate(field: 'password', value: password);
     _controller.add(_state);
+  }
+
+  Future<void> auth() async {
+    final params = AuthenticationParams(
+      email: _state.email!,
+      password: _state.password!,
+    );
+    await _authenticationUsecase.auth(params);
   }
 }
 
