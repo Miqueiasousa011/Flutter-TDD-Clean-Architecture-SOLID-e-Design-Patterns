@@ -99,4 +99,19 @@ void main() {
     sut.validatePassword(password);
     sut.validatePassword(password);
   });
+
+  test('Should emits null if password is valid', () {
+    when(validation.validate(
+            field: anyNamed('field'), value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.passwordErrorStream
+        .listen(expectAsync1((error) => expect(error, isNull)));
+
+    sut.isFormValidController
+        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+  });
 }
