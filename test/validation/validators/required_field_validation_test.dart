@@ -1,24 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-abstract class FieldValidation {
-  String? validate(String? value);
-}
-
-class RequiredFieldValidation implements FieldValidation {
-  final String? field;
-
-  RequiredFieldValidation(this.field);
-
-  @override
-  String? validate(String? value) {
-    if (value == null || value.isEmpty == true) {
-      return 'Campo obrigatório';
-    }
-
-    return null;
-  }
-}
+import 'package:fordev/validation/validators/validators.dart';
 
 void main() {
   late RequiredFieldValidation sut;
