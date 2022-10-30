@@ -37,6 +37,12 @@ void main() {
   });
 
   test('Should return error if value is empty', () {
+    final error = sut.validate('');
+
+    expect(error, equals('Campo obrigatório'));
+  });
+
+  test('Should return error if value is null', () {
     final error = sut.validate(null);
 
     expect(error, equals('Campo obrigatório'));
