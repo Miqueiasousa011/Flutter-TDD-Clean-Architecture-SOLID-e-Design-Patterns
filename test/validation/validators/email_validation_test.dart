@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/validation/protocols/protocols.dart';
 
@@ -8,7 +9,14 @@ class EmailValidation implements FieldValidation {
 
   @override
   String? validate(String? value) {
-    return null;
+    final regexp = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+
+    return regexp.hasMatch(value) ? null : 'Email inválido';
   }
 }
 
@@ -29,5 +37,17 @@ void main() {
     final error = sut.validate(null);
 
     expect(error, isNull);
+  });
+
+  test('Should return null if email is valid', () {
+    final error = sut.validate(faker.internet.email());
+
+    expect(error, isNull);
+  });
+
+  test('Should return error if email is invalid', () {
+    final error = sut.validate('asd.com');
+
+    expect(error, 'Email inválido');
   });
 }
