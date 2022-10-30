@@ -37,14 +37,14 @@ class StreamLoginPresenter {
   void validateEmail(String? email) {
     _state.email = email;
     _state.emailError = _validation.validate(field: 'email', value: email);
-    _controller.add(_state);
+    _addState(_state);
   }
 
   void validatePassword(String? password) {
     _state.password = password;
     _state.passwordError =
         _validation.validate(field: 'password', value: password);
-    _controller.add(_state);
+    _addState(_state);
   }
 
   Future<void> auth() async {
@@ -53,15 +53,24 @@ class StreamLoginPresenter {
       password: _state.password!,
     );
     _state.isLoading = true;
-    _controller.add(_state);
+    _addState(_state);
     try {
       await _authenticationUsecase.auth(params);
     } on DomainError catch (e) {
       _state.mainError = e.description;
     } finally {
       _state.isLoading = false;
-      _controller.add(_state);
+      _addState(_state);
     }
+  }
+
+  void _addState(LoginState state) {
+    if (_controller.isClosed) return;
+    _controller.add(_state);
+  }
+
+  Future<void> dispose() async {
+    return await _controller.close();
   }
 }
 

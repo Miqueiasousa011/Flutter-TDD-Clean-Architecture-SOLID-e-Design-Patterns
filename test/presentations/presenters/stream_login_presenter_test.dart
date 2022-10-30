@@ -249,4 +249,15 @@ void main() {
 
     await sut.auth();
   });
+
+  test('Should not emit after dispose', () async {
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn(null);
+
+    expectLater(sut.emailErrorStream, emitsDone);
+
+    await sut.dispose();
+
+    sut.validateEmail(email);
+  });
 }
