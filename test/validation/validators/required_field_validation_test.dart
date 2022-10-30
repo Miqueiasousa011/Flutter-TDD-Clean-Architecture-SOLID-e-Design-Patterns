@@ -9,7 +9,7 @@ void main() {
   setUp(() {
     value = faker.person.name();
 
-    sut = RequiredFieldValidation(value);
+    sut = RequiredFieldValidation('any_field');
   });
 
   test('Should return null if value is not empty', () {
