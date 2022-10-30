@@ -1,11 +1,12 @@
 import 'package:faker/faker.dart';
-import 'package:fordev/domain/entities/account_entity.dart';
-import 'package:fordev/domain/helpers/helpers.dart';
-import 'package:fordev/domain/usecases/usecases.dart';
 
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
+
+import 'package:fordev/domain/entities/account_entity.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 
 import 'package:fordev/presentation/presenters/presenters.dart';
 import 'package:fordev/presentation/protocols/protocols.dart';
@@ -225,6 +226,26 @@ void main() {
 
     sut.mainErrorController.listen(expectAsync1((error) =>
         expect(error, DomainError.invalidCredentialsError.description)));
+
+    await sut.auth();
+  });
+
+  test('Should emit correct events on UnexpectedError', () async {
+    when(authentication.auth(any)).thenThrow(DomainError.unexpected);
+
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn(null);
+
+    when(validation.validate(field: 'password', value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingController, emits(false));
+
+    sut.mainErrorController.listen(expectAsync1(
+        (error) => expect(error, DomainError.unexpected.description)));
 
     await sut.auth();
   });

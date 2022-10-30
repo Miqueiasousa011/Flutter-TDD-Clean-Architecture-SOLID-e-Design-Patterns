@@ -1,6 +1,6 @@
 enum DomainError {
-  unexpected('Unexpected Error'),
-  invalidCredentialsError('Invalid Credentials');
+  unexpected('Algo de errado aconteceu. Tente novamente'),
+  invalidCredentialsError('Credenciais inválidas.');
 
   const DomainError(this.description);
 
