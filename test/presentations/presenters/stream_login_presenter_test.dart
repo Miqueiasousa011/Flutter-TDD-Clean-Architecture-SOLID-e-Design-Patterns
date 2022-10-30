@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:fordev/domain/entities/account_entity.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
 
 import 'package:mockito/annotations.dart';
@@ -202,6 +203,28 @@ void main() {
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingController, emitsInOrder([isTrue, isFalse]));
+
+    await sut.auth();
+  });
+
+  test('Should emit correct events on InvalidCredentialsError', () async {
+    when(authentication.auth(any))
+        .thenThrow(DomainError.invalidCredentialsError);
+
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn(null);
+
+    when(validation.validate(field: 'password', value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    ///Esconde o loading
+    expectLater(sut.isLoadingController, emits(false));
+
+    sut.mainErrorController.listen(expectAsync1((error) =>
+        expect(error, DomainError.invalidCredentialsError.description)));
 
     await sut.auth();
   });

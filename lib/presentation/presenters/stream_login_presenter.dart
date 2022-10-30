@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:fordev/domain/helpers/helpers.dart';
+
 import '../../domain/usecases/usecases.dart';
 import '../protocols/protocols.dart';
 
@@ -27,7 +29,10 @@ class StreamLoginPresenter {
       _controller.stream.map((state) => state.isFormValid).distinct();
 
   Stream<bool> get isLoadingController =>
-      _controller.stream.map((state) => state.isLoading);
+      _controller.stream.map((state) => state.isLoading).distinct();
+
+  Stream<String?> get mainErrorController =>
+      _controller.stream.map((state) => state.mainError).distinct();
 
   void validateEmail(String? email) {
     _state.email = email;
@@ -49,11 +54,14 @@ class StreamLoginPresenter {
     );
     _state.isLoading = true;
     _controller.add(_state);
-
-    await _authenticationUsecase.auth(params);
-
-    _state.isLoading = false;
-    _controller.add(_state);
+    try {
+      await _authenticationUsecase.auth(params);
+    } on DomainError catch (e) {
+      _state.mainError = e.description;
+    } finally {
+      _state.isLoading = false;
+      _controller.add(_state);
+    }
   }
 }
 
@@ -63,6 +71,7 @@ class LoginState {
 
   String? emailError;
   String? passwordError;
+  String? mainError;
 
   bool isLoading = false;
 
