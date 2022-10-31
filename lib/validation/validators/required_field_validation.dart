@@ -1,9 +1,9 @@
 import '../protocols/protocols.dart';
 
 class RequiredFieldValidation implements FieldValidation {
-  final String field;
+  final String _field;
 
-  RequiredFieldValidation(this.field);
+  RequiredFieldValidation(this._field);
 
   @override
   String? validate(String? value) {
@@ -13,4 +13,7 @@ class RequiredFieldValidation implements FieldValidation {
 
     return null;
   }
+
+  @override
+  String get field => _field;
 }

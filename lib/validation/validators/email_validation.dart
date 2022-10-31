@@ -1,9 +1,9 @@
 import '../protocols/protocols.dart';
 
 class EmailValidation implements FieldValidation {
-  final String field;
+  final String _field;
 
-  EmailValidation(this.field);
+  EmailValidation(this._field);
 
   @override
   String? validate(String? value) {
@@ -16,4 +16,7 @@ class EmailValidation implements FieldValidation {
 
     return regexp.hasMatch(value) ? null : 'Email inválido';
   }
+
+  @override
+  String get field => _field;
 }
