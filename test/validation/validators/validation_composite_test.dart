@@ -14,7 +14,16 @@ class ValidationComposite implements Validation {
 
   @override
   String? validate({required String field, required value}) {
-    return null;
+    String? error;
+
+    for (var validation in validations) {
+      error = validation.validate(value);
+      if (error != null) {
+        return error;
+      }
+    }
+
+    return error;
   }
 }
 
@@ -30,15 +39,25 @@ void main() {
 
     when(val1.field).thenReturn('any_field');
     when(val2.field).thenReturn('any_field');
-    when(val2.validate(any)).thenReturn('');
+
     when(val1.validate(any)).thenReturn(null);
+    when(val2.validate(any)).thenReturn(null);
 
     sut = ValidationComposite([val1, val2]);
   });
 
-  test('Should return null if all validations returns null or empty', () {
+  test('Should return null if all validations returns null', () {
     final error = sut.validate(field: 'any_field', value: 'any_value');
 
     expect(error, isNull);
+  });
+
+  test('Should return first error if validations fail', () {
+    when(val1.validate(any)).thenReturn('error_1');
+    when(val2.validate(any)).thenReturn('error_2');
+
+    final error = sut.validate(field: 'any_field', value: 'any_value');
+
+    expect(error, 'error_1');
   });
 }
