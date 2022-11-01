@@ -1,7 +1,8 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../pages/pages.dart';
+import '../../main/factories/factories.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -14,7 +15,7 @@ class App extends StatelessWidget {
     const primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
     const primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
 
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
         primaryColor: primaryColor,
         primaryColorDark: primaryColorDark,
@@ -30,7 +31,13 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: '4Dev',
-      home: const LoginPage(),
+      initialRoute: '/login',
+      getPages: [
+        GetPage(
+          name: '/login',
+          page: () => makeLoginPage(),
+        )
+      ],
     );
   }
 }

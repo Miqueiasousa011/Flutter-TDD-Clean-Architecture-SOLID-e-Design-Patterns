@@ -4,11 +4,12 @@ import 'package:http/http.dart';
 
 import '../../data/http/http.dart';
 
-class HttpAdapter {
+class HttpAdapter implements HttpClient {
   final Client _client;
 
   HttpAdapter(this._client);
 
+  @override
   request({
     required String url,
     required String method,

@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:fordev/domain/helpers/helpers.dart';
+import 'package:fordev/ui/pages/login/login.dart';
 
 import '../../domain/usecases/usecases.dart';
 import '../protocols/protocols.dart';
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
   StreamLoginPresenter({
     required Validation validation,
     required AuthenticationUsecase authenticationUsecase,
@@ -19,27 +20,34 @@ class StreamLoginPresenter {
 
   final _state = LoginState();
 
+  @override
   Stream<String?> get emailErrorStream =>
       _controller.stream.map((state) => state.emailError).distinct();
 
+  @override
   Stream<String?> get passwordErrorStream =>
       _controller.stream.map((state) => state.passwordError).distinct();
 
+  @override
   Stream<bool> get isFormValidController =>
       _controller.stream.map((state) => state.isFormValid).distinct();
 
+  @override
   Stream<bool> get isLoadingController =>
       _controller.stream.map((state) => state.isLoading).distinct();
 
+  @override
   Stream<String?> get mainErrorController =>
-      _controller.stream.map((state) => state.mainError).distinct();
+      _controller.stream.map((state) => state.mainError);
 
+  @override
   void validateEmail(String? email) {
     _state.email = email;
     _state.emailError = _validation.validate(field: 'email', value: email);
     _addState(_state);
   }
 
+  @override
   void validatePassword(String? password) {
     _state.password = password;
     _state.passwordError =
@@ -47,6 +55,7 @@ class StreamLoginPresenter {
     _addState(_state);
   }
 
+  @override
   Future<void> auth() async {
     final params = AuthenticationParams(
       email: _state.email!,
@@ -69,6 +78,7 @@ class StreamLoginPresenter {
     _controller.add(_state);
   }
 
+  @override
   Future<void> dispose() async {
     return await _controller.close();
   }

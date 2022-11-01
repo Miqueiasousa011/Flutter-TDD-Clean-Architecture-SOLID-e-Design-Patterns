@@ -5,7 +5,7 @@ void showLoading(BuildContext context) {
     context: context,
     builder: (context) => const SimpleDialog(
       children: [
-        CircularProgressIndicator(),
+        Center(child: CircularProgressIndicator()),
       ],
     ),
   );
