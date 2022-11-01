@@ -12,9 +12,9 @@ void main() {
         validations,
         equals(
           const [
+            EmailValidation('email'),
             RequiredFieldValidation('email'),
             RequiredFieldValidation('password'),
-            EmailValidation('email'),
           ],
         ),
       );

@@ -1,3 +1,5 @@
+import 'package:fordev/main/builders/builders.dart';
+
 import '../../../../presentation/protocols/protocols.dart';
 import '../../../../validation/protocols/protocols.dart';
 import '../../../../validation/validators/validators.dart';
@@ -7,9 +9,8 @@ Validation makeLoginValidationFactory() {
 }
 
 List<FieldValidation> makeLoginValidation() {
-  return const [
-    RequiredFieldValidation('email'),
-    RequiredFieldValidation('password'),
-    EmailValidation('email'),
+  return [
+    ...ValidationBuilder.field('email').email().required().build(),
+    ...ValidationBuilder.field('password').required().build(),
   ];
 }
