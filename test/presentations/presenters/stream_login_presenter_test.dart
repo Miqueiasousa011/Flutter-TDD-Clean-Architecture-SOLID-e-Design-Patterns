@@ -224,8 +224,9 @@ void main() {
     ///Esconde o loading
     expectLater(sut.isLoadingController, emits(false));
 
-    sut.mainErrorController.listen(expectAsync1((error) =>
-        expect(error, DomainError.invalidCredentialsError.description)));
+    sut.mainErrorController.listen((error) {
+      expect(error, DomainError.invalidCredentialsError.description);
+    });
 
     await sut.auth();
   });
@@ -244,8 +245,9 @@ void main() {
 
     expectLater(sut.isLoadingController, emits(false));
 
-    sut.mainErrorController.listen(expectAsync1(
-        (error) => expect(error, DomainError.unexpected.description)));
+    sut.mainErrorController.listen(
+      ((error) => expect(error, DomainError.unexpected.description)),
+    );
 
     await sut.auth();
   });
