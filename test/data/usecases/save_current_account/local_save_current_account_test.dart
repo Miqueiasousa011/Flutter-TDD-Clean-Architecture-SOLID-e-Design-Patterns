@@ -4,31 +4,12 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fordev/domain/entities/entities.dart';
-import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/domain/helpers/helpers.dart';
 
+import 'package:fordev/data/usecases/usecases.dart';
+import 'package:fordev/data/cache/cache.dart';
+
 import 'local_save_current_account_test.mocks.dart';
-
-class LocalSaveCorrentAccount implements SaveCurrentAccountUsecase {
-  final SaveSegureCacheStorage _saveSecureCacheStorage;
-
-  LocalSaveCorrentAccount({
-    required SaveSegureCacheStorage saveSecureCacheStorage,
-  }) : _saveSecureCacheStorage = saveSecureCacheStorage;
-
-  @override
-  Future<void> save(AccountEntity account) async {
-    try {
-      await _saveSecureCacheStorage.save(key: 'token', value: account.token);
-    } catch (e) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class SaveSegureCacheStorage {
-  Future<void> save({required String key, required String value});
-}
 
 @GenerateMocks([SaveSegureCacheStorage])
 void main() {
