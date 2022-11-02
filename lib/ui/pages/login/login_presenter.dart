@@ -1,4 +1,6 @@
-abstract class LoginPresenter {
+import 'package:flutter/material.dart';
+
+abstract class LoginPresenter implements Listenable {
   Stream<String?> get emailErrorStream;
   Stream<String?> get passwordErrorStream;
   Stream<bool> get isFormValidController;

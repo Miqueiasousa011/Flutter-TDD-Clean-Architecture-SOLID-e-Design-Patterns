@@ -6,24 +6,17 @@ import '../../components/components.dart';
 import 'components/components.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, this.loginPresenter});
+  const LoginPage({super.key, required this.loginPresenter});
 
-  final LoginPresenter? loginPresenter;
+  final LoginPresenter loginPresenter;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  @override
-  void dispose() {
-    super.dispose();
-    widget.loginPresenter!.dispose();
-  }
-
   void _hindeKeyBoard() {
-    final currentFocus = Focus.of(context);
-
+    FocusScopeNode currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus) {
       currentFocus.unfocus();
     }
@@ -34,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.loginPresenter!.isLoadingController.listen((isLoading) {
+          widget.loginPresenter.isLoadingController.listen((isLoading) {
             if (isLoading) {
               showLoading(context);
             } else {
@@ -42,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
 
-          widget.loginPresenter!.mainErrorController.listen((error) {
+          widget.loginPresenter.mainErrorController.listen((error) {
             if (error != null) {
               showErrorMessage(context, error);
             }
@@ -57,8 +50,8 @@ class _LoginPageState extends State<LoginPage> {
                   const Headline1(text: 'login'),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Provider(
-                      create: (context) => widget.loginPresenter,
+                    child: ListenableProvider(
+                      create: (_) => widget.loginPresenter,
                       child: Form(
                         child: Column(
                           children: [

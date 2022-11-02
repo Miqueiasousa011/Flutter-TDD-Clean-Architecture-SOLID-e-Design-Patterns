@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/ui/pages/login/login.dart';
@@ -82,6 +83,12 @@ class StreamLoginPresenter implements LoginPresenter {
   Future<void> dispose() async {
     return await _controller.close();
   }
+
+  @override
+  void addListener(VoidCallback listener) {}
+
+  @override
+  void removeListener(VoidCallback listener) {}
 }
 
 class LoginState {
