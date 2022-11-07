@@ -268,19 +268,21 @@ void main() {
   // });
 
   test('Should call SaveCurrentAccount with correct value', () async {
+    when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
+    when(saveCurrentAccount.save(any)).thenThrow(DomainError.unexpected);
     when(validation.validate(field: 'email', value: anyNamed('value')))
         .thenReturn(null);
-
     when(validation.validate(field: 'password', value: anyNamed('value')))
         .thenReturn(null);
-
-    when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
 
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    await sut.auth();
+    expectLater(sut.isLoadingController, emitsInOrder([true, false]));
 
-    verify(saveCurrentAccount.save(accountEntity));
+    sut.mainErrorController.listen(expectAsync1(
+        (error) => expect(error, DomainError.unexpected.description)));
+
+    await sut.auth();
   });
 }
