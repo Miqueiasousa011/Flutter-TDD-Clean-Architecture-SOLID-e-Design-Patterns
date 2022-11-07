@@ -15,11 +15,12 @@ import 'getx_login_presenter_test.mocks.dart';
 
 ///A RESPONSABILIDADE DO PRESENTER É GERENCIAMENTO DE ESTADO
 
-@GenerateMocks([Validation, AuthenticationUsecase])
+@GenerateMocks([Validation, AuthenticationUsecase, SaveCurrentAccountUsecase])
 void main() {
   late GetXLoginPresenter sut;
   late MockValidation validation;
   late MockAuthenticationUsecase authentication;
+  late MockSaveCurrentAccountUsecase saveCurrentAccount;
 
   late String email;
   late String password;
@@ -30,6 +31,8 @@ void main() {
   setUp(() {
     email = faker.internet.email();
     password = faker.internet.password();
+
+    saveCurrentAccount = MockSaveCurrentAccountUsecase();
 
     authenticationParams = AuthenticationParams(
       email: email,
@@ -44,6 +47,7 @@ void main() {
     sut = GetXLoginPresenter(
       validation: validation,
       authenticationUsecase: authentication,
+      saveCurrentAccount: saveCurrentAccount,
     );
   });
 
@@ -262,4 +266,21 @@ void main() {
 
   //   sut.validateEmail(email);
   // });
+
+  test('Should call SaveCurrentAccount with correct value', () async {
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn(null);
+
+    when(validation.validate(field: 'password', value: anyNamed('value')))
+        .thenReturn(null);
+
+    when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(saveCurrentAccount.save(accountEntity));
+  });
 }

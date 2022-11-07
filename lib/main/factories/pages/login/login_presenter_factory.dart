@@ -1,8 +1,8 @@
-import 'package:fordev/main/factories/pages/login/login_validation_factory.dart';
-
 import '../../../../presentation/presenters/presenters.dart';
 import '../../../../ui/pages/pages.dart';
+import '../../usecases/save_current_account_factory.dart';
 import '../../usecases/usecases.dart';
+import '../pages.dart';
 
 LoginPresenter streamLoginPresenterFactory() {
   return StreamLoginPresenter(
@@ -15,5 +15,6 @@ LoginPresenter getXLoginPresenterFactory() {
   return GetXLoginPresenter(
     validation: makeLoginValidationFactory(),
     authenticationUsecase: makeRemoteAuthenticationUsecase(),
+    saveCurrentAccount: makeSaveCurrentAccount(),
   );
 }

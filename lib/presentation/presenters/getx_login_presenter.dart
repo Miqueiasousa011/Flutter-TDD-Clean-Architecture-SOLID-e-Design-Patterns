@@ -11,11 +11,14 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   GetXLoginPresenter({
     required Validation validation,
     required AuthenticationUsecase authenticationUsecase,
+    required SaveCurrentAccountUsecase saveCurrentAccount,
   })  : _validation = validation,
+        _saveCurrentAccount = saveCurrentAccount,
         _authenticationUsecase = authenticationUsecase;
 
   final Validation _validation;
   final AuthenticationUsecase _authenticationUsecase;
+  final SaveCurrentAccountUsecase _saveCurrentAccount;
 
   String? _email;
   String? _password;
@@ -70,7 +73,8 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
     _isLoading.value = true;
 
     try {
-      await _authenticationUsecase.auth(params);
+      final account = await _authenticationUsecase.auth(params);
+      await _saveCurrentAccount.save(account);
     } on DomainError catch (e) {
       _mainError.value = e.description;
     } finally {
