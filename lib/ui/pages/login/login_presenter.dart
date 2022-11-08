@@ -7,6 +7,8 @@ abstract class LoginPresenter implements Listenable {
   Stream<bool> get isLoadingController;
   Stream<String?> get mainErrorController;
 
+  Stream<String?> get navigateToStream;
+
   void validateEmail(String? email);
   void validatePassword(String? password);
   Future<void> auth();

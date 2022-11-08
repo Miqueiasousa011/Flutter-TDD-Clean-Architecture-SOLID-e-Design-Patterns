@@ -89,6 +89,9 @@ class StreamLoginPresenter implements LoginPresenter {
 
   @override
   void removeListener(VoidCallback listener) {}
+
+  @override
+  Stream<String?> get navigateToStream => throw UnimplementedError();
 }
 
 class LoginState {

@@ -54,6 +54,11 @@ class MockLoginPresenter extends _i1.Mock implements _i2.LoginPresenter {
         returnValue: _i3.Stream<String?>.empty(),
       ) as _i3.Stream<String?>);
   @override
+  _i3.Stream<String?> get navigateToStream => (super.noSuchMethod(
+        Invocation.getter(#navigateToStream),
+        returnValue: _i3.Stream<String?>.empty(),
+      ) as _i3.Stream<String?>);
+  @override
   void validateEmail(String? email) => super.noSuchMethod(
         Invocation.method(
           #validateEmail,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/ui/pages/pages.dart';
+import 'package:get/get.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
@@ -44,6 +46,12 @@ class _LoginPageState extends State<LoginPage> {
           widget.loginPresenter.mainErrorController.listen((error) {
             if (error != null) {
               showErrorMessage(context, error);
+            }
+          });
+
+          widget.loginPresenter.navigateToStream.listen((page) {
+            if (page?.isNotEmpty == true) {
+              Get.offAllNamed(page!);
             }
           });
 

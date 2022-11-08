@@ -285,4 +285,21 @@ void main() {
 
     await sut.auth();
   });
+
+  test('Should change page on success', () async {
+    when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
+    // when(saveCurrentAccount.save(any)).thenThrow(DomainError.unexpected);
+    when(validation.validate(field: 'email', value: anyNamed('value')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', value: anyNamed('value')))
+        .thenReturn(null);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    sut.navigateToStream
+        .listen(expectAsync1((page) => expect(page, '/surveys')));
+
+    await sut.auth();
+  });
 }

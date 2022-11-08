@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/route_manager.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -19,6 +20,7 @@ void main() {
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
   late StreamController<String?> mainErrorController;
+  late StreamController<String?> navigateToStream;
 
   setUp(() {
     presenter = MockLoginPresenter();
@@ -44,6 +46,9 @@ void main() {
     mainErrorController = StreamController();
     when(presenter.mainErrorController)
         .thenAnswer((_) => mainErrorController.stream);
+
+    navigateToStream = StreamController();
+    when(presenter.navigateToStream).thenAnswer((_) => navigateToStream.stream);
   });
 
   tearDown(() {
@@ -59,7 +64,7 @@ void main() {
     /// Crio uma instancia de LoginPage
     /// Como o componente utiliza componentes do Material Design,
     /// o mesmo deve estar envolvido em um MaterialApp()
-    final loginPage = MaterialApp(
+    final loginPage = GetMaterialApp(
         home: LoginPage(
       loginPresenter: presenter,
     ));
@@ -285,5 +290,33 @@ void main() {
     addTearDown(() {
       verify(presenter.dispose()).called(1);
     });
+  });
+
+  testWidgets('should navigate to /surveys', (tester) async {
+    final loginPage = GetMaterialApp(
+      initialRoute: '/login',
+      getPages: [
+        GetPage(
+          name: '/login',
+          page: () => LoginPage(loginPresenter: presenter),
+        ),
+        GetPage(
+          name: '/surveys',
+          page: () => const Scaffold(
+            body: Center(
+              child: Text('ENQUETES'),
+            ),
+          ),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(loginPage);
+
+    navigateToStream.add('/surveys');
+
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/surveys');
   });
 }
