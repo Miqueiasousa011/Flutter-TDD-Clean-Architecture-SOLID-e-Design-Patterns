@@ -31,7 +31,7 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   final _isFormValid = RxBool(false);
 
   @override
-  Stream<String?> get emailErrorStream => _emailError.stream.distinct();
+  Stream<String?> get emailErrorStream => _emailError.stream;
 
   @override
   Stream<String?> get passwordErrorStream => _passwordError.stream.distinct();
