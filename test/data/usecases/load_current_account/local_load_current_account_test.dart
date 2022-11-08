@@ -1,10 +1,11 @@
 import 'package:faker/faker.dart';
-import 'package:fordev/domain/usecases/usecases.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fordev/domain/entities/entities.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 
 import 'local_load_current_account_test.mocks.dart';
 
@@ -17,8 +18,12 @@ class LocalLoadCurrentAccount implements LoadCurrentAccountUsecase {
 
   @override
   Future<AccountEntity> load() async {
-    final token = await _fetchSecure.fetchSecure('token');
-    return AccountEntity(token: token);
+    try {
+      final token = await _fetchSecure.fetchSecure('token');
+      return AccountEntity(token: token);
+    } catch (e) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
@@ -53,5 +58,14 @@ void main() {
     final result = await sut.load();
 
     expect(result, equals(accountEntity));
+  });
+
+  test('Should throw UnexpectedError if FetchSecureCacheStorage throws',
+      () async {
+    when(fetchSecure.fetchSecure('token')).thenThrow(Exception());
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
