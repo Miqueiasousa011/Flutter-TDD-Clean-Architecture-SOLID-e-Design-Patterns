@@ -24,20 +24,32 @@ void main() {
     sut = LocalStorageAdapter(secureStorage: secureStorage);
   });
 
-  test('Should call save secure with correct values', () async {
-    await sut.save(key: key, value: value);
+  group('saveSecure', () {
+    test('Should call save secure with correct values', () async {
+      await sut.saveSecure(key: key, value: value);
 
-    verify(secureStorage.write(key: key, value: value));
+      verify(secureStorage.write(key: key, value: value));
+    });
+
+    test('Should throw if save secure throws', () {
+      when(secureStorage.write(key: key, value: value)).thenThrow(Exception());
+
+      final future = sut.saveSecure(key: key, value: value);
+
+      ///Significa que o adapter vai lançar uma exception qualquer
+      ///Não vamos trata-la no adapter. assim não é necessário usar o bloco
+      ///try catch
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
   });
 
-  test('Should throw if save secure throws', () {
-    when(secureStorage.write(key: key, value: value)).thenThrow(Exception());
+  group('fetchSecure', () {
+    test('Should call fetch secure with correct values', () async {
+      when(secureStorage.read(key: key)).thenAnswer((_) async => 'any');
 
-    final future = sut.save(key: key, value: value);
+      await sut.fetchSecure(key: key);
 
-    ///Significa que o adapter vai lançar uma exception qualquer
-    ///Não vamos trata-la no adapter. assim não é necessário usar o bloco
-    ///try catch
-    expect(future, throwsA(const TypeMatcher<Exception>()));
+      verify(secureStorage.read(key: key));
+    });
   });
 }

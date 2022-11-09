@@ -30,12 +30,12 @@ void main() {
   test('Should call SaveSecureCacheStorage with correct values', () async {
     await sut.save(accountEntity);
 
-    verify(saveSecureCacheStorage.save(key: 'token', value: token));
+    verify(saveSecureCacheStorage.saveSecure(key: 'token', value: token));
   });
 
   test('Should throw  UnexpectedError if SaveSecureCacheStorage throws',
       () async {
-    when(saveSecureCacheStorage.save(
+    when(saveSecureCacheStorage.saveSecure(
             key: anyNamed('key'), value: anyNamed('value')))
         .thenThrow(Exception());
 
