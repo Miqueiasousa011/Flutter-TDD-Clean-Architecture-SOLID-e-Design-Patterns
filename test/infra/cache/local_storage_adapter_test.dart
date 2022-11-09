@@ -47,9 +47,17 @@ void main() {
     test('Should call fetch secure with correct values', () async {
       when(secureStorage.read(key: key)).thenAnswer((_) async => 'any');
 
-      await sut.fetchSecure(key: key);
+      await sut.fetchSecure(key);
 
       verify(secureStorage.read(key: key));
+    });
+
+    test('Should return correct value on sucess', () async {
+      when(secureStorage.read(key: key)).thenAnswer((_) async => value);
+
+      final result = await sut.fetchSecure(key);
+
+      expect(result, equals(value));
     });
   });
 }
