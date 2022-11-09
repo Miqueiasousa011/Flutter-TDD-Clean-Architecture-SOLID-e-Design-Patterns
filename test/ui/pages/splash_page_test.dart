@@ -1,41 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/route_manager.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:fordev/ui/pages/splash/splash.dart';
+
 import 'splash_page_test.mocks.dart';
-
-class SplashPage extends StatelessWidget {
-  const SplashPage({super.key, required this.presenter});
-
-  final SplashPresenter presenter;
-
-  @override
-  Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
-    return Scaffold(body: Builder(
-      builder: (context) {
-        presenter.navigateToStream.listen((page) {
-          if (page?.isNotEmpty == true) {
-            Get.offAllNamed(page!);
-          }
-        });
-
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    ));
-  }
-}
-
-abstract class SplashPresenter {
-  Stream<String?> get navigateToStream;
-  Future<void> loadCurrentAccount();
-}
 
 @GenerateMocks([SplashPresenter])
 void main() {
