@@ -1,35 +1,15 @@
 import 'package:faker/faker.dart';
-import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fordev/domain/entities/entities.dart';
-import 'package:fordev/domain/usecases/usecases.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
+
+import 'package:fordev/data/cache/cache.dart';
+import 'package:fordev/data/usecases/usecases.dart';
 
 import 'local_load_current_account_test.mocks.dart';
-
-class LocalLoadCurrentAccount implements LoadCurrentAccountUsecase {
-  final FetchSecureCacheStorage _fetchSecure;
-
-  LocalLoadCurrentAccount({
-    required FetchSecureCacheStorage fetchSecure,
-  }) : _fetchSecure = fetchSecure;
-
-  @override
-  Future<AccountEntity> load() async {
-    try {
-      final token = await _fetchSecure.fetchSecure('token');
-      return AccountEntity(token: token);
-    } catch (e) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class FetchSecureCacheStorage {
-  Future<String> fetchSecure(String key);
-}
 
 @GenerateMocks([FetchSecureCacheStorage])
 void main() {
