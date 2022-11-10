@@ -18,7 +18,19 @@ class RemoteAddAccount {
     try {
       await _httpClient.request(url: _url, method: 'post', body: body);
     } on HttpError catch (e) {
-      throw DomainError.unexpected;
+      throw _handleError(e);
+    }
+  }
+
+  DomainError _handleError(HttpError error) {
+    switch (error) {
+      case HttpError.forbiddenError:
+        return DomainError.emailInUse;
+      case HttpError.badRequest:
+      case HttpError.notFound:
+      case HttpError.serverError:
+      default:
+        return DomainError.unexpected;
     }
   }
 }

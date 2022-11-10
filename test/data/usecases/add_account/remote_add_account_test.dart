@@ -90,4 +90,16 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw EmailInUse if httpClient returns 403 ', () async {
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+    )).thenThrow(HttpError.forbiddenError);
+
+    final future = sut.add(addAccountParams);
+
+    expect(future, throwsA(DomainError.emailInUse));
+  });
 }
