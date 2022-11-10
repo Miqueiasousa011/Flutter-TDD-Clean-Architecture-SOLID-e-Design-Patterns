@@ -1,3 +1,4 @@
+import 'package:fordev/utils/utils.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,8 @@ class App extends StatelessWidget {
     const primaryColor = Color.fromRGBO(136, 14, 79, 1);
     const primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
     const primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
+
+    R.load(const Locale('en', 'US'));
 
     return GetMaterialApp(
       theme: ThemeData(
