@@ -42,9 +42,9 @@ class MockValidation extends _i1.Mock implements _i3.Validation {
   }
 
   @override
-  String? validate({
+  _i3.ValidationError? validate({
     required String? field,
-    required dynamic value,
+    required String? value,
   }) =>
       (super.noSuchMethod(Invocation.method(
         #validate,
@@ -53,7 +53,7 @@ class MockValidation extends _i1.Mock implements _i3.Validation {
           #field: field,
           #value: value,
         },
-      )) as String?);
+      )) as _i3.ValidationError?);
 }
 
 /// A class which mocks [AuthenticationUsecase].

@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
           widget.loginPresenter.mainErrorController.listen((error) {
             if (error != null) {
-              showErrorMessage(context, error);
+              showErrorMessage(context, error.description);
             }
           });
 

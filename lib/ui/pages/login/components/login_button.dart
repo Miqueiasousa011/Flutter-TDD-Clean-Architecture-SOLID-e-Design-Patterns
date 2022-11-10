@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/ui/pages/pages.dart';
-import 'package:fordev/utils/utils.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../utils/i18n/i18n.dart';
 
 class LoginButton extends StatelessWidget {
   const LoginButton({

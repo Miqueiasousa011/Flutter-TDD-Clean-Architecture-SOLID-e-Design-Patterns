@@ -1,4 +1,5 @@
 import 'package:faker/faker.dart';
+import 'package:fordev/ui/helpers/ui_error.dart';
 
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -54,7 +55,7 @@ void main() {
   test('Should call Validation with correct email', () {
     when(validation.validate(
             field: anyNamed('field'), value: anyNamed('value')))
-        .thenReturn('any');
+        .thenReturn(ValidationError.invalidField);
 
     sut.validateEmail(email);
 
@@ -64,12 +65,12 @@ void main() {
   test('Should emit email error if Validation fails', () {
     when(validation.validate(
             field: anyNamed('field'), value: anyNamed('value')))
-        .thenReturn('error');
+        .thenReturn(ValidationError.requiredField);
 
     /// GARANTIR QUE A TELA SEJA RENDERIZADA APENAS UMA VEZ,
     /// CASO O MESMO ERRO SEJA EMITIDO VARIAS VEZES
     sut.emailErrorStream
-        .listen(expectAsync1((error) => expect(error, 'error')));
+        .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
 
     /// Notificando que o formulário não está válido
     sut.isFormValidController
@@ -101,7 +102,7 @@ void main() {
   test('Should call Validation with correct password', () {
     when(validation.validate(
             field: anyNamed('field'), value: anyNamed('value')))
-        .thenReturn('any');
+        .thenReturn(null);
 
     sut.validatePassword(password);
 
@@ -111,10 +112,10 @@ void main() {
   test('should password error if Validation fails', () {
     when(validation.validate(
             field: anyNamed('field'), value: anyNamed('value')))
-        .thenReturn('error');
+        .thenReturn(ValidationError.requiredField);
 
     sut.passwordErrorStream
-        .listen(expectAsync1((error) => expect(error, 'error')));
+        .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
 
     sut.isFormValidController
         .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
@@ -140,13 +141,13 @@ void main() {
 
   test('Should emits form is not valid if has error', () {
     when(validation.validate(field: 'email', value: anyNamed('value')))
-        .thenReturn('error');
+        .thenReturn(ValidationError.invalidField);
 
     when(validation.validate(field: 'password', value: anyNamed('value')))
         .thenReturn(null);
 
     sut.emailErrorStream
-        .listen(expectAsync1((error) => expect(error, equals('error'))));
+        .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
 
     sut.passwordErrorStream
         .listen(expectAsync1((error) => expect(error, isNull)));
@@ -229,7 +230,7 @@ void main() {
     expectLater(sut.isLoadingController, emitsInOrder([true, false]));
 
     sut.mainErrorController.listen((error) {
-      expect(error, DomainError.invalidCredentialsError.description);
+      expect(error, UIError.invalidCredentialsError);
     });
 
     await sut.auth();
@@ -250,7 +251,7 @@ void main() {
     expectLater(sut.isLoadingController, emitsInOrder([true, false]));
 
     sut.mainErrorController.listen(
-      ((error) => expect(error, DomainError.unexpected.description)),
+      ((error) => expect(error, UIError.unexpected)),
     );
 
     await sut.auth();
@@ -280,8 +281,8 @@ void main() {
 
     expectLater(sut.isLoadingController, emitsInOrder([true, false]));
 
-    sut.mainErrorController.listen(expectAsync1(
-        (error) => expect(error, DomainError.unexpected.description)));
+    sut.mainErrorController
+        .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
 
     await sut.auth();
   });

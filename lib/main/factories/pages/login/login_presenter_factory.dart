@@ -4,12 +4,12 @@ import '../../usecases/save_current_account_factory.dart';
 import '../../usecases/usecases.dart';
 import '../pages.dart';
 
-LoginPresenter streamLoginPresenterFactory() {
-  return StreamLoginPresenter(
-    validation: makeLoginValidationFactory(),
-    authenticationUsecase: makeRemoteAuthenticationUsecase(),
-  );
-}
+// LoginPresenter streamLoginPresenterFactory() {
+//   return StreamLoginPresenter(
+//     validation: makeLoginValidationFactory(),
+//     authenticationUsecase: makeRemoteAuthenticationUsecase(),
+//   );
+// }
 
 LoginPresenter getXLoginPresenterFactory() {
   return GetXLoginPresenter(

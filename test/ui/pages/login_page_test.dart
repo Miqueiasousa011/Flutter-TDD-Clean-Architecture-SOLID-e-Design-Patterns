@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fordev/ui/helpers/ui_error.dart';
 import 'package:get/route_manager.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -15,11 +16,11 @@ import 'login_page_test.mocks.dart';
 void main() {
   late MockLoginPresenter presenter;
 
-  late StreamController<String?> emailErrorController;
-  late StreamController<String?> passwordErrorController;
+  late StreamController<UIError?> emailErrorController;
+  late StreamController<UIError?> passwordErrorController;
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
-  late StreamController<String?> mainErrorController;
+  late StreamController<UIError?> mainErrorController;
   late StreamController<String?> navigateToStream;
 
   setUp(() {
@@ -133,12 +134,12 @@ void main() {
     await tester.pumpWidget(loginPage);
 
     ///altera estado
-    emailErrorController.add('email error');
+    emailErrorController.add(UIError.invalidField);
 
     ///Renderiza a tela novamente
     await tester.pump();
 
-    expect(find.text('email error'), findsOneWidget);
+    expect(find.text(UIError.invalidField.description), findsOneWidget);
   });
 
   testWidgets('Should present error if password is invalid', (tester) async {
@@ -146,11 +147,11 @@ void main() {
 
     await tester.pumpWidget(loginPage);
 
-    passwordErrorController.add('password error');
+    passwordErrorController.add(UIError.requiredField);
 
     await tester.pump();
 
-    expect(find.text('password error'), findsOneWidget);
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
   });
 
   testWidgets('should presents no error if email is valid', (tester) async {
@@ -272,11 +273,11 @@ void main() {
 
       await tester.pumpWidget(loginPage);
 
-      mainErrorController.add('Error message');
+      mainErrorController.add(UIError.unexpected);
 
       await tester.pump();
 
-      expect(find.text('Error message'), findsOneWidget);
+      expect(find.text(UIError.unexpected.description), findsOneWidget);
     },
   );
 

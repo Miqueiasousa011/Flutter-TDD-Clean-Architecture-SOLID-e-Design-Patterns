@@ -4,8 +4,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
-import 'dart:ui' as _i4;
+import 'dart:ui' as _i5;
 
+import 'package:fordev/ui/helpers/ui_error.dart' as _i4;
 import 'package:fordev/ui/pages/login/login_presenter.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -29,15 +30,20 @@ class MockLoginPresenter extends _i1.Mock implements _i2.LoginPresenter {
   }
 
   @override
-  _i3.Stream<String?> get emailErrorStream => (super.noSuchMethod(
+  _i3.Stream<_i4.UIError?> get emailErrorStream => (super.noSuchMethod(
         Invocation.getter(#emailErrorStream),
-        returnValue: _i3.Stream<String?>.empty(),
-      ) as _i3.Stream<String?>);
+        returnValue: _i3.Stream<_i4.UIError?>.empty(),
+      ) as _i3.Stream<_i4.UIError?>);
   @override
-  _i3.Stream<String?> get passwordErrorStream => (super.noSuchMethod(
+  _i3.Stream<_i4.UIError?> get passwordErrorStream => (super.noSuchMethod(
         Invocation.getter(#passwordErrorStream),
-        returnValue: _i3.Stream<String?>.empty(),
-      ) as _i3.Stream<String?>);
+        returnValue: _i3.Stream<_i4.UIError?>.empty(),
+      ) as _i3.Stream<_i4.UIError?>);
+  @override
+  _i3.Stream<_i4.UIError?> get mainErrorController => (super.noSuchMethod(
+        Invocation.getter(#mainErrorController),
+        returnValue: _i3.Stream<_i4.UIError?>.empty(),
+      ) as _i3.Stream<_i4.UIError?>);
   @override
   _i3.Stream<bool> get isFormValidController => (super.noSuchMethod(
         Invocation.getter(#isFormValidController),
@@ -48,11 +54,6 @@ class MockLoginPresenter extends _i1.Mock implements _i2.LoginPresenter {
         Invocation.getter(#isLoadingController),
         returnValue: _i3.Stream<bool>.empty(),
       ) as _i3.Stream<bool>);
-  @override
-  _i3.Stream<String?> get mainErrorController => (super.noSuchMethod(
-        Invocation.getter(#mainErrorController),
-        returnValue: _i3.Stream<String?>.empty(),
-      ) as _i3.Stream<String?>);
   @override
   _i3.Stream<String?> get navigateToStream => (super.noSuchMethod(
         Invocation.getter(#navigateToStream),
@@ -93,7 +94,7 @@ class MockLoginPresenter extends _i1.Mock implements _i2.LoginPresenter {
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
   @override
-  void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i5.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -101,7 +102,7 @@ class MockLoginPresenter extends _i1.Mock implements _i2.LoginPresenter {
         returnValueForMissingStub: null,
       );
   @override
-  void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i5.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],

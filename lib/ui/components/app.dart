@@ -1,9 +1,9 @@
-import 'package:fordev/utils/utils.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../main/factories/factories.dart';
+import '../../utils/i18n/i18n.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

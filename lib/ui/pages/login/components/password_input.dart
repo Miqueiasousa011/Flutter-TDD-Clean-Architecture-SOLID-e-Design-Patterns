@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/helpers/ui_error.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:provider/provider.dart';
 
@@ -10,14 +11,14 @@ class PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final presenter = Provider.of<LoginPresenter>(context);
-    return StreamBuilder<String?>(
+    return StreamBuilder<UIError?>(
       stream: presenter.passwordErrorStream,
       builder: (context, snapshot) {
         return TextFormField(
           obscureText: true,
           decoration: InputDecoration(
             hintText: 'Senha',
-            errorText: snapshot.data,
+            errorText: snapshot.data?.description,
           ),
           onChanged: (value) => presenter.validatePassword(value),
         );

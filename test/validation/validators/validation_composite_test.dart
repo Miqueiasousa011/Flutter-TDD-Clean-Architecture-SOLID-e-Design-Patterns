@@ -1,3 +1,4 @@
+import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -36,20 +37,20 @@ void main() {
   });
 
   test('Should return first error if validations fail', () {
-    when(val1.validate(any)).thenReturn('error_1');
-    when(val2.validate(any)).thenReturn('error_2');
+    when(val1.validate(any)).thenReturn(ValidationError.invalidField);
+    when(val2.validate(any)).thenReturn(ValidationError.requiredField);
 
     final error = sut.validate(field: 'any_field_2', value: 'any_value');
 
-    expect(error, 'error_2');
+    expect(error, ValidationError.requiredField);
   });
 
   test('Should return error of corresponding field', () {
-    when(val1.validate(any)).thenReturn('error_1');
-    when(val2.validate(any)).thenReturn('error_2');
-    when(val3.validate(any)).thenReturn('other_error');
+    when(val1.validate(any)).thenReturn(ValidationError.invalidField);
+    when(val2.validate(any)).thenReturn(ValidationError.requiredField);
+    when(val3.validate(any)).thenReturn(ValidationError.requiredField);
     final error = sut.validate(field: 'any_field_3', value: 'any_value');
 
-    expect(error, 'other_error');
+    expect(error, ValidationError.requiredField);
   });
 }
