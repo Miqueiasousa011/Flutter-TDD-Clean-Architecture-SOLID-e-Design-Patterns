@@ -29,11 +29,11 @@ class MockFetchSecureCacheStorage extends _i1.Mock
   }
 
   @override
-  _i3.Future<String> fetchSecure(String? key) => (super.noSuchMethod(
+  _i3.Future<String?> fetchSecure(String? key) => (super.noSuchMethod(
         Invocation.method(
           #fetchSecure,
           [key],
         ),
-        returnValue: _i3.Future<String>.value(''),
-      ) as _i3.Future<String>);
+        returnValue: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
 }

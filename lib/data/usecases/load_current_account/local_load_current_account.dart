@@ -11,10 +11,10 @@ class LocalLoadCurrentAccount implements LoadCurrentAccountUsecase {
   }) : _fetchSecure = fetchSecure;
 
   @override
-  Future<AccountEntity> load() async {
+  Future<AccountEntity?> load() async {
     try {
       final token = await _fetchSecure.fetchSecure('token');
-      return AccountEntity(token: token);
+      return token == null ? null : AccountEntity(token: token);
     } catch (e) {
       throw DomainError.unexpected;
     }
