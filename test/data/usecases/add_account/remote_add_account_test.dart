@@ -119,4 +119,17 @@ void main() {
 
     expect(result.token, equals(accountEntity.token));
   });
+
+  test('Should throw UnexpectedError if HttpClient return invalid data ',
+      () async {
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+    )).thenAnswer((_) async => {'invalid_key': 'invalid_data'});
+
+    final result = sut.add(addAccountParams);
+
+    expect(result, throwsA(DomainError.unexpected));
+  });
 }
