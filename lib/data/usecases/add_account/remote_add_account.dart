@@ -1,3 +1,4 @@
+import '../../../domain/helpers/helpers.dart';
 import '../../../domain/usecases/usecases.dart';
 import '../../http/http.dart';
 
@@ -14,7 +15,11 @@ class RemoteAddAccount {
   @override
   Future add(AddAccountParams params) async {
     final body = RemoteAddAccountParams.fromDomain(params).toMap();
-    await _httpClient.request(url: _url, method: 'post', body: body);
+    try {
+      await _httpClient.request(url: _url, method: 'post', body: body);
+    } on HttpError catch (e) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
