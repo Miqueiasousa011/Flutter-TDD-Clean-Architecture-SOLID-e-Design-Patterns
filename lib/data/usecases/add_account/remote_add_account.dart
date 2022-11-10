@@ -1,8 +1,10 @@
+import '../../../domain/entities/entities.dart';
 import '../../../domain/helpers/helpers.dart';
 import '../../../domain/usecases/usecases.dart';
 import '../../http/http.dart';
+import '../../models/models.dart';
 
-class RemoteAddAccount {
+class RemoteAddAccount implements AddAccountUsecase {
   final HttpClient _httpClient;
   final String _url;
 
@@ -13,10 +15,16 @@ class RemoteAddAccount {
         _url = url;
 
   @override
-  Future add(AddAccountParams params) async {
+  Future<AccountEntity> add(AddAccountParams params) async {
     final body = RemoteAddAccountParams.fromDomain(params).toMap();
     try {
-      await _httpClient.request(url: _url, method: 'post', body: body);
+      final response = await _httpClient.request(
+        url: _url,
+        method: 'post',
+        body: body,
+      );
+
+      return RemoteAccountModel.fromJson(response!).toEntity;
     } on HttpError catch (e) {
       throw _handleError(e);
     }

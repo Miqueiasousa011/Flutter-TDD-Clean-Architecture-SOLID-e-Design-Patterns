@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fordev/domain/entities/account_entity.dart';
 import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -16,6 +17,8 @@ void main() {
   late AddAccountParams addAccountParams;
   late MockHttpClient httpClient;
   late String url;
+  late AccountEntity accountEntity;
+  late String accessToken;
 
   setUp(() {
     addAccountParams = AddAccountParams(
@@ -25,6 +28,8 @@ void main() {
       passwordConfirmation: 'fake_password',
     );
     url = faker.internet.httpUrl();
+    accessToken = faker.guid.guid();
+    accountEntity = AccountEntity(token: accessToken);
 
     httpClient = MockHttpClient();
     sut = RemoteAddAccount(httpClient: httpClient, url: url);
@@ -37,7 +42,7 @@ void main() {
         method: anyNamed('method'),
         body: anyNamed('body'),
       ),
-    ).thenAnswer((_) async => {'any': 'any'});
+    ).thenAnswer((_) async => {'accessToken': accessToken});
 
     await sut.add(addAccountParams);
 
@@ -101,5 +106,17 @@ void main() {
     final future = sut.add(addAccountParams);
 
     expect(future, throwsA(DomainError.emailInUse));
+  });
+
+  test('Should return AccountEntity if httpClient returns 200 ', () async {
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+    )).thenAnswer((_) async => {'accessToken': accessToken});
+
+    final result = await sut.add(addAccountParams);
+
+    expect(result.token, equals(accountEntity.token));
   });
 }
