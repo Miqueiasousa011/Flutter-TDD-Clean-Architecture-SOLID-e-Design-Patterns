@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mockito/annotations.dart';
@@ -20,6 +21,7 @@ class GetxSplashPresenter implements SplashPresenter {
   @override
   Future<void> checkAccount() async {
     await _loadCurrentAccount.load();
+    _navigateTo.value = '/surveys';
   }
 
   @override
@@ -30,8 +32,10 @@ class GetxSplashPresenter implements SplashPresenter {
 void main() {
   late GetxSplashPresenter sut;
   late MockLoadCurrentAccountUsecase loadCurrentAccount;
+  late AccountEntity account;
 
   setUp(() {
+    account = AccountEntity(token: faker.guid.guid());
     loadCurrentAccount = MockLoadCurrentAccountUsecase();
     sut = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccount);
   });
@@ -46,11 +50,19 @@ void main() {
   });
 
   test('Should call loadCurrent account', () async {
-    when(loadCurrentAccount.load())
-        .thenAnswer((_) async => const AccountEntity(token: 'any'));
+    when(loadCurrentAccount.load()).thenAnswer((_) async => account);
 
     await sut.checkAccount();
 
     verify(loadCurrentAccount.load());
+  });
+
+  test('Should go to surveys page on success', () async {
+    when(loadCurrentAccount.load()).thenAnswer((_) async => account);
+
+    sut.navigateToStream
+        .listen(expectAsync1((page) => expect(page, '/surveys')));
+
+    await sut.checkAccount();
   });
 }
