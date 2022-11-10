@@ -1,36 +1,13 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:fordev/domain/entities/account_entity.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
-import 'package:fordev/ui/pages/splash/splash.dart';
+import 'package:fordev/presentation/presenters/presenters.dart';
 
 import 'getx_splash_presenter_test.mocks.dart';
-
-class GetxSplashPresenter implements SplashPresenter {
-  GetxSplashPresenter({required LoadCurrentAccountUsecase loadCurrentAccount})
-      : _loadCurrentAccount = loadCurrentAccount;
-
-  final LoadCurrentAccountUsecase _loadCurrentAccount;
-
-  final _navigateTo = Rx<String?>(null);
-
-  @override
-  Future<void> checkAccount() async {
-    try {
-      final account = await _loadCurrentAccount.load();
-      _navigateTo.value = account == null ? '/login' : '/surveys';
-    } catch (e) {
-      _navigateTo.value = '/login';
-    }
-  }
-
-  @override
-  Stream<String?> get navigateToStream => _navigateTo.stream;
-}
 
 @GenerateMocks([LoadCurrentAccountUsecase])
 void main() {
