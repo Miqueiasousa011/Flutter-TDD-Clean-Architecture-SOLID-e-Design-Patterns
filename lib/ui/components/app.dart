@@ -31,8 +31,12 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: '4Dev',
-      initialRoute: '/login',
+      initialRoute: '/',
       getPages: [
+        GetPage(
+          name: '/',
+          page: () => makeSplashPage(),
+        ),
         GetPage(
           name: '/login',
           page: () => makeLoginPage(),
