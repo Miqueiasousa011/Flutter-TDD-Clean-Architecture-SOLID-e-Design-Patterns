@@ -28,6 +28,7 @@ void main() {
   late StreamController<UIError?> passwordConfirmationErrorController;
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
+  late StreamController<UIError?> mainErrorStreamController;
 
   setUp(() {
     name = faker.person.name();
@@ -60,6 +61,10 @@ void main() {
     isLoadingController = StreamController();
     when(presenter.isLoadingController)
         .thenAnswer((_) => isLoadingController.stream);
+
+    mainErrorStreamController = StreamController();
+    when(presenter.mainErrorStreamController)
+        .thenAnswer((_) => mainErrorStreamController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -269,5 +274,23 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Should show error if segnup fails', (tester) async {
+    await loadPage(tester);
+
+    mainErrorStreamController.add(UIError.emailInUse);
+    await tester.pump();
+
+    expect(find.text(UIError.emailInUse.description), findsOneWidget);
+  });
+
+  testWidgets('Should show error if segnup throws', (tester) async {
+    await loadPage(tester);
+
+    mainErrorStreamController.add(UIError.unexpected);
+    await tester.pump();
+
+    expect(find.text(UIError.unexpected.description), findsOneWidget);
   });
 }

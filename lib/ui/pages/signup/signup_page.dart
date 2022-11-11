@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/i18n/i18n.dart';
@@ -25,6 +26,12 @@ class _SignUpPageState extends State<SignUpPage> {
             showLoading(context);
           } else {
             hidenLoading(context);
+          }
+        });
+
+        widget.presenter.mainErrorStreamController.listen((error) {
+          if (error != null) {
+            showErrorMessage(context, error.description);
           }
         });
         return GestureDetector(

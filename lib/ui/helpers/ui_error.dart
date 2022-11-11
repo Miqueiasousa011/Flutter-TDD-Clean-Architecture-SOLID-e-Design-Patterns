@@ -1,10 +1,27 @@
+import '../../utils/i18n/i18n.dart';
+
 enum UIError {
-  unexpected('Algo de errado aconteceu. Tente novamente'),
-  invalidCredentialsError('Credenciais inválidas.'),
-  requiredField('Campo obrigatório'),
-  invalidField('Campo inválido');
+  unexpected,
+  invalidCredentialsError,
+  requiredField,
+  invalidField,
+  emailInUse;
+}
 
-  const UIError(this.description);
-
-  final String description;
+extension UIErrorExpension on UIError {
+  String get description {
+    switch (this) {
+      case UIError.emailInUse:
+        return R.strings.emailInUse;
+      case UIError.invalidCredentialsError:
+        return R.strings.msgInvalidCredentials;
+      case UIError.invalidField:
+        return R.strings.msgInvalidField;
+      case UIError.requiredField:
+        return R.strings.msgRequiredField;
+      case UIError.unexpected:
+      default:
+        return R.strings.msgUnexpectedError;
+    }
+  }
 }

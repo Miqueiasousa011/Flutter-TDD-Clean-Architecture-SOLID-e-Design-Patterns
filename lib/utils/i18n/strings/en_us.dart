@@ -15,4 +15,19 @@ class EnUs implements Translations {
 
   @override
   String get passwordConfirmation => 'Password Confirmation';
+
+  @override
+  String get emailInUse => 'Email already registered';
+
+  @override
+  String get msgInvalidCredentials => 'Invalid credentials';
+
+  @override
+  String get msgInvalidField => 'Invalid field';
+
+  @override
+  String get msgRequiredField => 'Required field';
+
+  @override
+  String get msgUnexpectedError => 'Unexpected error';
 }
