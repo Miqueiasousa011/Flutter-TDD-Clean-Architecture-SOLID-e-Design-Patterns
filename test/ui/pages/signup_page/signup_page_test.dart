@@ -1,14 +1,60 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fordev/ui/pages/signup/signup.dart';
-import 'package:fordev/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
+import 'package:fordev/ui/pages/signup/signup.dart';
+import 'package:fordev/utils/i18n/i18n.dart';
+
+import 'signup_page_test.mocks.dart';
+
+@GenerateMocks([SignUpPresenter])
 void main() {
+  late String name;
+  late String email;
+  late String password;
+  late String passwordConfirmation;
+
+  late MockSignUpPresenter presenter;
+
+  // late StreamController<UIError?> nameErrorController;
+  // late StreamController<UIError?> emailErrorController;
+  // late StreamController<UIError?> passwordErrorController;
+  // late StreamController<UIError?> passwordConfirmationErrorController;
+
+  setUp(() {
+    name = faker.person.name();
+    email = faker.internet.email();
+    password = faker.internet.password();
+    passwordConfirmation = password;
+
+    presenter = MockSignUpPresenter();
+
+    // nameErrorController = StreamController();
+    // when(presenter.nameErrorController)
+    //     .thenAnswer((_) => nameErrorController.stream);
+
+    // emailErrorController = StreamController();
+    // when(presenter.emailErrorController)
+    //     .thenAnswer((_) => emailErrorController.stream);
+
+    // passwordErrorController = StreamController();
+    // when(presenter.passwordErrorController)
+    //     .thenAnswer((_) => passwordErrorController.stream);
+
+    // passwordConfirmationErrorController = StreamController();
+    // when(presenter.passwordConfirmationErrorController)
+    //     .thenAnswer((_) => passwordConfirmationErrorController.stream);
+  });
+
   Future<void> loadPage(WidgetTester tester) async {
     final page = GetMaterialApp(
       initialRoute: '/signup',
-      getPages: [GetPage(name: '/signup', page: () => const SignUpPage())],
+      getPages: [
+        GetPage(name: '/signup', page: () => SignUpPage(presenter: presenter))
+      ],
     );
 
     await tester.pumpWidget(page);
@@ -45,5 +91,24 @@ void main() {
         tester.widget<ElevatedButton>(find.byType(ElevatedButton));
 
     expect(signupButton.onPressed, isNull);
+  });
+
+  testWidgets('Should call validate with correct values', (tester) async {
+    await loadPage(tester);
+
+    await tester.enterText(find.bySemanticsLabel(R.strings.name), name);
+    verify(presenter.validateName(name));
+
+    await tester.enterText(find.bySemanticsLabel(R.strings.email), email);
+    verify(presenter.validateEmail(email));
+
+    await tester.enterText(find.bySemanticsLabel(R.strings.password), password);
+    verify(presenter.validatePassword(password));
+
+    await tester.enterText(
+      find.bySemanticsLabel(R.strings.passwordConfirmation),
+      passwordConfirmation,
+    );
+    verify(presenter.validatePasswordConfirmation(passwordConfirmation));
   });
 }
