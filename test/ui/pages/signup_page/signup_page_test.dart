@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +9,7 @@ import 'package:mockito/mockito.dart';
 
 import 'package:fordev/ui/pages/signup/signup.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
+import 'package:fordev/ui/helpers/helpers.dart';
 
 import 'signup_page_test.mocks.dart';
 
@@ -19,8 +22,8 @@ void main() {
 
   late MockSignUpPresenter presenter;
 
-  // late StreamController<UIError?> nameErrorController;
-  // late StreamController<UIError?> emailErrorController;
+  late StreamController<UIError?> nameErrorController;
+  late StreamController<UIError?> emailErrorController;
   // late StreamController<UIError?> passwordErrorController;
   // late StreamController<UIError?> passwordConfirmationErrorController;
 
@@ -32,13 +35,13 @@ void main() {
 
     presenter = MockSignUpPresenter();
 
-    // nameErrorController = StreamController();
-    // when(presenter.nameErrorController)
-    //     .thenAnswer((_) => nameErrorController.stream);
+    nameErrorController = StreamController();
+    when(presenter.nameErrorController)
+        .thenAnswer((_) => nameErrorController.stream);
 
-    // emailErrorController = StreamController();
-    // when(presenter.emailErrorController)
-    //     .thenAnswer((_) => emailErrorController.stream);
+    emailErrorController = StreamController();
+    when(presenter.emailErrorController)
+        .thenAnswer((_) => emailErrorController.stream);
 
     // passwordErrorController = StreamController();
     // when(presenter.passwordErrorController)
@@ -110,5 +113,49 @@ void main() {
       passwordConfirmation,
     );
     verify(presenter.validatePasswordConfirmation(passwordConfirmation));
+  });
+
+  testWidgets('Should present error if name is invalid', (tester) async {
+    await loadPage(tester);
+
+    nameErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
+
+    nameErrorController.add(UIError.invalidField);
+    await tester.pump();
+    expect(find.text(UIError.invalidField.description), findsOneWidget);
+
+    nameErrorController.add(null);
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: find.bySemanticsLabel(R.strings.email),
+        matching: find.byType(Text),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Should present error if email is invalid', (tester) async {
+    await loadPage(tester);
+
+    emailErrorController.add(UIError.invalidField);
+    await tester.pump();
+    expect(find.text(UIError.invalidField.description), findsOneWidget);
+
+    emailErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
+
+    emailErrorController.add(null);
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: find.bySemanticsLabel(R.strings.email),
+        matching: find.byType(Text),
+      ),
+      findsOneWidget,
+    );
   });
 }
