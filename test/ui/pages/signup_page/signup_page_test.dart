@@ -1,28 +1,49 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fordev/ui/pages/signup/signup.dart';
+import 'package:fordev/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
-
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
 
 void main() {
   Future<void> loadPage(WidgetTester tester) async {
     final page = GetMaterialApp(
       initialRoute: '/signup',
-      getPages: [GetPage(name: '/signup', page: () => SignUpPage())],
+      getPages: [GetPage(name: '/signup', page: () => const SignUpPage())],
     );
 
     await tester.pumpWidget(page);
   }
 
-  testWidgets('description', (tester) async {
+  testWidgets('Should load with correct initial state', (tester) async {
     await loadPage(tester);
+
+    final emailChildren = find.descendant(
+      of: find.bySemanticsLabel(R.strings.email),
+      matching: find.byType(Text),
+    );
+    expect(emailChildren, findsOneWidget);
+
+    final nameChidren = find.descendant(
+      of: find.bySemanticsLabel(R.strings.name),
+      matching: find.byType(Text),
+    );
+    expect(nameChidren, findsOneWidget);
+
+    final passwordChildren = find.descendant(
+      of: find.bySemanticsLabel(R.strings.password),
+      matching: find.byType(Text),
+    );
+    expect(passwordChildren, findsOneWidget);
+
+    final passwordConfirmation = find.descendant(
+      of: find.bySemanticsLabel(R.strings.passwordConfirmation),
+      matching: find.byType(Text),
+    );
+    expect(passwordConfirmation, findsOneWidget);
+
+    final signupButton =
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+    expect(signupButton.onPressed, isNull);
   });
 }
