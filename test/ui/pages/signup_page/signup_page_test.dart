@@ -24,7 +24,7 @@ void main() {
 
   late StreamController<UIError?> nameErrorController;
   late StreamController<UIError?> emailErrorController;
-  // late StreamController<UIError?> passwordErrorController;
+  late StreamController<UIError?> passwordErrorController;
   // late StreamController<UIError?> passwordConfirmationErrorController;
 
   setUp(() {
@@ -43,9 +43,9 @@ void main() {
     when(presenter.emailErrorController)
         .thenAnswer((_) => emailErrorController.stream);
 
-    // passwordErrorController = StreamController();
-    // when(presenter.passwordErrorController)
-    //     .thenAnswer((_) => passwordErrorController.stream);
+    passwordErrorController = StreamController();
+    when(presenter.passwordErrorController)
+        .thenAnswer((_) => passwordErrorController.stream);
 
     // passwordConfirmationErrorController = StreamController();
     // when(presenter.passwordConfirmationErrorController)
@@ -153,6 +153,28 @@ void main() {
     expect(
       find.descendant(
         of: find.bySemanticsLabel(R.strings.email),
+        matching: find.byType(Text),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Should present error if password is invalid', (tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(UIError.requiredField.description), findsOneWidget);
+
+    passwordErrorController.add(UIError.invalidField);
+    await tester.pump();
+    expect(find.text(UIError.invalidField.description), findsOneWidget);
+
+    passwordErrorController.add(null);
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: find.bySemanticsLabel(R.strings.password),
         matching: find.byType(Text),
       ),
       findsOneWidget,
