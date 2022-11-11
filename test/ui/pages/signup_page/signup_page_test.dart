@@ -27,6 +27,7 @@ void main() {
   late StreamController<UIError?> passwordErrorController;
   late StreamController<UIError?> passwordConfirmationErrorController;
   late StreamController<bool> isFormValidController;
+  late StreamController<bool> isLoadingController;
 
   setUp(() {
     name = faker.person.name();
@@ -55,6 +56,10 @@ void main() {
     isFormValidController = StreamController();
     when(presenter.isFormValidController)
         .thenAnswer((_) => isFormValidController.stream);
+
+    isLoadingController = StreamController();
+    when(presenter.isLoadingController)
+        .thenAnswer((_) => isLoadingController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -243,5 +248,26 @@ void main() {
     await tester.pump();
 
     verify(presenter.signUp()).called(1);
+  });
+
+  testWidgets('Should show loading', (tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading', (tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+    isLoadingController.add(false);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }

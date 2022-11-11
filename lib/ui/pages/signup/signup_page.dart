@@ -19,33 +19,42 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: _hindeKeyBoard,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Provider(
-            create: (context) => widget.presenter,
-            child: Form(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Headline1(text: R.strings.addAccount.toUpperCase()),
-                  const SizedBox(height: 32),
-                  const NameInput(),
-                  const SizedBox(height: 8),
-                  const EmailInput(),
-                  const SizedBox(height: 8),
-                  const PasswordInput(),
-                  const SizedBox(height: 8),
-                  const PasswordConfirmationInput(),
-                  const SizedBox(height: 32),
-                  const SignUpButton()
-                ],
+      body: Builder(builder: (context) {
+        widget.presenter.isLoadingController.listen((isLoading) {
+          if (isLoading) {
+            showLoading(context);
+          } else {
+            hidenLoading(context);
+          }
+        });
+        return GestureDetector(
+          onTap: _hindeKeyBoard,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Provider(
+              create: (context) => widget.presenter,
+              child: Form(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Headline1(text: R.strings.addAccount.toUpperCase()),
+                    const SizedBox(height: 32),
+                    const NameInput(),
+                    const SizedBox(height: 8),
+                    const EmailInput(),
+                    const SizedBox(height: 8),
+                    const PasswordInput(),
+                    const SizedBox(height: 8),
+                    const PasswordConfirmationInput(),
+                    const SizedBox(height: 32),
+                    const SignUpButton()
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 

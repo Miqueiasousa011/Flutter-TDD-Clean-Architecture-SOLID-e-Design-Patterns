@@ -6,6 +6,7 @@ abstract class SignUpPresenter {
   Stream<UIError?> get passwordErrorController;
   Stream<UIError?> get passwordConfirmationErrorController;
   Stream<bool> get isFormValidController;
+  Stream<bool> get isLoadingController;
 
   void validateName(String? name);
   void validateEmail(String? email);
