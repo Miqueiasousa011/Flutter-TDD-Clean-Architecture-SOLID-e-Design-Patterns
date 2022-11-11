@@ -230,4 +230,18 @@ void main() {
 
     expect(button.onPressed, isNotNull);
   });
+
+  testWidgets('Should call signUp on form submit', (tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    ///Garantir que o botão estará visível
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    verify(presenter.signUp()).called(1);
+  });
 }
