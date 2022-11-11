@@ -50,6 +50,11 @@ class MockSignUpPresenter extends _i1.Mock implements _i2.SignUpPresenter {
         returnValue: _i3.Stream<_i4.UIError?>.empty(),
       ) as _i3.Stream<_i4.UIError?>);
   @override
+  _i3.Stream<bool> get isFormValidController => (super.noSuchMethod(
+        Invocation.getter(#isFormValidController),
+        returnValue: _i3.Stream<bool>.empty(),
+      ) as _i3.Stream<bool>);
+  @override
   void validateName(String? name) => super.noSuchMethod(
         Invocation.method(
           #validateName,
@@ -81,4 +86,13 @@ class MockSignUpPresenter extends _i1.Mock implements _i2.SignUpPresenter {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i3.Future<void> signUp() => (super.noSuchMethod(
+        Invocation.method(
+          #signUp,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }

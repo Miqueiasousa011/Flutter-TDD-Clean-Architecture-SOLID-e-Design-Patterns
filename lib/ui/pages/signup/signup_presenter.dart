@@ -5,9 +5,11 @@ abstract class SignUpPresenter {
   Stream<UIError?> get emailErrorController;
   Stream<UIError?> get passwordErrorController;
   Stream<UIError?> get passwordConfirmationErrorController;
+  Stream<bool> get isFormValidController;
 
   void validateName(String? name);
   void validateEmail(String? email);
   void validatePassword(String? password);
   void validatePasswordConfirmation(String? password);
+  Future<void> signUp();
 }
