@@ -16,7 +16,7 @@ class App extends StatelessWidget {
     const primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
     const primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
 
-    R.load(const Locale('en', 'US'));
+    R.load(const Locale('pt', 'BR'));
 
     return GetMaterialApp(
       theme: ThemeData(
