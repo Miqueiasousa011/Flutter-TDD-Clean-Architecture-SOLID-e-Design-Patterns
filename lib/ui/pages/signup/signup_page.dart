@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/i18n/i18n.dart';
@@ -34,6 +35,13 @@ class _SignUpPageState extends State<SignUpPage> {
             showErrorMessage(context, error.description);
           }
         });
+
+        widget.presenter.navigateToController.listen((route) {
+          if (route?.isNotEmpty == true) {
+            Get.offAllNamed(route!);
+          }
+        });
+
         return GestureDetector(
           onTap: _hindeKeyBoard,
           child: SingleChildScrollView(

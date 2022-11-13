@@ -29,6 +29,7 @@ void main() {
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
   late StreamController<UIError?> mainErrorStreamController;
+  late StreamController<String?> navigateToController;
 
   setUp(() {
     name = faker.person.name();
@@ -65,13 +66,21 @@ void main() {
     mainErrorStreamController = StreamController();
     when(presenter.mainErrorStreamController)
         .thenAnswer((_) => mainErrorStreamController.stream);
+
+    navigateToController = StreamController();
+    when(presenter.navigateToController)
+        .thenAnswer((_) => navigateToController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
     final page = GetMaterialApp(
       initialRoute: '/signup',
       getPages: [
-        GetPage(name: '/signup', page: () => SignUpPage(presenter: presenter))
+        GetPage(name: '/signup', page: () => SignUpPage(presenter: presenter)),
+        GetPage(
+          name: '/surveys',
+          page: () => const Scaffold(body: Text('/surveys')),
+        )
       ],
     );
 
@@ -292,5 +301,25 @@ void main() {
     await tester.pump();
 
     expect(find.text(UIError.unexpected.description), findsOneWidget);
+  });
+
+  testWidgets('Should not change page ', (tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+
+    await tester.pump();
+
+    expect(Get.currentRoute, equals('/signup'));
+  });
+
+  testWidgets('Should navigate to homePage', (tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/surveys');
+
+    await tester.pump();
+
+    expect(Get.currentRoute, equals('/surveys'));
   });
 }
