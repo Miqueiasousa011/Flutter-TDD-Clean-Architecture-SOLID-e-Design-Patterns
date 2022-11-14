@@ -28,53 +28,106 @@ void main() {
     sut = GetxSignUpPresenter(validation: validation);
   });
 
-  test('Should call Validation with correct email', () async {
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+  group('Email field', () {
+    test('Should call Validation with correct email', () async {
+      when(validation.validate(field: 'email', value: email)).thenReturn(null);
 
-    sut.validateEmail(email);
+      sut.validateEmail(email);
 
-    verify(validation.validate(field: 'email', value: email)).called(1);
+      verify(validation.validate(field: 'email', value: email)).called(1);
+    });
+
+    test('Should emit invalidFieldError if email is invalid', () async {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(ValidationError.invalidField);
+
+      sut.emailErrorController
+          .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validateEmail(email);
+      sut.validateEmail(email);
+    });
+
+    test('Should emit requiredFieldError if email is empty', () async {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(ValidationError.requiredField);
+
+      sut.emailErrorController.listen(
+          expectAsync1((error) => expect(error, UIError.requiredField)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validateEmail(email);
+      sut.validateEmail(email);
+    });
+
+    test('Should emit null if Validation success', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(null);
+
+      sut.emailErrorController
+          .listen(expectAsync1((error) => expect(error, isNull)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validateEmail(email);
+      sut.validateEmail(email);
+    });
   });
 
-  test('Should emit invalidFieldError if email is invalid', () async {
-    when(
-      validation.validate(field: anyNamed('field'), value: anyNamed('value')),
-    ).thenReturn(ValidationError.invalidField);
+  group('Password field', () {
+    test('Should call Validation with correct password', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(null);
 
-    sut.emailErrorController
-        .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
-    sut.isFormValidController
-        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+      sut.validatePassword(password);
+      verify(validation.validate(field: 'password', value: password));
+    });
 
-    sut.validateEmail(email);
-    sut.validateEmail(email);
-  });
+    test('Should emits invalidFieldError if password is invalid', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(ValidationError.invalidField);
 
-  test('Should emit requiredFieldError if email is empty', () async {
-    when(
-      validation.validate(field: anyNamed('field'), value: anyNamed('value')),
-    ).thenReturn(ValidationError.requiredField);
+      sut.passwordErrorController
+          .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
 
-    sut.emailErrorController
-        .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
-    sut.isFormValidController
-        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+      sut.validatePassword(password);
+      sut.validatePassword(password);
+    });
 
-    sut.validateEmail(email);
-    sut.validateEmail(email);
-  });
+    test('Should emits requiredFieldError if password is empty', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(ValidationError.requiredField);
 
-  test('Should emit null if Validation success', () {
-    when(
-      validation.validate(field: anyNamed('field'), value: anyNamed('value')),
-    ).thenReturn(null);
+      sut.passwordErrorController.listen(
+          expectAsync1((error) => expect(error, UIError.requiredField)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
 
-    sut.emailErrorController
-        .listen(expectAsync1((error) => expect(error, isNull)));
-    sut.isFormValidController
-        .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+      sut.validatePassword(password);
+    });
 
-    sut.validateEmail(email);
-    sut.validateEmail(email);
+    test('Should emits null if valildation success', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(null);
+
+      sut.passwordErrorController
+          .listen(expectAsync1((error) => expect(error, isNull)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validatePassword(password);
+    });
   });
 }
