@@ -1,11 +1,12 @@
 import 'package:fordev/domain/helpers/helpers.dart';
+import 'package:fordev/ui/pages/signup/signup_presenter.dart';
 import 'package:get/get.dart';
 
 import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../protocols/protocols.dart';
 
-class GetxSignUpPresenter {
+class GetxSignUpPresenter implements SignUpPresenter {
   GetxSignUpPresenter({
     required Validation validation,
     required AddAccountUsecase addAccountUsecase,
@@ -32,16 +33,25 @@ class GetxSignUpPresenter {
   final _isLoading = RxBool(false);
   final _navigateTo = Rx<String?>(null);
 
+  @override
   Stream<UIError?> get nameErrorController => _nameError.stream;
+  @override
   Stream<UIError?> get emailErrorController => _emailError.stream;
+  @override
   Stream<UIError?> get passwordErrorController => _passwordError.stream;
+  @override
   Stream<UIError?> get passwordConfirmationErrorController =>
       _passwordConfirmationError.stream;
+  @override
   Stream<bool> get isFormValidController => _isFormValid.stream;
+  @override
   Stream<UIError?> get mainErrorStreamController => _mainError.stream;
+  @override
   Stream<bool> get isLoadingController => _isLoading.stream;
+  @override
   Stream<String?> get navigateToController => _navigateTo.stream;
 
+  @override
   void validateEmail(String? email) {
     _email = email;
     final result = _validate('email');
@@ -49,6 +59,7 @@ class GetxSignUpPresenter {
     _validateForm();
   }
 
+  @override
   void validateName(String? name) {
     _name = name;
     final result = _validate('name');
@@ -56,6 +67,7 @@ class GetxSignUpPresenter {
     _validateForm();
   }
 
+  @override
   void validatePassword(String? password) {
     _password = password;
     final result = _validate('password');
@@ -63,6 +75,7 @@ class GetxSignUpPresenter {
     _validateForm();
   }
 
+  @override
   void validatePasswordConfirmation(String? password) {
     _passwordConfirmation = password;
     final result = _validate('passwordConfirmation');
@@ -70,6 +83,7 @@ class GetxSignUpPresenter {
     _validateForm();
   }
 
+  @override
   Future<void> signUp() async {
     try {
       _isLoading.value = true;

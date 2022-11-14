@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../main/factories/factories.dart';
+import '../../main/factories/pages/signup/signup_page_factory.dart';
 import '../../utils/i18n/i18n.dart';
 
 class App extends StatelessWidget {
@@ -43,6 +44,10 @@ class App extends StatelessWidget {
         GetPage(
           name: '/login',
           page: () => makeLoginPage(),
+        ),
+        GetPage(
+          name: '/signup',
+          page: () => makeSignUpPage(),
         ),
         GetPage(
           name: '/surveys',
