@@ -11,12 +11,15 @@ import 'package:fordev/presentation/presenters/presenters.dart';
 
 import 'getx_signup_presenter_test.mocks.dart';
 
-@GenerateMocks([Validation, AddAccountUsecase])
+@GenerateMocks([Validation, AddAccountUsecase, SaveCurrentAccountUsecase])
 void main() {
   late GetxSignUpPresenter sut;
   late MockValidation validation;
   late MockAddAccountUsecase addAccount;
   late AddAccountParams addAccountParams;
+  late SaveCurrentAccountUsecase saveCurrentAccount;
+
+  late AccountEntity accountEntity;
 
   late String name;
   late String email;
@@ -30,6 +33,9 @@ void main() {
     passwordConfirmation = password;
     validation = MockValidation();
 
+    accountEntity = AccountEntity(token: faker.guid.guid());
+
+    saveCurrentAccount = MockSaveCurrentAccountUsecase();
     addAccount = MockAddAccountUsecase();
     addAccountParams = AddAccountParams(
       name: name,
@@ -40,6 +46,7 @@ void main() {
     sut = GetxSignUpPresenter(
       validation: validation,
       addAccountUsecase: addAccount,
+      saveCurrentAccount: saveCurrentAccount,
     );
   });
 
@@ -274,7 +281,7 @@ void main() {
     await Future.delayed(Duration.zero);
   });
 
-  test('Should call addAccount eith correct values', () async {
+  test('Should call addAccount with correct values', () async {
     when(validation.validate(field: 'name', value: name)).thenReturn(null);
     when(validation.validate(field: 'email', value: email)).thenReturn(null);
     when(validation.validate(
@@ -297,5 +304,29 @@ void main() {
     await sut.signUp();
 
     verify(addAccount.add(addAccountParams));
+  });
+
+  test('Should call SaveCurrent with correct values', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(
+      field: 'password',
+      value: password,
+    )).thenReturn(null);
+    when(validation.validate(
+      field: 'password confirmation',
+      value: passwordConfirmation,
+    )).thenReturn(null);
+
+    when(addAccount.add(any)).thenAnswer((_) async => accountEntity);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    verify(saveCurrentAccount.save(accountEntity)).called(1);
   });
 }

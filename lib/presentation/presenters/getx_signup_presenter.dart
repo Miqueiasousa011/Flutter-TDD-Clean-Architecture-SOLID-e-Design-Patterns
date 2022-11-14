@@ -8,11 +8,14 @@ class GetxSignUpPresenter {
   GetxSignUpPresenter({
     required Validation validation,
     required AddAccountUsecase addAccountUsecase,
+    required SaveCurrentAccountUsecase saveCurrentAccount,
   })  : _validation = validation,
-        _addAccountUsecase = addAccountUsecase;
+        _addAccountUsecase = addAccountUsecase,
+        _saveCurrentAccount = saveCurrentAccount;
 
   final Validation _validation;
   final AddAccountUsecase _addAccountUsecase;
+  final SaveCurrentAccountUsecase _saveCurrentAccount;
 
   String? _name;
   String? _email;
@@ -61,12 +64,14 @@ class GetxSignUpPresenter {
   }
 
   Future<void> signUp() async {
-    await _addAccountUsecase.add(AddAccountParams(
+    final account = await _addAccountUsecase.add(AddAccountParams(
       name: _name!,
       email: _email!,
       password: _password!,
       passwordConfirmation: _passwordConfirmation!,
     ));
+
+    await _saveCurrentAccount.save(account);
   }
 
   UIError? _validate({required String field, String? value}) {
