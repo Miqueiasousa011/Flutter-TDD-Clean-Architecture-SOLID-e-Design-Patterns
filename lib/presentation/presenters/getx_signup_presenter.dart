@@ -9,15 +9,19 @@ class GetxSignUpPresenter {
   String? _name;
   String? _email;
   String? _password;
+  String? _passwordConfirmation;
 
   final _nameError = Rx<UIError?>(null);
   final _emailError = Rx<UIError?>(null);
   final _passwordError = Rx<UIError?>(null);
+  final _passwordConfirmationError = Rx<UIError?>(null);
   final _isFormValid = RxBool(false);
 
   Stream<UIError?> get nameErrorController => _nameError.stream;
   Stream<UIError?> get emailErrorController => _emailError.stream;
   Stream<UIError?> get passwordErrorController => _passwordError.stream;
+  Stream<UIError?> get passwordConfirmationErrorController =>
+      _passwordConfirmationError.stream;
   Stream<bool> get isFormValidController => _isFormValid.stream;
 
   GetxSignUpPresenter({required Validation validation})
@@ -41,6 +45,13 @@ class GetxSignUpPresenter {
     _password = password;
     final result = _validate(field: 'password', value: password);
     _passwordError.value = result;
+    _validateForm();
+  }
+
+  void validatePasswordConfirmation(String? password) {
+    _passwordConfirmation = password;
+    final result = _validate(field: 'password confirmation', value: password);
+    _passwordConfirmationError.value = result;
     _validateForm();
   }
 

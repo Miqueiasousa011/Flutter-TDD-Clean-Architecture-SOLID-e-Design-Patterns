@@ -181,4 +181,58 @@ void main() {
       sut.validatePassword(password);
     });
   });
+
+  group('Password Confirmation field', () {
+    test('Should call Validation with correct password confirmation', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(null);
+
+      sut.validatePasswordConfirmation(password);
+      verify(
+          validation.validate(field: 'password confirmation', value: password));
+    });
+
+    test('Should emits invalidFieldError if password confirmation is invalid',
+        () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(ValidationError.invalidField);
+
+      sut.passwordConfirmationErrorController
+          .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validatePasswordConfirmation(password);
+      sut.validatePasswordConfirmation(password);
+    });
+
+    test('Should emits requiredFieldError if password confirmation is empty',
+        () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(ValidationError.requiredField);
+
+      sut.passwordConfirmationErrorController.listen(
+          expectAsync1((error) => expect(error, UIError.requiredField)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validatePasswordConfirmation(password);
+    });
+
+    test('Should emits null if valildation success', () {
+      when(
+        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+      ).thenReturn(null);
+
+      sut.passwordConfirmationErrorController
+          .listen(expectAsync1((error) => expect(error, isNull)));
+      sut.isFormValidController
+          .listen(expectAsync1((isValid) => expect(isValid, isFalse)));
+
+      sut.validatePasswordConfirmation(password);
+    });
+  });
 }
