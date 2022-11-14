@@ -69,6 +69,13 @@ class GetxSignUpPresenter {
   }
 
   _validateForm() {
-    _isFormValid.value = false;
+    _isFormValid.value = (_name != null &&
+            _email != null &&
+            _password != null &&
+            _passwordConfirmation != null) &&
+        (_nameError.value == null &&
+            _emailError.value == null &&
+            _passwordError.value == null &&
+            _passwordConfirmationError.value == null);
   }
 }

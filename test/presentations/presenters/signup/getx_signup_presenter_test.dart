@@ -235,4 +235,27 @@ void main() {
       sut.validatePasswordConfirmation(password);
     });
   });
+
+  test('Should enable form button if all fields avalid', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(
+      validation.validate(field: 'password', value: password),
+    ).thenReturn(null);
+    when(
+      validation.validate(
+          field: 'password confirmation', value: passwordConfirmation),
+    ).thenReturn(null);
+
+    expectLater(sut.isFormValidController, emitsInOrder([false, true]));
+
+    sut.validateName(name);
+    await Future.delayed(Duration.zero);
+    sut.validateEmail(email);
+    await Future.delayed(Duration.zero);
+    sut.validatePassword(password);
+    await Future.delayed(Duration.zero);
+    sut.validatePasswordConfirmation(password);
+    await Future.delayed(Duration.zero);
+  });
 }
