@@ -1,5 +1,5 @@
-import 'package:fordev/validation/protocols/field_validation.dart';
-import 'package:fordev/validation/validators/validators.dart';
+import '../../validation/protocols/protocols.dart';
+import '../../validation/validators/validators.dart';
 
 class ValidationBuilder {
   static late ValidationBuilder _instance;
@@ -21,6 +21,11 @@ class ValidationBuilder {
 
   ValidationBuilder email() {
     validations.add(EmailValidation(_fieldName));
+    return this;
+  }
+
+  ValidationBuilder min(int size) {
+    validations.add(MinLengthValidation(field: _fieldName, size: size));
     return this;
   }
 
