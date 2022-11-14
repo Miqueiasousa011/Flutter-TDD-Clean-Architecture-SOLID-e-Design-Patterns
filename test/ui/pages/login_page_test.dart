@@ -320,4 +320,34 @@ void main() {
 
     expect(Get.currentRoute, '/surveys');
   });
+
+  testWidgets('Should call goToSignUp on button clicked', (tester) async {
+    final loginPage = GetMaterialApp(
+      initialRoute: '/login',
+      getPages: [
+        GetPage(
+          name: '/login',
+          page: () => LoginPage(loginPresenter: presenter),
+        ),
+        GetPage(
+          name: '/signup',
+          page: () => const Scaffold(
+            body: Center(
+              child: Text('signup'),
+            ),
+          ),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(loginPage);
+
+    final button = find.text('Criar conta');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+
+    await tester.pump();
+
+    verify(presenter.goToSignUp());
+  });
 }

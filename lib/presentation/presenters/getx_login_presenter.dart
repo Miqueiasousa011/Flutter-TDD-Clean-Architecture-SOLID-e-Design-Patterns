@@ -120,4 +120,7 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   Future<void> dispose() async {
     super.dispose();
   }
+
+  @override
+  void goToSignUp() => _navigateTo.value = '/signup';
 }

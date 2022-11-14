@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const LoginButton(),
                             TextButton.icon(
-                              onPressed: () {},
+                              onPressed: widget.loginPresenter.goToSignUp,
                               icon: const Icon(Icons.person),
                               label: const Text('Criar conta'),
                             )

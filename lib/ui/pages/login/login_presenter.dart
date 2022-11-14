@@ -16,4 +16,5 @@ abstract class LoginPresenter implements Listenable {
   void validatePassword(String? password);
   Future<void> auth();
   Future<void> dispose();
+  void goToSignUp();
 }
