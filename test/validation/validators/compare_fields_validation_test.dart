@@ -17,6 +17,9 @@ class CompareFieldsValidation implements FieldValidation {
 
   @override
   ValidationError? validate(String? value) {
+    if (value == _valueToCompare) {
+      return null;
+    }
     return ValidationError.invalidField;
   }
 }
@@ -35,5 +38,11 @@ void main() {
     final error = sut.validate('wrong_value');
 
     expect(error, ValidationError.invalidField);
+  });
+
+  test('Should return null if value its equals', () {
+    final error = sut.validate('any_value');
+
+    expect(error, isNull);
   });
 }
