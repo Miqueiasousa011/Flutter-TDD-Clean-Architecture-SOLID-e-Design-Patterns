@@ -1,3 +1,5 @@
+import 'package:fordev/domain/entities/account_entity.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -9,10 +11,12 @@ import 'package:fordev/presentation/presenters/presenters.dart';
 
 import 'getx_signup_presenter_test.mocks.dart';
 
-@GenerateMocks([Validation])
+@GenerateMocks([Validation, AddAccountUsecase])
 void main() {
   late GetxSignUpPresenter sut;
   late MockValidation validation;
+  late MockAddAccountUsecase addAccount;
+  late AddAccountParams addAccountParams;
 
   late String name;
   late String email;
@@ -25,7 +29,18 @@ void main() {
     password = faker.internet.password();
     passwordConfirmation = password;
     validation = MockValidation();
-    sut = GetxSignUpPresenter(validation: validation);
+
+    addAccount = MockAddAccountUsecase();
+    addAccountParams = AddAccountParams(
+      name: name,
+      email: email,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+    );
+    sut = GetxSignUpPresenter(
+      validation: validation,
+      addAccountUsecase: addAccount,
+    );
   });
 
   group('Email field', () {
@@ -257,5 +272,30 @@ void main() {
     await Future.delayed(Duration.zero);
     sut.validatePasswordConfirmation(password);
     await Future.delayed(Duration.zero);
+  });
+
+  test('Should call addAccount eith correct values', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(
+      field: 'password',
+      value: password,
+    )).thenReturn(null);
+    when(validation.validate(
+      field: 'password confirmation',
+      value: passwordConfirmation,
+    )).thenReturn(null);
+
+    when(addAccount.add(any))
+        .thenAnswer((_) async => const AccountEntity(token: 'token'));
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    verify(addAccount.add(addAccountParams));
   });
 }

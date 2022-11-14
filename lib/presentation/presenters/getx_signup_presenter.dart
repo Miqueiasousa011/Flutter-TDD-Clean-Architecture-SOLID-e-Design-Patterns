@@ -1,10 +1,18 @@
 import 'package:get/get.dart';
 
+import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../protocols/protocols.dart';
 
 class GetxSignUpPresenter {
+  GetxSignUpPresenter({
+    required Validation validation,
+    required AddAccountUsecase addAccountUsecase,
+  })  : _validation = validation,
+        _addAccountUsecase = addAccountUsecase;
+
   final Validation _validation;
+  final AddAccountUsecase _addAccountUsecase;
 
   String? _name;
   String? _email;
@@ -23,9 +31,6 @@ class GetxSignUpPresenter {
   Stream<UIError?> get passwordConfirmationErrorController =>
       _passwordConfirmationError.stream;
   Stream<bool> get isFormValidController => _isFormValid.stream;
-
-  GetxSignUpPresenter({required Validation validation})
-      : _validation = validation;
 
   void validateEmail(String? email) {
     _email = email;
@@ -53,6 +58,15 @@ class GetxSignUpPresenter {
     final result = _validate(field: 'password confirmation', value: password);
     _passwordConfirmationError.value = result;
     _validateForm();
+  }
+
+  Future<void> signUp() async {
+    await _addAccountUsecase.add(AddAccountParams(
+      name: _name!,
+      email: _email!,
+      password: _password!,
+      passwordConfirmation: _passwordConfirmation!,
+    ));
   }
 
   UIError? _validate({required String field, String? value}) {
