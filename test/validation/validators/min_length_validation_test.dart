@@ -1,36 +1,13 @@
+import 'package:test/test.dart';
 import 'package:faker/faker.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
-import 'package:fordev/validation/protocols/field_validation.dart';
-import 'package:test/test.dart';
-
-class MinLengthValidation implements FieldValidation {
-  final String _field;
-  final int _size;
-
-  MinLengthValidation({
-    required String field,
-    required int size,
-  })  : _field = field,
-        _size = size;
-
-  @override
-  String get field => _field;
-
-  @override
-  ValidationError? validate(String? value) {
-    if (value?.length != null && value!.length >= _size) {
-      return null;
-    }
-
-    return ValidationError.invalidField;
-  }
-}
+import 'package:fordev/validation/validators/validators.dart';
 
 void main() {
   late MinLengthValidation sut;
 
   setUp(() {
-    sut = MinLengthValidation(field: 'any', size: 5);
+    sut = const MinLengthValidation(field: 'any', size: 5);
   });
 
   test('Should return InvalidFieldError if value  is null', () {
