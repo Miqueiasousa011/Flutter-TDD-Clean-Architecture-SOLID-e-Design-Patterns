@@ -1,4 +1,5 @@
 import 'package:fordev/domain/entities/account_entity.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:mockito/mockito.dart';
@@ -328,5 +329,31 @@ void main() {
     await sut.signUp();
 
     verify(saveCurrentAccount.save(accountEntity)).called(1);
+  });
+
+  test('Should emit UnexpectedError if signup fails', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(
+      field: 'password',
+      value: password,
+    )).thenReturn(null);
+    when(validation.validate(
+      field: 'password confirmation',
+      value: passwordConfirmation,
+    )).thenReturn(null);
+
+    when(addAccount.add(any)).thenThrow(DomainError.unexpected);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+    sut.mainErrorStreamController
+        .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
+
+    await sut.signUp();
   });
 }

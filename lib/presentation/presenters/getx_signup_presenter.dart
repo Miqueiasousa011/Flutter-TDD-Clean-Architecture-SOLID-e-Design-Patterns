@@ -1,3 +1,4 @@
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 
 import '../../domain/usecases/usecases.dart';
@@ -27,6 +28,8 @@ class GetxSignUpPresenter {
   final _passwordError = Rx<UIError?>(null);
   final _passwordConfirmationError = Rx<UIError?>(null);
   final _isFormValid = RxBool(false);
+  final _mainError = Rx<UIError?>(null);
+  final _isLoading = RxBool(false);
 
   Stream<UIError?> get nameErrorController => _nameError.stream;
   Stream<UIError?> get emailErrorController => _emailError.stream;
@@ -34,6 +37,8 @@ class GetxSignUpPresenter {
   Stream<UIError?> get passwordConfirmationErrorController =>
       _passwordConfirmationError.stream;
   Stream<bool> get isFormValidController => _isFormValid.stream;
+  Stream<UIError?> get mainErrorStreamController => _mainError.stream;
+  Stream<bool> get isLoadingController => _isLoading.stream;
 
   void validateEmail(String? email) {
     _email = email;
@@ -64,14 +69,27 @@ class GetxSignUpPresenter {
   }
 
   Future<void> signUp() async {
-    final account = await _addAccountUsecase.add(AddAccountParams(
-      name: _name!,
-      email: _email!,
-      password: _password!,
-      passwordConfirmation: _passwordConfirmation!,
-    ));
+    try {
+      _isLoading.value = true;
+      final account = await _addAccountUsecase.add(AddAccountParams(
+        name: _name!,
+        email: _email!,
+        password: _password!,
+        passwordConfirmation: _passwordConfirmation!,
+      ));
 
-    await _saveCurrentAccount.save(account);
+      await _saveCurrentAccount.save(account);
+    } on DomainError catch (e) {
+      switch (e) {
+        case DomainError.unexpected:
+
+        default:
+          _mainError.value = UIError.unexpected;
+      }
+      _isLoading.value = false;
+    } finally {
+      _isLoading.value = false;
+    }
   }
 
   UIError? _validate({required String field, String? value}) {
