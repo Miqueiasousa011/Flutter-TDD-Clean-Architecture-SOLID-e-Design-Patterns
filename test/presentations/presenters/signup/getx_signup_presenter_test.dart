@@ -22,6 +22,8 @@ void main() {
 
   late AccountEntity accountEntity;
 
+  late Map<String, dynamic> formData;
+
   late String name;
   late String email;
   late String password;
@@ -33,6 +35,13 @@ void main() {
     password = faker.internet.password();
     passwordConfirmation = password;
     validation = MockValidation();
+
+    formData = {
+      'name': name,
+      'email': email,
+      'password': password,
+      'passwordConfirmation': passwordConfirmation,
+    };
 
     accountEntity = AccountEntity(token: faker.guid.guid());
 
@@ -53,16 +62,24 @@ void main() {
 
   group('Email field', () {
     test('Should call Validation with correct email', () async {
-      when(validation.validate(field: 'email', value: email)).thenReturn(null);
+      when(validation.validate(field: 'email', input: anyNamed('input')))
+          .thenReturn(null);
+
+      formData = {
+        'name': null,
+        'email': email,
+        'password': null,
+        'passwordConfirmation': null,
+      };
 
       sut.validateEmail(email);
 
-      verify(validation.validate(field: 'email', value: email)).called(1);
+      verify(validation.validate(field: 'email', input: formData)).called(1);
     });
 
     test('Should emit invalidFieldError if email is invalid', () async {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.invalidField);
 
       sut.emailErrorController
@@ -76,7 +93,7 @@ void main() {
 
     test('Should emit requiredFieldError if email is empty', () async {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.requiredField);
 
       sut.emailErrorController.listen(
@@ -90,7 +107,7 @@ void main() {
 
     test('Should emit null if Validation success', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
 
       sut.emailErrorController
@@ -106,16 +123,23 @@ void main() {
   group('Name field', () {
     test('Should call Validation with correct name', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
 
+      formData = {
+        'name': name,
+        'email': null,
+        'password': null,
+        'passwordConfirmation': null,
+      };
+
       sut.validateName(name);
-      verify(validation.validate(field: 'name', value: name));
+      verify(validation.validate(field: 'name', input: formData));
     });
 
     test('Should emits invalidFieldError if name is invalid', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.invalidField);
 
       sut.nameErrorController
@@ -129,7 +153,7 @@ void main() {
 
     test('Should emits requiredFieldError if name is empty', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.requiredField);
 
       sut.nameErrorController.listen(
@@ -142,7 +166,7 @@ void main() {
 
     test('Should emits null if valildation success', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
 
       sut.nameErrorController
@@ -157,16 +181,22 @@ void main() {
   group('Password field', () {
     test('Should call Validation with correct password', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
+      formData = {
+        'name': null,
+        'email': null,
+        'password': password,
+        'passwordConfirmation': null,
+      };
 
       sut.validatePassword(password);
-      verify(validation.validate(field: 'password', value: password));
+      verify(validation.validate(field: 'password', input: formData));
     });
 
     test('Should emits invalidFieldError if password is invalid', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.invalidField);
 
       sut.passwordErrorController
@@ -180,7 +210,7 @@ void main() {
 
     test('Should emits requiredFieldError if password is empty', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.requiredField);
 
       sut.passwordErrorController.listen(
@@ -193,7 +223,7 @@ void main() {
 
     test('Should emits null if valildation success', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
 
       sut.passwordErrorController
@@ -208,18 +238,25 @@ void main() {
   group('Password Confirmation field', () {
     test('Should call Validation with correct password confirmation', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
 
-      sut.validatePasswordConfirmation(password);
+      formData = {
+        'name': null,
+        'email': null,
+        'password': null,
+        'passwordConfirmation': passwordConfirmation,
+      };
+
+      sut.validatePasswordConfirmation(passwordConfirmation);
       verify(
-          validation.validate(field: 'password confirmation', value: password));
+          validation.validate(field: 'passwordConfirmation', input: formData));
     });
 
     test('Should emits invalidFieldError if password confirmation is invalid',
         () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.invalidField);
 
       sut.passwordConfirmationErrorController
@@ -234,7 +271,7 @@ void main() {
     test('Should emits requiredFieldError if password confirmation is empty',
         () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(ValidationError.requiredField);
 
       sut.passwordConfirmationErrorController.listen(
@@ -247,7 +284,7 @@ void main() {
 
     test('Should emits null if valildation success', () {
       when(
-        validation.validate(field: anyNamed('field'), value: anyNamed('value')),
+        validation.validate(field: anyNamed('field'), input: anyNamed('input')),
       ).thenReturn(null);
 
       sut.passwordConfirmationErrorController
@@ -260,14 +297,16 @@ void main() {
   });
 
   test('Should enable form button if all fields avalid', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
     when(
-      validation.validate(field: 'password', value: password),
+      validation.validate(field: 'password', input: anyNamed('input')),
     ).thenReturn(null);
     when(
       validation.validate(
-          field: 'password confirmation', value: passwordConfirmation),
+          field: 'passwordConfirmation', input: anyNamed('input')),
     ).thenReturn(null);
 
     expectLater(sut.isFormValidController, emitsInOrder([false, true]));
@@ -283,16 +322,15 @@ void main() {
   });
 
   test('Should call addAccount with correct values', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', input: anyNamed('input')))
+        .thenReturn(null);
     when(validation.validate(
-      field: 'password',
-      value: password,
-    )).thenReturn(null);
-    when(validation.validate(
-      field: 'password confirmation',
-      value: passwordConfirmation,
-    )).thenReturn(null);
+            field: 'passwordConfirmation', input: anyNamed('input')))
+        .thenReturn(null);
 
     when(addAccount.add(any))
         .thenAnswer((_) async => const AccountEntity(token: 'token'));
@@ -308,16 +346,15 @@ void main() {
   });
 
   test('Should call SaveCurrent with correct values', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', input: anyNamed('input')))
+        .thenReturn(null);
     when(validation.validate(
-      field: 'password',
-      value: password,
-    )).thenReturn(null);
-    when(validation.validate(
-      field: 'password confirmation',
-      value: passwordConfirmation,
-    )).thenReturn(null);
+            field: 'passwordConfirmation', input: anyNamed('input')))
+        .thenReturn(null);
 
     when(addAccount.add(any)).thenAnswer((_) async => accountEntity);
 
@@ -332,16 +369,15 @@ void main() {
   });
 
   test('Should emit UnexpectedError if signup fails', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', input: anyNamed('input')))
+        .thenReturn(null);
     when(validation.validate(
-      field: 'password',
-      value: password,
-    )).thenReturn(null);
-    when(validation.validate(
-      field: 'password confirmation',
-      value: passwordConfirmation,
-    )).thenReturn(null);
+            field: 'passwordConfirmation', input: anyNamed('input')))
+        .thenReturn(null);
 
     when(addAccount.add(any)).thenThrow(DomainError.unexpected);
 
@@ -358,16 +394,15 @@ void main() {
   });
 
   test('Should emit EmailInUseError if signup fails', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', input: anyNamed('input')))
+        .thenReturn(null);
     when(validation.validate(
-      field: 'password',
-      value: password,
-    )).thenReturn(null);
-    when(validation.validate(
-      field: 'password confirmation',
-      value: passwordConfirmation,
-    )).thenReturn(null);
+            field: 'passwordConfirmation', input: anyNamed('input')))
+        .thenReturn(null);
 
     when(addAccount.add(any)).thenThrow(DomainError.emailInUse);
 
@@ -384,16 +419,15 @@ void main() {
   });
 
   test('Should emit correct event on SignUp success', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', input: anyNamed('input')))
+        .thenReturn(null);
     when(validation.validate(
-      field: 'password',
-      value: password,
-    )).thenReturn(null);
-    when(validation.validate(
-      field: 'password confirmation',
-      value: passwordConfirmation,
-    )).thenReturn(null);
+            field: 'passwordConfirmation', input: anyNamed('input')))
+        .thenReturn(null);
 
     when(addAccount.add(any)).thenAnswer((_) async => accountEntity);
 
@@ -408,16 +442,15 @@ void main() {
   });
 
   test('Should change page on success', () async {
-    when(validation.validate(field: 'name', value: name)).thenReturn(null);
-    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(field: 'name', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'email', input: anyNamed('input')))
+        .thenReturn(null);
+    when(validation.validate(field: 'password', input: anyNamed('input')))
+        .thenReturn(null);
     when(validation.validate(
-      field: 'password',
-      value: password,
-    )).thenReturn(null);
-    when(validation.validate(
-      field: 'password confirmation',
-      value: passwordConfirmation,
-    )).thenReturn(null);
+            field: 'passwordConfirmation', input: anyNamed('input')))
+        .thenReturn(null);
 
     when(addAccount.add(any)).thenAnswer((_) async => accountEntity);
 

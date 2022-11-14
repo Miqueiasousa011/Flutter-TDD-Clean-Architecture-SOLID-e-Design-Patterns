@@ -3,6 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:fordev/presentation/protocols/protocols.dart' as _i3;
 import 'package:fordev/validation/protocols/field_validation.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -30,4 +31,10 @@ class MockFieldValidation extends _i1.Mock implements _i2.FieldValidation {
         Invocation.getter(#field),
         returnValue: '',
       ) as String);
+  @override
+  _i3.ValidationError? validate(Map<String, dynamic>? input) =>
+      (super.noSuchMethod(Invocation.method(
+        #validate,
+        [input],
+      )) as _i3.ValidationError?);
 }

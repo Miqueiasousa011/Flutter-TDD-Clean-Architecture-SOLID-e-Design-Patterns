@@ -31,7 +31,7 @@ void main() {
   });
 
   test('Should return null if all validations returns null', () {
-    final error = sut.validate(field: 'any_field', value: 'any_value');
+    final error = sut.validate(field: 'any_field', input: {'any': 'any'});
 
     expect(error, isNull);
   });
@@ -40,7 +40,7 @@ void main() {
     when(val1.validate(any)).thenReturn(ValidationError.invalidField);
     when(val2.validate(any)).thenReturn(ValidationError.requiredField);
 
-    final error = sut.validate(field: 'any_field_2', value: 'any_value');
+    final error = sut.validate(field: 'any_field_2', input: {'any': 'any'});
 
     expect(error, ValidationError.requiredField);
   });
@@ -49,7 +49,7 @@ void main() {
     when(val1.validate(any)).thenReturn(ValidationError.invalidField);
     when(val2.validate(any)).thenReturn(ValidationError.requiredField);
     when(val3.validate(any)).thenReturn(ValidationError.requiredField);
-    final error = sut.validate(field: 'any_field_3', value: 'any_value');
+    final error = sut.validate(field: 'any_field_3', input: {'any': 'any'});
 
     expect(error, ValidationError.requiredField);
   });

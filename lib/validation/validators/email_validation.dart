@@ -9,15 +9,15 @@ class EmailValidation extends Equatable implements FieldValidation {
   const EmailValidation(this._field);
 
   @override
-  ValidationError? validate(String? value) {
+  ValidationError? validate(Map<String, dynamic> input) {
     final regexp = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-    if (value == null || value.isEmpty) {
+    if (input[field] == null || input[field].isEmpty) {
       return null;
     }
 
-    return regexp.hasMatch(value) ? null : ValidationError.invalidField;
+    return regexp.hasMatch(input[field]) ? null : ValidationError.invalidField;
   }
 
   @override

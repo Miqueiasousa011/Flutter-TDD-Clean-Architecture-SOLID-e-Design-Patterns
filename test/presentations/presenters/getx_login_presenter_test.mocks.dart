@@ -44,14 +44,14 @@ class MockValidation extends _i1.Mock implements _i3.Validation {
   @override
   _i3.ValidationError? validate({
     required String? field,
-    required String? value,
+    required Map<String, dynamic>? input,
   }) =>
       (super.noSuchMethod(Invocation.method(
         #validate,
         [],
         {
           #field: field,
-          #value: value,
+          #input: input,
         },
       )) as _i3.ValidationError?);
 }

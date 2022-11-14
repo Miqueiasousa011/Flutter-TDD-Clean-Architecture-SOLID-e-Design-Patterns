@@ -49,10 +49,15 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   @override
   Stream<String?> get navigateToStream => _navigateTo.stream;
 
-  UIError? _validateField({required String field, required String? value}) {
+  UIError? _validateField(String field) {
+    final formData = {
+      'email': _email,
+      'password': _password,
+    };
+
     final error = _validation.validate(
       field: field,
-      value: value,
+      input: formData,
     );
     switch (error) {
       case ValidationError.invalidField:
@@ -67,20 +72,14 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   @override
   void validateEmail(String? email) {
     _email = email;
-    _emailError.value = _validateField(
-      field: 'email',
-      value: email,
-    );
+    _emailError.value = _validateField('email');
     _validateForm();
   }
 
   @override
   void validatePassword(String? password) {
     _password = password;
-    _passwordError.value = _validateField(
-      field: 'password',
-      value: password,
-    );
+    _passwordError.value = _validateField('password');
     _validateForm();
   }
 

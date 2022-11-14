@@ -44,28 +44,28 @@ class GetxSignUpPresenter {
 
   void validateEmail(String? email) {
     _email = email;
-    final result = _validate(field: 'email', value: email);
+    final result = _validate('email');
     _emailError.value = result;
     _validateForm();
   }
 
   void validateName(String? name) {
     _name = name;
-    final result = _validate(field: 'name', value: name);
+    final result = _validate('name');
     _nameError.value = result;
     _validateForm();
   }
 
   void validatePassword(String? password) {
     _password = password;
-    final result = _validate(field: 'password', value: password);
+    final result = _validate('password');
     _passwordError.value = result;
     _validateForm();
   }
 
   void validatePasswordConfirmation(String? password) {
     _passwordConfirmation = password;
-    final result = _validate(field: 'password confirmation', value: password);
+    final result = _validate('passwordConfirmation');
     _passwordConfirmationError.value = result;
     _validateForm();
   }
@@ -96,8 +96,14 @@ class GetxSignUpPresenter {
     }
   }
 
-  UIError? _validate({required String field, String? value}) {
-    final result = _validation.validate(field: field, value: value);
+  UIError? _validate(String field) {
+    final formData = {
+      'email': _email,
+      'name': _name,
+      'password': _password,
+      'passwordConfirmation': _passwordConfirmation,
+    };
+    final result = _validation.validate(field: field, input: formData);
 
     switch (result) {
       case ValidationError.invalidField:

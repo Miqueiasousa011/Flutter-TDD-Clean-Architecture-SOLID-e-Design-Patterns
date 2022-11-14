@@ -29,9 +29,16 @@ void main() {
 
   late AccountEntity accountEntity;
 
+  late Map<String, dynamic> formData;
+
   setUp(() {
     email = faker.internet.email();
     password = faker.internet.password();
+
+    formData = {
+      'email': email,
+      'password': password,
+    };
 
     saveCurrentAccount = MockSaveCurrentAccountUsecase();
 
@@ -54,17 +61,22 @@ void main() {
 
   test('Should call Validation with correct email', () {
     when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+            field: anyNamed('field'), input: anyNamed('input')))
         .thenReturn(ValidationError.invalidField);
+
+    formData = {
+      'email': email,
+      'password': null,
+    };
 
     sut.validateEmail(email);
 
-    verify(validation.validate(field: 'email', value: email)).called(1);
+    verify(validation.validate(field: 'email', input: formData)).called(1);
   });
 
   test('Should emit email error if Validation fails', () {
     when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+            field: anyNamed('field'), input: anyNamed('input')))
         .thenReturn(ValidationError.requiredField);
 
     /// GARANTIR QUE A TELA SEJA RENDERIZADA APENAS UMA VEZ,
@@ -84,7 +96,7 @@ void main() {
 
   test('Should emit null if email is valid', () {
     when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+            field: anyNamed('field'), input: anyNamed('input')))
         .thenReturn(null);
 
     sut.emailErrorStream.listen(expectAsync1(
@@ -101,17 +113,22 @@ void main() {
 
   test('Should call Validation with correct password', () {
     when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+            field: anyNamed('field'), input: anyNamed('input')))
         .thenReturn(null);
+
+    formData = {
+      'email': null,
+      'password': password,
+    };
 
     sut.validatePassword(password);
 
-    verify(validation.validate(field: 'password', value: password)).called(1);
+    verify(validation.validate(field: 'password', input: formData)).called(1);
   });
 
   test('should password error if Validation fails', () {
     when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+            field: anyNamed('field'), input: anyNamed('input')))
         .thenReturn(ValidationError.requiredField);
 
     sut.passwordErrorStream
@@ -126,7 +143,7 @@ void main() {
 
   test('Should emits null if password is valid', () {
     when(validation.validate(
-            field: anyNamed('field'), value: anyNamed('value')))
+            field: anyNamed('field'), input: anyNamed('input')))
         .thenReturn(null);
 
     sut.passwordErrorStream
@@ -140,10 +157,10 @@ void main() {
   });
 
   test('Should emits form is not valid if has error', () {
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(ValidationError.invalidField);
 
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.emailErrorStream
@@ -160,10 +177,10 @@ void main() {
   });
 
   test('should emits form is valid if not has error', () async {
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
 
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.emailErrorStream.listen(expectAsync1((error) => expect(error, isNull)));
@@ -181,10 +198,10 @@ void main() {
   test('Should call Authentication with correct values', () async {
     when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
 
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
 
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.validateEmail(email);
@@ -199,10 +216,10 @@ void main() {
   test('Should emit correct events on Authentication success', () async {
     when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
 
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
 
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.validateEmail(email);
@@ -217,10 +234,10 @@ void main() {
     when(authentication.auth(any))
         .thenThrow(DomainError.invalidCredentialsError);
 
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
 
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.validateEmail(email);
@@ -239,10 +256,10 @@ void main() {
   test('Should emit correct events on UnexpectedError', () async {
     when(authentication.auth(any)).thenThrow(DomainError.unexpected);
 
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
 
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.validateEmail(email);
@@ -271,9 +288,9 @@ void main() {
   test('Should call SaveCurrentAccount with correct value', () async {
     when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
     when(saveCurrentAccount.save(any)).thenThrow(DomainError.unexpected);
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.validateEmail(email);
@@ -290,9 +307,9 @@ void main() {
   test('Should change page on success', () async {
     when(authentication.auth(any)).thenAnswer((_) async => accountEntity);
     // when(saveCurrentAccount.save(any)).thenThrow(DomainError.unexpected);
-    when(validation.validate(field: 'email', value: anyNamed('value')))
+    when(validation.validate(field: 'email', input: anyNamed('input')))
         .thenReturn(null);
-    when(validation.validate(field: 'password', value: anyNamed('value')))
+    when(validation.validate(field: 'password', input: anyNamed('input')))
         .thenReturn(null);
 
     sut.validateEmail(email);

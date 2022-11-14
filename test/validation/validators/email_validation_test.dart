@@ -7,29 +7,29 @@ void main() {
   late EmailValidation sut;
 
   setUp(() {
-    sut = const EmailValidation('field');
+    sut = const EmailValidation('email');
   });
 
   test('Should return null if email is empty', () {
-    final error = sut.validate('');
+    final error = sut.validate({'email': ''});
 
     expect(error, isNull);
   });
 
   test('Should return null if email is null', () {
-    final error = sut.validate(null);
+    final error = sut.validate({'email': null});
 
     expect(error, isNull);
   });
 
   test('Should return null if email is valid', () {
-    final error = sut.validate(faker.internet.email());
+    final error = sut.validate({'email': faker.internet.email()});
 
     expect(error, isNull);
   });
 
   test('Should return error if email is invalid', () {
-    final error = sut.validate('asd.com');
+    final error = sut.validate({'email': 'asd.com'});
 
     expect(error, ValidationError.invalidField);
   });
