@@ -6,13 +6,16 @@ import '../protocols/protocols.dart';
 class GetxSignUpPresenter {
   final Validation _validation;
 
+  String? _name;
   String? _email;
   String? _password;
 
+  final _nameError = Rx<UIError?>(null);
   final _emailError = Rx<UIError?>(null);
   final _passwordError = Rx<UIError?>(null);
   final _isFormValid = RxBool(false);
 
+  Stream<UIError?> get nameErrorController => _nameError.stream;
   Stream<UIError?> get emailErrorController => _emailError.stream;
   Stream<UIError?> get passwordErrorController => _passwordError.stream;
   Stream<bool> get isFormValidController => _isFormValid.stream;
@@ -24,6 +27,13 @@ class GetxSignUpPresenter {
     _email = email;
     final result = _validate(field: 'email', value: email);
     _emailError.value = result;
+    _validateForm();
+  }
+
+  void validateName(String? name) {
+    _name = name;
+    final result = _validate(field: 'name', value: name);
+    _nameError.value = result;
     _validateForm();
   }
 
