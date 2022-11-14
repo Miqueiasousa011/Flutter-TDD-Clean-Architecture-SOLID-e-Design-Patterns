@@ -30,6 +30,7 @@ class GetxSignUpPresenter {
   final _isFormValid = RxBool(false);
   final _mainError = Rx<UIError?>(null);
   final _isLoading = RxBool(false);
+  final _navigateTo = Rx<String?>(null);
 
   Stream<UIError?> get nameErrorController => _nameError.stream;
   Stream<UIError?> get emailErrorController => _emailError.stream;
@@ -39,6 +40,7 @@ class GetxSignUpPresenter {
   Stream<bool> get isFormValidController => _isFormValid.stream;
   Stream<UIError?> get mainErrorStreamController => _mainError.stream;
   Stream<bool> get isLoadingController => _isLoading.stream;
+  Stream<String?> get navigateToController => _navigateTo.stream;
 
   void validateEmail(String? email) {
     _email = email;
@@ -79,10 +81,12 @@ class GetxSignUpPresenter {
       ));
 
       await _saveCurrentAccount.save(account);
+      _navigateTo.value = '/surveys';
     } on DomainError catch (e) {
       switch (e) {
-        case DomainError.unexpected:
-
+        case DomainError.emailInUse:
+          _mainError.value = UIError.emailInUse;
+          break;
         default:
           _mainError.value = UIError.unexpected;
       }

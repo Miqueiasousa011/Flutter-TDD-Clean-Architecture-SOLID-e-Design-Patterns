@@ -356,4 +356,79 @@ void main() {
 
     await sut.signUp();
   });
+
+  test('Should emit EmailInUseError if signup fails', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(
+      field: 'password',
+      value: password,
+    )).thenReturn(null);
+    when(validation.validate(
+      field: 'password confirmation',
+      value: passwordConfirmation,
+    )).thenReturn(null);
+
+    when(addAccount.add(any)).thenThrow(DomainError.emailInUse);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+    sut.mainErrorStreamController
+        .listen(expectAsync1((error) => expect(error, UIError.emailInUse)));
+
+    await sut.signUp();
+  });
+
+  test('Should emit correct event on SignUp success', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(
+      field: 'password',
+      value: password,
+    )).thenReturn(null);
+    when(validation.validate(
+      field: 'password confirmation',
+      value: passwordConfirmation,
+    )).thenReturn(null);
+
+    when(addAccount.add(any)).thenAnswer((_) async => accountEntity);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+
+    await sut.signUp();
+  });
+
+  test('Should change page on success', () async {
+    when(validation.validate(field: 'name', value: name)).thenReturn(null);
+    when(validation.validate(field: 'email', value: email)).thenReturn(null);
+    when(validation.validate(
+      field: 'password',
+      value: password,
+    )).thenReturn(null);
+    when(validation.validate(
+      field: 'password confirmation',
+      value: passwordConfirmation,
+    )).thenReturn(null);
+
+    when(addAccount.add(any)).thenAnswer((_) async => accountEntity);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    sut.navigateToController
+        .listen(expectAsync1((page) => expect(page, '/surveys')));
+
+    await sut.signUp();
+  });
 }
