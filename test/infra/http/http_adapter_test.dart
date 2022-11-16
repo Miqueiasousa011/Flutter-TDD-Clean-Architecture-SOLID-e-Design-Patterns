@@ -251,13 +251,22 @@ void main() {
       expect(result, throwsA(HttpError.forbiddenError));
     });
 
-    test('Should return Forbidden if get returns 404', () async {
+    test('Should return NotFound if get returns 404', () async {
       when(httpClient.get(any, headers: anyNamed('headers')))
           .thenAnswer((_) async => Response('', 404));
 
       final result = sut.request(url: url, method: 'get');
 
       expect(result, throwsA(HttpError.notFound));
+    });
+
+    test('Should return ServerError if get returns 500', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 500));
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.serverError));
     });
   });
 }
