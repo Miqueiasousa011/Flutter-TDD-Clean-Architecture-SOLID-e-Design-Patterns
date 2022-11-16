@@ -87,85 +87,96 @@ void main() {
 
       expect(result, isNull);
     });
+    test('should return null if post returns 204', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 204));
+
+      final result = await sut.request(url: url, method: 'post');
+
+      expect(result, isNull);
+    });
+
+    test('should return null id post returns 204 with data', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{any: "any"}', 204));
+
+      final result = await sut.request(url: url, method: 'post');
+
+      expect(result, isNull);
+    });
+
+    test('should return BadRequestError if post returns 400', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('any', 400));
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('should throw BadRequestError if post returns 400 with data',
+        () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 400));
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('should throw ServerError if httpAdapter retuns 500', () {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 500));
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+
+    test('should throw unauthorized if httpAdapter returns 401', () {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('any', 401));
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test('should throw ForbiddenError if httpAdapter returns 403', () {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 403));
+
+      final future = sut.request(url: url, method: 'post');
+      expect(future, throwsA(HttpError.forbiddenError));
+    });
+
+    test('should throw notFoundError if httpAdapter returns 404', () {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 404));
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.notFound));
+    });
+
+    test('should throw ServerError if post returns 500', () async {
+      when(httpClient.post(any, headers: anyNamed('headers')))
+          .thenThrow(Exception());
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
   });
 
-  test('should return null if post returns 204', () async {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 204));
+  group('get', () {
+    test('Should call post with correct values', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{}', 200));
 
-    final result = await sut.request(url: url, method: 'post');
+      await sut.request(url: url, method: 'get');
 
-    expect(result, isNull);
-  });
-
-  test('should return null id post returns 204 with data', () async {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('{any: "any"}', 204));
-
-    final result = await sut.request(url: url, method: 'post');
-
-    expect(result, isNull);
-  });
-
-  test('should return BadRequestError if post returns 400', () async {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('any', 400));
-
-    final future = sut.request(url: url, method: 'post');
-
-    expect(future, throwsA(HttpError.badRequest));
-  });
-
-  test('should throw BadRequestError if post returns 400 with data', () async {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 400));
-
-    final future = sut.request(url: url, method: 'post');
-
-    expect(future, throwsA(HttpError.badRequest));
-  });
-
-  test('should throw ServerError if httpAdapter retuns 500', () {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 500));
-
-    final future = sut.request(url: url, method: 'post');
-
-    expect(future, throwsA(HttpError.serverError));
-  });
-
-  test('should throw unauthorized if httpAdapter returns 401', () {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('any', 401));
-
-    final future = sut.request(url: url, method: 'post');
-
-    expect(future, throwsA(HttpError.unauthorized));
-  });
-
-  test('should throw ForbiddenError if httpAdapter returns 403', () {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 403));
-
-    final future = sut.request(url: url, method: 'post');
-    expect(future, throwsA(HttpError.forbiddenError));
-  });
-
-  test('should throw notFoundError if httpAdapter returns 404', () {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 404));
-
-    final future = sut.request(url: url, method: 'post');
-
-    expect(future, throwsA(HttpError.notFound));
-  });
-
-  test('should throw ServerError if post returns 500', () async {
-    when(httpClient.post(any, headers: anyNamed('headers')))
-        .thenThrow(Exception());
-
-    final future = sut.request(url: url, method: 'post');
-
-    expect(future, throwsA(HttpError.serverError));
+      verify(httpClient.get(uri, headers: headers));
+    });
   });
 }
