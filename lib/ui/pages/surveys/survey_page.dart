@@ -49,20 +49,22 @@ class _SurveyPageState extends State<SurveyPage> {
                 );
               }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    aspectRatio: 1,
-                    enlargeCenterPage: true,
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      aspectRatio: 1,
+                      enlargeCenterPage: true,
+                    ),
+                    items: snapshot.data!
+                        .map((viewModel) => SurveyItem(viewModel))
+                        .toList(),
                   ),
-                  items: const [
-                    SurveyItem(),
-                    SurveyItem(),
-                    SurveyItem(),
-                  ],
-                ),
-              );
+                );
+              }
+
+              return Container();
             },
           );
         },

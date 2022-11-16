@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
@@ -34,6 +35,23 @@ void main() {
     isLoadingController.close();
     loadSurveysController.close();
   });
+
+  List<SurveyViewModel> makeSurveys() {
+    return [
+      SurveyViewModel(
+        id: '1',
+        question: 'question 1',
+        date: faker.date.dateTime().toIso8601String(),
+        didAnswer: faker.randomGenerator.boolean(),
+      ),
+      SurveyViewModel(
+        id: '2',
+        question: 'question 2',
+        date: faker.date.dateTime().toIso8601String(),
+        didAnswer: faker.randomGenerator.boolean(),
+      ),
+    ];
+  }
 
   Future<void> loadPage(WidgetTester tester) async {
     final page = GetMaterialApp(
@@ -74,5 +92,19 @@ void main() {
 
     expect(find.text(R.strings.msgUnexpectedError), findsOneWidget);
     expect(find.text(R.strings.reload), findsOneWidget);
+  });
+
+  testWidgets('Should present list if loadSurveysStream success',
+      (tester) async {
+    await loadPage(tester);
+
+    loadSurveysController.add(makeSurveys());
+
+    await tester.pump();
+
+    expect(find.text('question 1'), findsWidgets);
+    expect(find.text('question 2'), findsWidgets);
+    expect(find.text(R.strings.msgUnexpectedError), findsNothing);
+    expect(find.text(R.strings.reload), findsNothing);
   });
 }

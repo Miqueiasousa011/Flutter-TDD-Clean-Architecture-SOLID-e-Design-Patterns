@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/pages/pages.dart';
 
 class SurveyItem extends StatelessWidget {
-  const SurveyItem({super.key});
+  const SurveyItem(
+    this.viewModel, {
+    super.key,
+  });
+
+  final SurveyViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +32,12 @@ class SurveyItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '26 ago 2020',
+            '20 ago 2023',
             style: textTheme.headline6,
           ),
           const SizedBox(height: 20),
           Text(
-            'Pergunta',
+            viewModel.question,
             style: textTheme.headline5,
           ),
         ],
