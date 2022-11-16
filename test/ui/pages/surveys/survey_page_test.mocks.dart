@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:fordev/ui/pages/surveys/survey_viewmodel.dart' as _i4;
 import 'package:fordev/ui/pages/surveys/surveys_presenter.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -32,6 +33,12 @@ class MockSurveysPresenter extends _i1.Mock implements _i2.SurveysPresenter {
         Invocation.getter(#isLoadingController),
         returnValue: _i3.Stream<bool>.empty(),
       ) as _i3.Stream<bool>);
+  @override
+  _i3.Stream<List<_i4.SurveyViewModel>> get loadSurveysController =>
+      (super.noSuchMethod(
+        Invocation.getter(#loadSurveysController),
+        returnValue: _i3.Stream<List<_i4.SurveyViewModel>>.empty(),
+      ) as _i3.Stream<List<_i4.SurveyViewModel>>);
   @override
   _i3.Future<void> loadData() => (super.noSuchMethod(
         Invocation.method(
