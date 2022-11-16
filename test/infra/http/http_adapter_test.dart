@@ -232,5 +232,14 @@ void main() {
 
       expect(result, throwsA(HttpError.badRequest));
     });
+
+    test('Should return Unauthorized if get returns 401', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 401));
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.unauthorized));
+    });
   });
 }
