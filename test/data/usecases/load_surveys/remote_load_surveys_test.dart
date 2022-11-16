@@ -128,4 +128,13 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     },
   );
+
+  test('Should throw UnexpextedError if HttpClient returns 404', () {
+    when(client.request(url: anyNamed('url'), method: anyNamed('method')))
+        .thenThrow(HttpError.notFound);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
