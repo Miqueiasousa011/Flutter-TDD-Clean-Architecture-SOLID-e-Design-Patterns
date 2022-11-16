@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:fordev/data/models/models.dart';
 import 'package:fordev/domain/entities/entities.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -20,11 +21,15 @@ class RemoteLoadSurveys {
         _url = url;
 
   Future<List<SurveyEntity>> load() async {
-    final response = await _client.request(url: _url, method: 'get');
-    List<SurveyEntity> surveys = [
-      ...response.map((json) => RemoteSurveyModel.fromJson(json).toEntity())
-    ];
-    return surveys;
+    try {
+      final response = await _client.request(url: _url, method: 'get');
+      List<SurveyEntity> surveys = [
+        ...response.map((json) => RemoteSurveyModel.fromJson(json).toEntity())
+      ];
+      return surveys;
+    } on HttpError catch (e) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
@@ -94,6 +99,33 @@ void main() {
           ],
         ),
       );
+    },
+  );
+
+  test(
+    'Should throw UnexpectedError if HttpClient returns 200 with invalid data',
+    () async {
+      when(client.request(url: anyNamed('url'), method: anyNamed('method')))
+          .thenAnswer(
+        (_) async => validData = [
+          {
+            'id': faker.guid.guid(),
+            'questions': faker.randomGenerator.string(50),
+            'didAnswer': faker.randomGenerator.boolean(),
+            'date': faker.date.dateTime().toIso8601String(),
+          },
+          {
+            'id': faker.guid.guid(),
+            'questions': faker.randomGenerator.string(50),
+            'didAnswer': faker.randomGenerator.boolean(),
+            'date': faker.date.dateTime().toIso8601String(),
+          },
+        ],
+      );
+
+      final future = sut.load();
+
+      expect(future, throwsA(DomainError.unexpected));
     },
   );
 }
