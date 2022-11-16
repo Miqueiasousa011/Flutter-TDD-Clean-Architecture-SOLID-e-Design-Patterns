@@ -41,13 +41,13 @@ void main() {
       SurveyViewModel(
         id: '1',
         question: 'question 1',
-        date: faker.date.dateTime().toIso8601String(),
+        date: 'date 1',
         didAnswer: faker.randomGenerator.boolean(),
       ),
       SurveyViewModel(
         id: '2',
         question: 'question 2',
-        date: faker.date.dateTime().toIso8601String(),
+        date: 'date 2',
         didAnswer: faker.randomGenerator.boolean(),
       ),
     ];
@@ -104,6 +104,8 @@ void main() {
 
     expect(find.text('question 1'), findsWidgets);
     expect(find.text('question 2'), findsWidgets);
+    expect(find.text('date 1'), findsWidgets);
+    expect(find.text('date 2'), findsWidgets);
     expect(find.text(R.strings.msgUnexpectedError), findsNothing);
     expect(find.text(R.strings.reload), findsNothing);
   });

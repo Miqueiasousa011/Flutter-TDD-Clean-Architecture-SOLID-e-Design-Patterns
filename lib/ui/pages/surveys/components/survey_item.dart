@@ -32,7 +32,7 @@ class SurveyItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '20 ago 2023',
+            viewModel.date,
             style: textTheme.headline6,
           ),
           const SizedBox(height: 20),
