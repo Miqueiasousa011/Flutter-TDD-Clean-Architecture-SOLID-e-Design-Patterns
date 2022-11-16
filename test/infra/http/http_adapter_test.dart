@@ -250,5 +250,14 @@ void main() {
 
       expect(result, throwsA(HttpError.forbiddenError));
     });
+
+    test('Should return Forbidden if get returns 404', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 404));
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.notFound));
+    });
   });
 }
