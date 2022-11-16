@@ -241,5 +241,14 @@ void main() {
 
       expect(result, throwsA(HttpError.unauthorized));
     });
+
+    test('Should return Forbidden if get returns 403', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 403));
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.forbiddenError));
+    });
   });
 }
