@@ -214,5 +214,23 @@ void main() {
 
       expect(result, isNull);
     });
+
+    test('Should return BadRequest if get returns 400 with data', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{"any": "any"}', 400));
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return BadRequest if get returns 400 with no data', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 400));
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.badRequest));
+    });
   });
 }
