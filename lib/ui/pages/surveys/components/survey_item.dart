@@ -18,7 +18,8 @@ class SurveyItem extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Theme.of(context).primaryColor,
+        color:
+            viewModel.didAnswer ? Colors.green.shade900 : Colors.red.shade900,
         boxShadow: const [
           BoxShadow(
             offset: Offset(0, 1),

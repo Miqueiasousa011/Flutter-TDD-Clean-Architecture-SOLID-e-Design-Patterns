@@ -42,7 +42,7 @@ class _SurveyPageState extends State<SurveyPage> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: null,
+                      onPressed: () => widget.presenter.loadData(),
                       child: Text(R.strings.reload),
                     ),
                   ],

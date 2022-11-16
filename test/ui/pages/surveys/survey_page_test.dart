@@ -109,4 +109,20 @@ void main() {
     expect(find.text(R.strings.msgUnexpectedError), findsNothing);
     expect(find.text(R.strings.reload), findsNothing);
   });
+
+  testWidgets('Should call LoadSurveys on click reload button', (tester) async {
+    await loadPage(tester);
+
+    //Adicionado erro na tela
+    loadSurveysController.addError(UIError.unexpected.description);
+
+    await tester.pump();
+
+    //Com o erro o botão de reload deve ficar visivel
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    //Clicando no botão
+    await tester.tap(find.byType(ElevatedButton));
+    //o segundo reload deve acontecer.
+    verify(presenter.loadData()).called(2);
+  });
 }
