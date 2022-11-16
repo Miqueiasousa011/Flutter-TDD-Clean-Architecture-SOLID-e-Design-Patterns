@@ -10,4 +10,6 @@ abstract class Translations {
   String get name;
   String get password;
   String get passwordConfirmation;
+
+  String get surveys;
 }

@@ -30,4 +30,7 @@ class EnUs implements Translations {
 
   @override
   String get msgUnexpectedError => 'Unexpected error';
+
+  @override
+  String get surveys => 'Surveys';
 }

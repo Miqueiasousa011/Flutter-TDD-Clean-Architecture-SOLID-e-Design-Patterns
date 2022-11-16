@@ -30,4 +30,7 @@ class PtBr implements Translations {
 
   @override
   String get msgUnexpectedError => 'Error inesperado';
+
+  @override
+  String get surveys => 'Enquetes';
 }
