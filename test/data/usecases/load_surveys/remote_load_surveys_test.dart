@@ -1,39 +1,14 @@
 import 'package:faker/faker.dart';
-import 'package:fordev/data/models/models.dart';
-import 'package:fordev/domain/entities/entities.dart';
-import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fordev/data/http/http.dart';
+import 'package:fordev/data/usecases/usecases.dart';
+import 'package:fordev/domain/entities/entities.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 
 import '../add_account/remote_add_account_test.mocks.dart';
-
-class RemoteLoadSurveys {
-  final HttpClient _client;
-  final String _url;
-
-  RemoteLoadSurveys({
-    required HttpClient client,
-    required String url,
-  })  : _client = client,
-        _url = url;
-
-  Future<List<SurveyEntity>> load() async {
-    try {
-      final response = await _client.request(url: _url, method: 'get');
-      List<SurveyEntity> surveys = [
-        ...response.map((json) => RemoteSurveyModel.fromJson(json).toEntity())
-      ];
-      return surveys;
-    } on HttpError catch (error) {
-      throw error == HttpError.forbiddenError
-          ? DomainError.accessDenied
-          : DomainError.unexpected;
-    }
-  }
-}
 
 @GenerateMocks([HttpClient])
 void main() {
