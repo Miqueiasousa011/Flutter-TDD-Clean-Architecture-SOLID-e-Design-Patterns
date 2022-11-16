@@ -268,5 +268,14 @@ void main() {
 
       expect(result, throwsA(HttpError.serverError));
     });
+
+    test('Should return ServerError if get throws', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenThrow(Exception());
+
+      final result = sut.request(url: url, method: 'get');
+
+      expect(result, throwsA(HttpError.serverError));
+    });
   });
 }
