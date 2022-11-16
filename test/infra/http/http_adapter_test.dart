@@ -178,5 +178,23 @@ void main() {
 
       verify(httpClient.get(uri, headers: headers));
     });
+
+    test('Should return data if get returns 200', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response(jsonEncode({'any': 'any'}), 200));
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, equals({'any': 'any'}));
+    });
+
+    test('Should return null if get returns 200 with no data', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 200));
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, isNull);
+    });
   });
 }
