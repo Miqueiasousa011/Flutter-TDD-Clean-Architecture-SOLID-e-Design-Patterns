@@ -196,5 +196,23 @@ void main() {
 
       expect(result, isNull);
     });
+
+    test('Should return null if get returns 204 with no data', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 204));
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, isNull);
+    });
+
+    test('Should return null if get returns 204 with  data', () async {
+      when(httpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{"any": "any"}', 204));
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, isNull);
+    });
   });
 }
