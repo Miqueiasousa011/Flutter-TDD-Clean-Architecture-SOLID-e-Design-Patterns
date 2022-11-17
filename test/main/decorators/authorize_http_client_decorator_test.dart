@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 import 'authorize_http_client_decorator_test.mocks.dart';
 
-class AuthorizeHttpClientDecorator {
+class AuthorizeHttpClientDecorator implements HttpClient {
   final FetchSecureCacheStorage _secureCacheStorage;
   final HttpClient _decoratee;
 
@@ -17,7 +17,8 @@ class AuthorizeHttpClientDecorator {
   })  : _secureCacheStorage = secureCacheStorage,
         _decoratee = decoratee;
 
-  Future request({
+  @override
+  Future<dynamic> request({
     required String url,
     required String method,
     Map<String, dynamic>? body,
@@ -30,7 +31,7 @@ class AuthorizeHttpClientDecorator {
       if (headers != null) ...headers
     };
 
-    await _decoratee.request(
+    return await _decoratee.request(
       url: url,
       method: method,
       body: body,
@@ -48,7 +49,7 @@ void main() {
   late String url;
   late String method;
   late Map<String, dynamic> body;
-
+  late String response;
   late String token;
 
   setUp(() {
@@ -56,6 +57,7 @@ void main() {
     url = faker.internet.httpUrl();
     method = 'any';
     body = {'any': 'any'};
+    response = faker.randomGenerator.string(10);
 
     secureCacheStorage = MockFetchSecureCacheStorage();
     httpClient = MockHttpClient();
@@ -115,5 +117,18 @@ void main() {
             body: body,
             headers: {'x-access-token': token, 'any_header': 'any_value'}))
         .called(1);
+  });
+
+  test('Should return same result as decoratee', () async {
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+      headers: anyNamed('headers'),
+    )).thenAnswer((_) async => response);
+
+    final result = await sut.request(url: url, method: method);
+
+    expect(result, response);
   });
 }
