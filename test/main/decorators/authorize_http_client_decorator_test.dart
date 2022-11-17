@@ -24,19 +24,23 @@ class AuthorizeHttpClientDecorator implements HttpClient {
     Map<String, dynamic>? body,
     Map<String, dynamic>? headers,
   }) async {
-    final token = await _secureCacheStorage.fetchSecure('token') ?? '';
+    try {
+      final token = await _secureCacheStorage.fetchSecure('token') ?? '';
 
-    final authorizedHeader = {
-      'x-access-token': token,
-      if (headers != null) ...headers
-    };
+      final authorizedHeader = {
+        'x-access-token': token,
+        if (headers != null) ...headers
+      };
 
-    return await _decoratee.request(
-      url: url,
-      method: method,
-      body: body,
-      headers: authorizedHeader,
-    );
+      return await _decoratee.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: authorizedHeader,
+      );
+    } catch (e) {
+      throw HttpError.forbiddenError;
+    }
   }
 }
 
@@ -130,5 +134,14 @@ void main() {
     final result = await sut.request(url: url, method: method);
 
     expect(result, response);
+  });
+
+  test('Should throw ForbiddenError if FetchSecureCacheStorage throws',
+      () async {
+    when(secureCacheStorage.fetchSecure(any)).thenThrow(Exception());
+
+    final future = sut.request(url: url, method: method);
+
+    expect(future, throwsA(HttpError.forbiddenError));
   });
 }
