@@ -37,9 +37,7 @@ class _SurveyPageState extends State<SurveyPage> {
               if (snapshot.hasError) {
                 return Column(
                   children: [
-                    Text(
-                      snapshot.error.toString(),
-                    ),
+                    Text('${snapshot.error}'),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () => widget.presenter.loadData(),
@@ -63,7 +61,6 @@ class _SurveyPageState extends State<SurveyPage> {
                   ),
                 );
               }
-
               return Container();
             },
           );
