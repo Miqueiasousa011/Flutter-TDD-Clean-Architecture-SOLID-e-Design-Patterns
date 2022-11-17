@@ -33,6 +33,7 @@ class MockHttpClient<ResponseType> extends _i1.Mock
     required String? url,
     required String? method,
     Map<String, dynamic>? body,
+    Map<String, dynamic>? headers,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -42,6 +43,7 @@ class MockHttpClient<ResponseType> extends _i1.Mock
             #url: url,
             #method: method,
             #body: body,
+            #headers: headers,
           },
         ),
         returnValue: _i3.Future<ResponseType>.value(null),

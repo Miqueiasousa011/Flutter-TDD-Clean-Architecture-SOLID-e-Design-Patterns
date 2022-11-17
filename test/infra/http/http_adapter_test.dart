@@ -16,11 +16,11 @@ void main() {
   late MockClient httpClient;
   late String url;
   late Uri uri;
-  late Map<String, String> headers;
+  late Map<String, String> defaultHeaders;
   late Map<String, dynamic> body;
 
   setUp(() {
-    headers = {
+    defaultHeaders = {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
@@ -46,7 +46,16 @@ void main() {
       when(httpClient.post(any, headers: anyNamed('headers')))
           .thenAnswer((_) async => Response('{}', 200));
 
-      await sut.request(url: url, method: 'post');
+      await sut.request(
+        url: url,
+        method: 'post',
+        headers: {'any_header': 'any_value'},
+      );
+
+      final headers = {
+        ...defaultHeaders,
+        ...{'any_header': 'any_value'},
+      };
 
       verify(httpClient.post(uri, headers: headers));
     });
@@ -58,7 +67,8 @@ void main() {
 
       await sut.request(url: url, method: 'post', body: body);
 
-      verify(httpClient.post(uri, headers: headers, body: jsonEncode(body)));
+      verify(httpClient.post(uri,
+          headers: defaultHeaders, body: jsonEncode(body)));
     });
 
     test('Should call post without body', () async {
@@ -67,7 +77,7 @@ void main() {
 
       await sut.request(url: url, method: 'post');
 
-      verify(httpClient.post(uri, headers: headers));
+      verify(httpClient.post(uri, headers: defaultHeaders));
     });
 
     test('should return data if post returns 200', () async {
@@ -174,7 +184,19 @@ void main() {
       when(httpClient.get(any, headers: anyNamed('headers')))
           .thenAnswer((_) async => Response('{}', 200));
 
-      await sut.request(url: url, method: 'get');
+      await sut.request(
+        url: url,
+        method: 'get',
+
+        //Teste para acrecentar valores ao header default
+        headers: {'any_header': 'any_value'},
+      );
+
+      //Teste para acrecentar valores ao header default
+      final headers = {
+        ...defaultHeaders,
+        ...{'any_header': 'any_value'}
+      };
 
       verify(httpClient.get(uri, headers: headers));
     });

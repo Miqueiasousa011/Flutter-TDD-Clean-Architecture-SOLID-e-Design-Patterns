@@ -14,7 +14,12 @@ class HttpAdapter implements HttpClient {
     required String url,
     required String method,
     Map<String, dynamic>? body,
+    Map<String, dynamic>? headers,
   }) async {
+    final defaultHeaders = <String, String>{
+      ..._headers,
+      if (headers != null) ...headers,
+    };
     final requestBody = body != null ? jsonEncode(body) : null;
 
     var response = Response('', 500);
@@ -23,13 +28,13 @@ class HttpAdapter implements HttpClient {
       if (method == 'post') {
         response = await _client.post(
           Uri.parse(url),
-          headers: _headers,
+          headers: defaultHeaders,
           body: requestBody,
         );
       } else if (method == 'get') {
         response = await _client.get(
           Uri.parse(url),
-          headers: _headers,
+          headers: defaultHeaders,
         );
       }
     } catch (e) {
