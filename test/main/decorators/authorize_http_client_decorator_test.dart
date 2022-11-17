@@ -38,6 +38,8 @@ class AuthorizeHttpClientDecorator implements HttpClient {
         body: body,
         headers: authorizedHeader,
       );
+    } on HttpError {
+      rethrow;
     } catch (e) {
       throw HttpError.forbiddenError;
     }
@@ -143,5 +145,18 @@ void main() {
     final future = sut.request(url: url, method: method);
 
     expect(future, throwsA(HttpError.forbiddenError));
+  });
+
+  test('Should rethrow  if HttpClient throws', () async {
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+      headers: anyNamed('headers'),
+    )).thenThrow(HttpError.badRequest);
+
+    final future = sut.request(url: url, method: method);
+
+    expect(future, throwsA(HttpError.badRequest));
   });
 }
