@@ -17,7 +17,7 @@ import 'survey_page_test.mocks.dart';
 void main() {
   late MockSurveysPresenter presenter;
   late StreamController<bool> isLoadingController;
-  late StreamController<List<SurveyViewModel>> loadSurveysController;
+  late StreamController<List<SurveyViewModel>> surveysStream;
 
   setUp(() {
     presenter = MockSurveysPresenter();
@@ -26,14 +26,13 @@ void main() {
     when(presenter.isLoadingController)
         .thenAnswer((_) => isLoadingController.stream);
 
-    loadSurveysController = StreamController();
-    when(presenter.loadSurveysController)
-        .thenAnswer((_) => loadSurveysController.stream);
+    surveysStream = StreamController();
+    when(presenter.surveysStream).thenAnswer((_) => surveysStream.stream);
   });
 
   tearDown(() {
     isLoadingController.close();
-    loadSurveysController.close();
+    surveysStream.close();
   });
 
   List<SurveyViewModel> makeSurveys() {
@@ -86,7 +85,7 @@ void main() {
       (tester) async {
     await loadPage(tester);
 
-    loadSurveysController.addError(UIError.unexpected.description);
+    surveysStream.addError(UIError.unexpected.description);
 
     await tester.pump();
 
@@ -98,7 +97,7 @@ void main() {
       (tester) async {
     await loadPage(tester);
 
-    loadSurveysController.add(makeSurveys());
+    surveysStream.add(makeSurveys());
 
     await tester.pump();
 
@@ -114,7 +113,7 @@ void main() {
     await loadPage(tester);
 
     //Adicionado erro na tela
-    loadSurveysController.addError(UIError.unexpected.description);
+    surveysStream.addError(UIError.unexpected.description);
 
     await tester.pump();
 

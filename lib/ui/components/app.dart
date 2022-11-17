@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../main/factories/factories.dart';
 import '../../main/factories/pages/signup/signup_page_factory.dart';
@@ -34,6 +35,13 @@ class App extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      locale: const Locale('pt'),
+      supportedLocales: const [Locale('pt', 'BR')],
       title: '4Dev',
       initialRoute: '/',
       getPages: [

@@ -34,9 +34,9 @@ class MockSurveysPresenter extends _i1.Mock implements _i2.SurveysPresenter {
         returnValue: _i3.Stream<bool>.empty(),
       ) as _i3.Stream<bool>);
   @override
-  _i3.Stream<List<_i4.SurveyViewModel>> get loadSurveysController =>
+  _i3.Stream<List<_i4.SurveyViewModel>> get surveysStream =>
       (super.noSuchMethod(
-        Invocation.getter(#loadSurveysController),
+        Invocation.getter(#surveysStream),
         returnValue: _i3.Stream<List<_i4.SurveyViewModel>>.empty(),
       ) as _i3.Stream<List<_i4.SurveyViewModel>>);
   @override

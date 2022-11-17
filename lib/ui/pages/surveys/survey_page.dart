@@ -32,7 +32,7 @@ class _SurveyPageState extends State<SurveyPage> {
           widget.presenter.isLoadingController.listen(_isLoading);
 
           return StreamBuilder<List<SurveyViewModel>>(
-            stream: widget.presenter.loadSurveysController,
+            stream: widget.presenter.surveysStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Column(
