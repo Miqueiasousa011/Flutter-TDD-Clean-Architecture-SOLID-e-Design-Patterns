@@ -44,7 +44,7 @@ class HttpAdapter implements HttpClient {
     return _handleResponse(response);
   }
 
-  Map<String, dynamic>? _handleResponse(Response response) {
+  _handleResponse(Response response) {
     switch (response.statusCode) {
       case 200:
         return response.body.isNotEmpty ? jsonDecode(response.body) : null;
