@@ -9,13 +9,30 @@ import 'authorize_http_client_decorator_test.mocks.dart';
 
 class AuthorizeHttpClientDecorator {
   final FetchSecureCacheStorage _secureCacheStorage;
+  final HttpClient _decoratee;
 
   AuthorizeHttpClientDecorator({
     required FetchSecureCacheStorage secureCacheStorage,
-  }) : _secureCacheStorage = secureCacheStorage;
+    required HttpClient decoratee,
+  })  : _secureCacheStorage = secureCacheStorage,
+        _decoratee = decoratee;
 
-  Future request() async {
-    await _secureCacheStorage.fetchSecure('token');
+  Future request({
+    required String url,
+    required String method,
+    Map<String, dynamic>? body,
+    Map<String, dynamic>? headers,
+  }) async {
+    final token = await _secureCacheStorage.fetchSecure('token');
+
+    final authorizedHeader = {'x-access-token': token ?? ''};
+
+    await _decoratee.request(
+      url: url,
+      method: method,
+      body: body,
+      headers: authorizedHeader,
+    );
   }
 }
 
@@ -25,20 +42,58 @@ void main() {
   late MockHttpClient httpClient;
   late MockFetchSecureCacheStorage secureCacheStorage;
 
+  late String url;
+  late String method;
+  late Map<String, dynamic> body;
+
   late String token;
 
   setUp(() {
     token = faker.guid.guid();
+    url = faker.internet.httpUrl();
+    method = 'any';
+    body = {'any': 'any'};
+
     secureCacheStorage = MockFetchSecureCacheStorage();
     httpClient = MockHttpClient();
-    sut = AuthorizeHttpClientDecorator(secureCacheStorage: secureCacheStorage);
+    sut = AuthorizeHttpClientDecorator(
+      secureCacheStorage: secureCacheStorage,
+      decoratee: httpClient,
+    );
+
+    when(secureCacheStorage.fetchSecure(any)).thenAnswer((_) async => token);
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
-    when(secureCacheStorage.fetchSecure(any)).thenAnswer((_) async => token);
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+      headers: anyNamed('headers'),
+    )).thenAnswer((_) async => '');
 
-    await sut.request();
+    await sut.request(
+      url: url,
+      method: method,
+      body: body,
+    );
 
     verify(secureCacheStorage.fetchSecure('token')).called(1);
+  });
+
+  test('Should call decoratee with access token on header', () async {
+    when(httpClient.request(
+        url: anyNamed('url'),
+        method: anyNamed('method'),
+        body: anyNamed('body'),
+        headers: {'x-access-token': token})).thenAnswer((_) async => '');
+
+    await sut.request(url: url, method: method, body: body);
+
+    verify(httpClient.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: {'x-access-token': token})).called(1);
   });
 }
