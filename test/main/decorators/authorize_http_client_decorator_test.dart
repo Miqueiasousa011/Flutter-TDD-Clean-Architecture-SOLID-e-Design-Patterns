@@ -23,9 +23,12 @@ class AuthorizeHttpClientDecorator {
     Map<String, dynamic>? body,
     Map<String, dynamic>? headers,
   }) async {
-    final token = await _secureCacheStorage.fetchSecure('token');
+    final token = await _secureCacheStorage.fetchSecure('token') ?? '';
 
-    final authorizedHeader = {'x-access-token': token ?? ''};
+    final authorizedHeader = {
+      'x-access-token': token,
+      if (headers != null) ...headers
+    };
 
     await _decoratee.request(
       url: url,
@@ -83,17 +86,34 @@ void main() {
 
   test('Should call decoratee with access token on header', () async {
     when(httpClient.request(
-        url: anyNamed('url'),
-        method: anyNamed('method'),
-        body: anyNamed('body'),
-        headers: {'x-access-token': token})).thenAnswer((_) async => '');
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+      headers: anyNamed('headers'),
+    )).thenAnswer((_) async => '');
 
+    //header não passado
     await sut.request(url: url, method: method, body: body);
 
+    //Verifica se foi adicionado o token no header
     verify(httpClient.request(
         url: url,
         method: method,
         body: body,
         headers: {'x-access-token': token})).called(1);
+
+    //Adicionando o token a um header existente
+    await sut.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: {'any_header': 'any_value'});
+
+    verify(httpClient.request(
+            url: url,
+            method: method,
+            body: body,
+            headers: {'x-access-token': token, 'any_header': 'any_value'}))
+        .called(1);
   });
 }
