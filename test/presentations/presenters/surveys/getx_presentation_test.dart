@@ -1,52 +1,16 @@
 import 'package:faker/faker.dart';
-import 'package:fordev/domain/entities/survey_entity.dart';
-import 'package:fordev/domain/helpers/helpers.dart';
-import 'package:fordev/domain/usecases/load_surveys_usecase.dart';
-import 'package:fordev/ui/helpers/ui_error.dart';
-import 'package:fordev/ui/pages/pages.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:fordev/domain/entities/survey_entity.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
+import 'package:fordev/domain/usecases/load_surveys_usecase.dart';
+import 'package:fordev/presentation/presenters/getx_surveys_presenter.dart';
+import 'package:fordev/ui/helpers/ui_error.dart';
+import 'package:fordev/ui/pages/pages.dart';
+
 import 'getx_presentation_test.mocks.dart';
-
-class GetxSurveysPresenter {
-  final LoadSurveysUsecase _loadSurveys;
-
-  GetxSurveysPresenter({required LoadSurveysUsecase loadSurveys})
-      : _loadSurveys = loadSurveys;
-
-  final _isLoading = RxBool(false);
-  final _surveys = Rx<List<SurveyViewModel>>([]);
-
-  Stream<bool> get isLoadingController => _isLoading.stream;
-
-  Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
-
-  Future<void> loadData() async {
-    try {
-      _isLoading.value = true;
-      final surveys = await _loadSurveys.load();
-
-      _surveys.value = surveys
-          .map((entity) => SurveyViewModel(
-                id: entity.id,
-                question: entity.question,
-                date: DateFormat(
-                  'dd MMM yyyy',
-                ).format(entity.dateTime),
-                didAnswer: entity.didAnswer,
-              ))
-          .toList();
-    } on DomainError {
-      _surveys.subject.addError(UIError.unexpected.description);
-    } finally {
-      _isLoading.value = false;
-    }
-  }
-}
 
 @GenerateMocks([LoadSurveysUsecase])
 void main() {
