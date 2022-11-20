@@ -3,35 +3,11 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fordev/data/cache/cache.dart';
-import 'package:fordev/data/models/local_survey_model.dart';
+import 'package:fordev/data/usecases/load_surveys/local_load_surveys.dart';
 import 'package:fordev/domain/entities/survey_entity.dart';
 import 'package:fordev/domain/helpers/helpers.dart';
 
 import 'local_load_surveys_test.mocks.dart';
-
-class LocalLoadSurveys {
-  final FetchCacheStorage _fetchCacheStorage;
-
-  LocalLoadSurveys({required FetchCacheStorage fetchCacheStorage})
-      : _fetchCacheStorage = fetchCacheStorage;
-
-  Future<List<SurveyEntity>> load() async {
-    try {
-      final response = await _fetchCacheStorage.fetch('surveys');
-
-      if (response?.isEmpty != false) {
-        throw Exception();
-      }
-
-      return response
-          .map<SurveyEntity>(
-              (json) => LocalSurveyModel.fromJson(json).toEntity())
-          .toList();
-    } catch (e) {
-      throw DomainError.unexpected;
-    }
-  }
-}
 
 @GenerateMocks([FetchCacheStorage])
 void main() {
