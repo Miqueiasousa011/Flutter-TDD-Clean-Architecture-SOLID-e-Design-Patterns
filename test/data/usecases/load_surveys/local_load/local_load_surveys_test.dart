@@ -1,5 +1,6 @@
 import 'package:fordev/data/models/local_survey_model.dart';
 import 'package:fordev/domain/entities/survey_entity.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -14,6 +15,10 @@ class LocalLoadSurveys {
 
   Future<List<SurveyEntity>> load() async {
     final response = await _fetchCacheStorage.fetch('surveys');
+
+    if (response.isEmpty) {
+      return throw DomainError.unexpected;
+    }
 
     return response
         .map<SurveyEntity>((json) => LocalSurveyModel.fromJson(json).toEntity())
@@ -84,5 +89,13 @@ void main() {
     final result = await sut.load();
 
     expect(result, equals(response));
+  });
+
+  test('Should throw UnexpectedError if cash is empty', () async {
+    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => []);
+
+    final result = sut.load();
+
+    expect(result, throwsA(DomainError.unexpected));
   });
 }
