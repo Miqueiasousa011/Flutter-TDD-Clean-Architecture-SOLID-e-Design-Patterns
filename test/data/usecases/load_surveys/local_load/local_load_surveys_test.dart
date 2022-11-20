@@ -128,27 +128,11 @@ void main() {
     late MockCacheStorage cacheStorage;
     late LocalLoadSurveys sut;
 
-    late List<SurveyEntity> response;
     late List<Map<String, dynamic>> fetchResponse;
 
     setUp(() {
       cacheStorage = MockCacheStorage();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
-
-      response = [
-        SurveyEntity(
-          id: '1',
-          question: 'question',
-          dateTime: DateTime(2000, 2, 2),
-          didAnswer: false,
-        ),
-        SurveyEntity(
-          id: '2',
-          question: 'question 2',
-          dateTime: DateTime(2000, 12, 2),
-          didAnswer: true,
-        ),
-      ];
 
       fetchResponse = [
         {
@@ -197,6 +181,14 @@ void main() {
               'question': 'question',
             },
           ]);
+
+      await sut.validate();
+
+      verify(cacheStorage.delete('surveys')).called(1);
+    });
+
+    test('Should delete cache if CacheStorage throws', () async {
+      when(cacheStorage.fetch(any)).thenThrow(Exception());
 
       await sut.validate();
 

@@ -26,9 +26,9 @@ class LocalLoadSurveys implements LoadSurveysUsecase {
   }
 
   Future<void> validate() async {
-    final response = await _cacheStorage.fetch('surveys');
-
     try {
+      final response = await _cacheStorage.fetch('surveys');
+
       _jsonToEntyity(response);
     } catch (e) {
       await _cacheStorage.delete('surveys');
