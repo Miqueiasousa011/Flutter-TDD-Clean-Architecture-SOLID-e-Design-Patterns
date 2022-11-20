@@ -5,15 +5,15 @@ import '../../cache/cache.dart';
 import '../../models/models.dart';
 
 class LocalLoadSurveys implements LoadSurveysUsecase {
-  final FetchCacheStorage _fetchCacheStorage;
+  final CacheStorage _cacheStorage;
 
-  LocalLoadSurveys({required FetchCacheStorage fetchCacheStorage})
-      : _fetchCacheStorage = fetchCacheStorage;
+  LocalLoadSurveys({required CacheStorage cacheStorage})
+      : _cacheStorage = cacheStorage;
 
   @override
   Future<List<SurveyEntity>> load() async {
     try {
-      final response = await _fetchCacheStorage.fetch('surveys');
+      final response = await _cacheStorage.fetch('surveys');
 
       if (response?.isEmpty != false) {
         throw Exception();
@@ -26,5 +26,9 @@ class LocalLoadSurveys implements LoadSurveysUsecase {
     } catch (e) {
       throw DomainError.unexpected;
     }
+  }
+
+  Future<void> validate() async {
+    await _cacheStorage.fetch('surveys');
   }
 }

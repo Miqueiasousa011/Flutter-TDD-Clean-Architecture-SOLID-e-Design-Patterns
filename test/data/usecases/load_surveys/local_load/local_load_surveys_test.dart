@@ -9,116 +9,170 @@ import 'package:fordev/domain/helpers/helpers.dart';
 
 import 'local_load_surveys_test.mocks.dart';
 
-@GenerateMocks([FetchCacheStorage])
+@GenerateMocks([CacheStorage])
 void main() {
-  late MockFetchCacheStorage fetchCacheStorage;
-  late LocalLoadSurveys sut;
+  group('load', () {
+    late MockCacheStorage cacheStorage;
+    late LocalLoadSurveys sut;
 
-  late List<SurveyEntity> response;
-  late List<Map<String, dynamic>> fetchResponse;
+    late List<SurveyEntity> response;
+    late List<Map<String, dynamic>> fetchResponse;
 
-  setUp(() {
-    fetchCacheStorage = MockFetchCacheStorage();
-    sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
+    setUp(() {
+      cacheStorage = MockCacheStorage();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
-    response = [
-      SurveyEntity(
-        id: '1',
-        question: 'question',
-        dateTime: DateTime(2000, 2, 2),
-        didAnswer: false,
-      ),
-      SurveyEntity(
-        id: '2',
-        question: 'question 2',
-        dateTime: DateTime(2000, 12, 2),
-        didAnswer: true,
-      ),
-    ];
+      response = [
+        SurveyEntity(
+          id: '1',
+          question: 'question',
+          dateTime: DateTime(2000, 2, 2),
+          didAnswer: false,
+        ),
+        SurveyEntity(
+          id: '2',
+          question: 'question 2',
+          dateTime: DateTime(2000, 12, 2),
+          didAnswer: true,
+        ),
+      ];
 
-    fetchResponse = [
-      {
-        'id': '1',
-        'question': 'question',
-        'date': '2000-02-02',
-        'didAnswer': false
-      },
-      {
-        'id': '2',
-        'question': 'question 2',
-        'date': '2000-12-02',
-        'didAnswer': true
-      },
-    ];
+      fetchResponse = [
+        {
+          'id': '1',
+          'question': 'question',
+          'date': '2000-02-02',
+          'didAnswer': false
+        },
+        {
+          'id': '2',
+          'question': 'question 2',
+          'date': '2000-12-02',
+          'didAnswer': true
+        },
+      ];
+    });
+
+    test('Should call cacheStorage with correct key', () async {
+      when(cacheStorage.fetch('surveys'))
+          .thenAnswer((_) async => fetchResponse);
+
+      await sut.load();
+
+      verify(cacheStorage.fetch('surveys')).called(1);
+    });
+
+    test('Should return list of surveys on success', () async {
+      when(cacheStorage.fetch('surveys'))
+          .thenAnswer((_) async => fetchResponse);
+
+      final result = await sut.load();
+
+      expect(result, equals(response));
+    });
+
+    test('Should throw UnexpectedError if cash is empty', () async {
+      when(cacheStorage.fetch(any)).thenAnswer((_) async => []);
+
+      final result = sut.load();
+
+      expect(result, throwsA(DomainError.unexpected));
+    });
+
+    test('Should throw UnexpectedError if cash is null', () async {
+      when(cacheStorage.fetch(any)).thenAnswer((_) async => null);
+
+      final result = sut.load();
+
+      expect(result, throwsA(DomainError.unexpected));
+    });
+
+    test('Should throw UnexpectedError if cash is invalid', () async {
+      when(cacheStorage.fetch(any)).thenAnswer((_) async => [
+            {
+              'id': '1',
+              'question': 'question',
+              'date': 'invalid',
+              'didAnswer': false
+            },
+          ]);
+
+      final result = sut.load();
+
+      expect(result, throwsA(DomainError.unexpected));
+    });
+
+    test('Should throw UnexpectedError if cash is incomplete', () async {
+      when(cacheStorage.fetch(any)).thenAnswer((_) async => [
+            {
+              'id': '1',
+              'date': '2000-02-02',
+            },
+          ]);
+
+      final result = sut.load();
+
+      expect(result, throwsA(DomainError.unexpected));
+    });
+
+    test('Should throw UnexpectedError if cacheStorage throws', () async {
+      when(cacheStorage.fetch(any)).thenThrow((_) => Exception());
+
+      final result = sut.load();
+
+      expect(result, throwsA(DomainError.unexpected));
+    });
   });
 
-  test('Should call FetchCacheStorage with correct key', () async {
-    when(fetchCacheStorage.fetch('surveys'))
-        .thenAnswer((_) async => fetchResponse);
+  group('validate', () {
+    late MockCacheStorage cacheStorage;
+    late LocalLoadSurveys sut;
 
-    await sut.load();
+    late List<SurveyEntity> response;
+    late List<Map<String, dynamic>> fetchResponse;
 
-    verify(fetchCacheStorage.fetch('surveys')).called(1);
-  });
+    setUp(() {
+      cacheStorage = MockCacheStorage();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
-  test('Should return list of surveys on success', () async {
-    when(fetchCacheStorage.fetch('surveys'))
-        .thenAnswer((_) async => fetchResponse);
+      response = [
+        SurveyEntity(
+          id: '1',
+          question: 'question',
+          dateTime: DateTime(2000, 2, 2),
+          didAnswer: false,
+        ),
+        SurveyEntity(
+          id: '2',
+          question: 'question 2',
+          dateTime: DateTime(2000, 12, 2),
+          didAnswer: true,
+        ),
+      ];
 
-    final result = await sut.load();
+      fetchResponse = [
+        {
+          'id': '1',
+          'question': 'question',
+          'date': '2000-02-02',
+          'didAnswer': false
+        },
+        {
+          'id': '2',
+          'question': 'question 2',
+          'date': '2000-12-02',
+          'didAnswer': true
+        },
+      ];
+    });
 
-    expect(result, equals(response));
-  });
+    test('Should call cacheStorage with correct key', () async {
+      when(cacheStorage.fetch('surveys'))
+          .thenAnswer((_) async => fetchResponse);
 
-  test('Should throw UnexpectedError if cash is empty', () async {
-    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => []);
+      await sut.validate();
 
-    final result = sut.load();
-
-    expect(result, throwsA(DomainError.unexpected));
-  });
-
-  test('Should throw UnexpectedError if cash is null', () async {
-    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => null);
-
-    final result = sut.load();
-
-    expect(result, throwsA(DomainError.unexpected));
-  });
-
-  test('Should throw UnexpectedError if cash is invalid', () async {
-    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => [
-          {
-            'id': '1',
-            'question': 'question',
-            'date': 'invalid',
-            'didAnswer': false
-          },
-        ]);
-
-    final result = sut.load();
-
-    expect(result, throwsA(DomainError.unexpected));
-  });
-
-  test('Should throw UnexpectedError if cash is incomplete', () async {
-    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => [
-          {
-            'id': '1',
-            'date': '2000-02-02',
-          },
-        ]);
-
-    final result = sut.load();
-
-    expect(result, throwsA(DomainError.unexpected));
-  });
-
-  test('Should throw UnexpectedError if fetchCacheStorage throws', () async {
-    when(fetchCacheStorage.fetch(any)).thenThrow((_) => Exception());
-
-    final result = sut.load();
-
-    expect(result, throwsA(DomainError.unexpected));
+      verify(cacheStorage.fetch('surveys')).called(1);
+    });
   });
 }

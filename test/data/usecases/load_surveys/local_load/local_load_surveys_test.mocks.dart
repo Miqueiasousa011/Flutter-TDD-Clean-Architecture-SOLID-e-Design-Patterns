@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:fordev/data/cache/fetch_cache_storage.dart' as _i2;
+import 'package:fordev/data/cache/cache_storage.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -19,11 +19,11 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [FetchCacheStorage].
+/// A class which mocks [CacheStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFetchCacheStorage extends _i1.Mock implements _i2.FetchCacheStorage {
-  MockFetchCacheStorage() {
+class MockCacheStorage extends _i1.Mock implements _i2.CacheStorage {
+  MockCacheStorage() {
     _i1.throwOnMissingStub(this);
   }
 
