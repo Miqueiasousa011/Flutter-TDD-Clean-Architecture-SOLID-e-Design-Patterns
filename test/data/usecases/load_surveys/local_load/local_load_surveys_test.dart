@@ -14,9 +14,9 @@ class LocalLoadSurveys {
       : _fetchCacheStorage = fetchCacheStorage;
 
   Future<List<SurveyEntity>> load() async {
-    final response = await _fetchCacheStorage.fetch('surveys');
-
     try {
+      final response = await _fetchCacheStorage.fetch('surveys');
+
       if (response?.isEmpty != false) {
         throw Exception();
       }
@@ -134,6 +134,14 @@ void main() {
             'date': '2000-02-02',
           },
         ]);
+
+    final result = sut.load();
+
+    expect(result, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if fetchCacheStorage throws', () async {
+    when(fetchCacheStorage.fetch(any)).thenThrow((_) => Exception());
 
     final result = sut.load();
 
