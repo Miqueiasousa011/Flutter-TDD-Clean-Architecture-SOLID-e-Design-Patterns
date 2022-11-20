@@ -19,10 +19,7 @@ class LocalLoadSurveys implements LoadSurveysUsecase {
         throw Exception();
       }
 
-      return response
-          .map<SurveyEntity>(
-              (json) => LocalSurveyModel.fromJson(json).toEntity())
-          .toList();
+      return _jsonToEntyity(response);
     } catch (e) {
       throw DomainError.unexpected;
     }
@@ -32,9 +29,15 @@ class LocalLoadSurveys implements LoadSurveysUsecase {
     final response = await _cacheStorage.fetch('surveys');
 
     try {
-      response.map<SurveyEntity>((json) => LocalSurveyModel.fromJson(json));
+      _jsonToEntyity(response);
     } catch (e) {
       await _cacheStorage.delete('surveys');
     }
   }
+
+  List<SurveyEntity> _jsonToEntyity(List<Map<String, dynamic>> listOfJson) =>
+      listOfJson
+          .map<SurveyEntity>(
+              (json) => LocalSurveyModel.fromJson(json).toEntity())
+          .toList();
 }
