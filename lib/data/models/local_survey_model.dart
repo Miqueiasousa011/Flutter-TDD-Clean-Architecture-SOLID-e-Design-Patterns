@@ -1,7 +1,5 @@
 import 'package:fordev/domain/entities/survey_entity.dart';
 
-import '../http/http.dart';
-
 class LocalSurveyModel {
   final String id;
   final String question;
@@ -19,7 +17,7 @@ class LocalSurveyModel {
     if (!json.keys
         .toSet()
         .containsAll(['id', 'question', 'date', 'didAnswer'])) {
-      throw HttpError.invalidData;
+      throw Exception();
     }
 
     return LocalSurveyModel(

@@ -18,7 +18,7 @@ class LocalLoadSurveys {
 
     try {
       if (response?.isEmpty != false) {
-        throw DomainError.unexpected;
+        throw Exception();
       }
 
       return response
@@ -119,6 +119,19 @@ void main() {
             'question': 'question',
             'date': 'invalid',
             'didAnswer': false
+          },
+        ]);
+
+    final result = sut.load();
+
+    expect(result, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if cash is incomplete', () async {
+    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => [
+          {
+            'id': '1',
+            'date': '2000-02-02',
           },
         ]);
 
