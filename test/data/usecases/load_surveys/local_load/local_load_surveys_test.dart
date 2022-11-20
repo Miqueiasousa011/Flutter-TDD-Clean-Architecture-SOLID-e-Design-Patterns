@@ -189,5 +189,18 @@ void main() {
 
       verify(cacheStorage.delete('surveys')).called(1);
     });
+
+    test('Should delete cache if it is incomplete', () async {
+      when(cacheStorage.fetch(any)).thenAnswer((_) async => [
+            {
+              'id': '1',
+              'question': 'question',
+            },
+          ]);
+
+      await sut.validate();
+
+      verify(cacheStorage.delete('surveys')).called(1);
+    });
   });
 }
