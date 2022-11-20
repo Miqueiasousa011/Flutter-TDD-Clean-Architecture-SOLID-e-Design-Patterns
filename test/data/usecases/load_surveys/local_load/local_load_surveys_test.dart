@@ -174,5 +174,20 @@ void main() {
 
       verify(cacheStorage.fetch('surveys')).called(1);
     });
+
+    test('Should delete cache if isValid', () async {
+      when(cacheStorage.fetch(any)).thenAnswer((_) async => [
+            {
+              'id': '1',
+              'question': 'question',
+              'date': 'invalid',
+              'didAnswer': false
+            },
+          ]);
+
+      await sut.validate();
+
+      verify(cacheStorage.delete('surveys')).called(1);
+    });
   });
 }
