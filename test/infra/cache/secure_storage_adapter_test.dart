@@ -7,11 +7,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:fordev/infra/cache/cache.dart';
 
-import 'local_storage_adapter_test.mocks.dart';
+import 'secure_storage_adapter_test.mocks.dart';
 
 @GenerateMocks([FlutterSecureStorage])
 void main() {
-  late LocalStorageAdapter sut;
+  late SecureStorageAdapter sut;
   late MockFlutterSecureStorage secureStorage;
   late String key;
   late String value;
@@ -21,7 +21,7 @@ void main() {
     value = faker.guid.guid();
 
     secureStorage = MockFlutterSecureStorage();
-    sut = LocalStorageAdapter(secureStorage: secureStorage);
+    sut = SecureStorageAdapter(secureStorage: secureStorage);
   });
 
   group('saveSecure', () {

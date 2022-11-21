@@ -19,7 +19,7 @@ SurveysPresenter makeGetxSurveysPresenter() {
 LoadSurveysUsecase makeRemoteLoadSurveys() {
   return RemoteLoadSurveys(
     client: AuthorizeHttpClientDecorator(
-      secureCacheStorage: makeLocalStorageAdapter(),
+      secureCacheStorage: makeSecureStorageAdapter(),
       decoratee: makeHttpAdapter(),
     ),
     url: makeApiUrl('surveys'),

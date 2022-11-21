@@ -4,5 +4,5 @@ import 'package:fordev/domain/usecases/usecases.dart';
 import '../cache/cache.dart';
 
 LoadCurrentAccountUsecase makeLocalCurrentAccout() {
-  return LocalLoadCurrentAccount(fetchSecure: makeLocalStorageAdapter());
+  return LocalLoadCurrentAccount(fetchSecure: makeSecureStorageAdapter());
 }
