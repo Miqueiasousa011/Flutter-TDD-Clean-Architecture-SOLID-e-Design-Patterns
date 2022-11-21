@@ -26,7 +26,7 @@ void main() {
   late String value;
   late String key;
 
-  setUpAll(() {
+  setUp(() {
     value = faker.randomGenerator.string(10);
     key = faker.randomGenerator.string(10);
 
@@ -41,6 +41,14 @@ void main() {
       verify(localStorage.deleteItem(key)).called(1);
 
       verify(localStorage.setItem(key, value)).called(1);
+    });
+
+    test('Should throw if deleteItem throws', () async {
+      when(localStorage.deleteItem(any)).thenThrow(Exception());
+
+      final future = sut.save(key: key, value: value);
+
+      expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });
 }
