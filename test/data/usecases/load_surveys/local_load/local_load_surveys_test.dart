@@ -195,4 +195,51 @@ void main() {
       verify(cacheStorage.delete('surveys')).called(1);
     });
   });
+
+  group('save', () {
+    late MockCacheStorage cacheStorage;
+    late LocalLoadSurveys sut;
+    late List<SurveyEntity> surveys;
+
+    setUp(() {
+      surveys = [
+        SurveyEntity(
+          id: '1',
+          question: 'question 1',
+          dateTime: DateTime.utc(2020, 2, 2),
+          didAnswer: true,
+        ),
+        SurveyEntity(
+          id: '2',
+          question: 'question 2',
+          dateTime: DateTime.utc(2018, 12, 20),
+          didAnswer: false,
+        ),
+      ];
+
+      cacheStorage = MockCacheStorage();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
+    });
+
+    test('Should call cacheStorage with correct values', () async {
+      List<Map<String, dynamic>> list = [
+        {
+          'id': '1',
+          'question': 'question 1',
+          'date': '2020-02-02T00:00:00.000Z',
+          'didAnswer': true,
+        },
+        {
+          'id': '2',
+          'question': 'question 2',
+          'date': '2018-12-20T00:00:00.000Z',
+          'didAnswer': false,
+        },
+      ];
+
+      await sut.save(surveys);
+
+      verify(cacheStorage.save(key: 'surveys', value: list)).called(1);
+    });
+  });
 }

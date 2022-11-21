@@ -28,10 +28,26 @@ class LocalSurveyModel {
     );
   }
 
+  factory LocalSurveyModel.fromEntity(SurveyEntity survey) {
+    return LocalSurveyModel(
+      id: survey.id,
+      question: survey.question,
+      date: survey.dateTime.toIso8601String(),
+      didAnswer: survey.didAnswer,
+    );
+  }
+
   SurveyEntity toEntity() => SurveyEntity(
         id: id,
         question: question,
         dateTime: DateTime.parse(date),
         didAnswer: didAnswer,
       );
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'question': question,
+        'date': date,
+        'didAnswer': didAnswer,
+      };
 }

@@ -35,9 +35,17 @@ class LocalLoadSurveys implements LoadSurveysUsecase {
     }
   }
 
+  Future<void> save(List<SurveyEntity> surveys) async {
+    await _cacheStorage.save(key: 'surveys', value: _entityToJson(surveys));
+  }
+
   List<SurveyEntity> _jsonToEntyity(List<Map<String, dynamic>> listOfJson) =>
       listOfJson
           .map<SurveyEntity>(
               (json) => LocalSurveyModel.fromJson(json).toEntity())
           .toList();
+
+  List<Map<String, dynamic>> _entityToJson(List<SurveyEntity> list) => list
+      .map((entity) => LocalSurveyModel.fromEntity(entity).toMap())
+      .toList();
 }
