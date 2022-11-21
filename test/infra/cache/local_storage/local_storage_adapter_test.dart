@@ -49,4 +49,12 @@ void main() {
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });
+
+  group('delete', () {
+    test('Should call LocalStorage package with correct values', () async {
+      await sut.delete(key);
+
+      verify(localStorage.deleteItem(key)).called(1);
+    });
+  });
 }
