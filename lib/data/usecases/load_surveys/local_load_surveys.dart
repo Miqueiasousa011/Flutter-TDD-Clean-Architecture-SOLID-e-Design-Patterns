@@ -36,7 +36,11 @@ class LocalLoadSurveys implements LoadSurveysUsecase {
   }
 
   Future<void> save(List<SurveyEntity> surveys) async {
-    await _cacheStorage.save(key: 'surveys', value: _entityToJson(surveys));
+    try {
+      await _cacheStorage.save(key: 'surveys', value: _entityToJson(surveys));
+    } catch (e) {
+      throw DomainError.unexpected;
+    }
   }
 
   List<SurveyEntity> _jsonToEntyity(List<Map<String, dynamic>> listOfJson) =>
