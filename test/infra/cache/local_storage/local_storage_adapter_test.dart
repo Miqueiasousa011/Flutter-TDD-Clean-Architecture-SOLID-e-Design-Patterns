@@ -74,5 +74,15 @@ void main() {
 
       verify(localStorage.getItem(key));
     });
+
+    test('Shoul return same value as localStorage', () async {
+      final fetchResult = faker.randomGenerator.string(10);
+
+      when(localStorage.getItem(any)).thenAnswer((_) async => fetchResult);
+
+      final result = await sut.fetch(key);
+
+      expect(result, equals(fetchResult));
+    });
   });
 }
