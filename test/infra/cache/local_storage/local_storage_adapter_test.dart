@@ -84,5 +84,13 @@ void main() {
 
       expect(result, equals(fetchResult));
     });
+
+    test('Shoul throw if getItem throws', () async {
+      when(localStorage.getItem(any)).thenThrow(Exception());
+
+      final future = sut.fetch(key);
+
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
   });
 }
