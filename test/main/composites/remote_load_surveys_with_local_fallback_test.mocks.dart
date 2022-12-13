@@ -5,6 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:fordev/data/usecases/load_surveys/local_load_surveys.dart'
+    as _i5;
 import 'package:fordev/data/usecases/load_surveys/remote_load_surveys.dart'
     as _i2;
 import 'package:fordev/domain/entities/entities.dart' as _i4;
@@ -38,4 +40,41 @@ class MockRemoteLoadSurveys extends _i1.Mock implements _i2.RemoteLoadSurveys {
         returnValue:
             _i3.Future<List<_i4.SurveyEntity>>.value(<_i4.SurveyEntity>[]),
       ) as _i3.Future<List<_i4.SurveyEntity>>);
+}
+
+/// A class which mocks [LocalLoadSurveys].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLocalLoadSurveys extends _i1.Mock implements _i5.LocalLoadSurveys {
+  MockLocalLoadSurveys() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<List<_i4.SurveyEntity>> load() => (super.noSuchMethod(
+        Invocation.method(
+          #load,
+          [],
+        ),
+        returnValue:
+            _i3.Future<List<_i4.SurveyEntity>>.value(<_i4.SurveyEntity>[]),
+      ) as _i3.Future<List<_i4.SurveyEntity>>);
+  @override
+  _i3.Future<void> validate() => (super.noSuchMethod(
+        Invocation.method(
+          #validate,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+  @override
+  _i3.Future<void> save(List<_i4.SurveyEntity>? surveys) => (super.noSuchMethod(
+        Invocation.method(
+          #save,
+          [surveys],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
