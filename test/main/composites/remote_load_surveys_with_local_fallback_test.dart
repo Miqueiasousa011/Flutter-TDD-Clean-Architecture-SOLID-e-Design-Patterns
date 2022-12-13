@@ -116,4 +116,13 @@ main() {
 
     expect(result, localSurveys);
   });
+
+  test('Should throw UnexpectedError if remote and local throws', () async {
+    when(remote.load()).thenThrow(DomainError.unexpected);
+    when(local.load()).thenThrow(DomainError.unexpected);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
