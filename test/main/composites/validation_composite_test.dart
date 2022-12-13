@@ -1,10 +1,10 @@
+import 'package:fordev/main/composites/composites.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fordev/validation/protocols/protocols.dart';
-import 'package:fordev/validation/validators/validators.dart';
 
 import 'validation_composite_test.mocks.dart';
 
