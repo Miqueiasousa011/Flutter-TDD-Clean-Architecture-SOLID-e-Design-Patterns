@@ -21,11 +21,19 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveysUsecase {
 
   @override
   Future<List<SurveyEntity>> load() async {
-    final surveys = await _remote.load();
+    try {
+      final surveys = await _remote.load();
 
-    await _local.save(surveys);
+      await _local.save(surveys);
 
-    return surveys;
+      return surveys;
+    } catch (e) {
+      if (e == DomainError.accessDenied) {
+        rethrow;
+      }
+      await _local.validate();
+      return await _local.load();
+    }
   }
 }
 
@@ -79,5 +87,15 @@ main() {
 
     //Como é rethrow o erro repassado deve ser o mesmo do recebido
     expect(future, throwsA(DomainError.accessDenied));
+  });
+
+  test('Should call local fetch on remote error', () async {
+    when(remote.load()).thenThrow(DomainError.unexpected);
+    when(local.load()).thenAnswer((_) async => []);
+
+    await sut.load();
+
+    verify(local.validate()).called(1);
+    verify(local.load()).called(1);
   });
 }
