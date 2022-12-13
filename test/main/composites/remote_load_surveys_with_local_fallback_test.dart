@@ -23,7 +23,6 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveysUsecase {
   Future<List<SurveyEntity>> load() async {
     try {
       final surveys = await _remote.load();
-
       await _local.save(surveys);
 
       return surveys;
@@ -44,9 +43,19 @@ main() {
   late MockLocalLoadSurveys local;
 
   late List<SurveyEntity> remoteSurveys;
+  late List<SurveyEntity> localSurveys;
 
   setUp(() {
     remoteSurveys = [
+      SurveyEntity(
+        id: faker.guid.guid(),
+        question: faker.randomGenerator.string(50),
+        dateTime: faker.date.dateTime(),
+        didAnswer: faker.randomGenerator.boolean(),
+      )
+    ];
+
+    localSurveys = [
       SurveyEntity(
         id: faker.guid.guid(),
         question: faker.randomGenerator.string(50),
@@ -97,5 +106,14 @@ main() {
 
     verify(local.validate()).called(1);
     verify(local.load()).called(1);
+  });
+
+  test('Should return local surveys', () async {
+    when(remote.load()).thenThrow(DomainError.unexpected);
+    when(local.load()).thenAnswer((_) async => localSurveys);
+
+    final result = await sut.load();
+
+    expect(result, localSurveys);
   });
 }
