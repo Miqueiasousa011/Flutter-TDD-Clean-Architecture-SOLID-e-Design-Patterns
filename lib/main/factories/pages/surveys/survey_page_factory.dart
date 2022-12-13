@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/data/usecases/usecases.dart';
-import 'package:fordev/domain/usecases/usecases.dart';
+import 'package:fordev/main/composites/composites.dart';
 import 'package:fordev/main/decorators/authorize_http_client_decorator.dart';
 import 'package:fordev/main/factories/cache/cache.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
@@ -13,15 +13,28 @@ Widget makeSurveyPage() {
 }
 
 SurveysPresenter makeGetxSurveysPresenter() {
-  return GetxSurveysPresenter(loadSurveys: makeRemoteLoadSurveys());
+  return GetxSurveysPresenter(
+    loadSurveys: makeRemoteLoadSurveysWithLocalFallback(),
+  );
 }
 
-LoadSurveysUsecase makeRemoteLoadSurveys() {
+RemoteLoadSurveys makeRemoteLoadSurveys() {
   return RemoteLoadSurveys(
     client: AuthorizeHttpClientDecorator(
       secureCacheStorage: makeSecureStorageAdapter(),
       decoratee: makeHttpAdapter(),
     ),
     url: makeApiUrl('surveys'),
+  );
+}
+
+LocalLoadSurveys makeLocalLoadSurveys() {
+  return LocalLoadSurveys(cacheStorage: makeLocalStorageAdapter());
+}
+
+RemoteLoadSurveysWithLocalFallback makeRemoteLoadSurveysWithLocalFallback() {
+  return RemoteLoadSurveysWithLocalFallback(
+    remote: makeRemoteLoadSurveys(),
+    local: makeLocalLoadSurveys(),
   );
 }
