@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:fordev/domain/entities/survey_entity.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/usecases/load_surveys_usecase.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -69,5 +70,14 @@ main() {
     final response = await sut.load();
 
     expect(response, remoteSurveys);
+  });
+
+  test('Should rethrow if remote load throws AccessDeniedError', () async {
+    when(remote.load()).thenThrow(DomainError.accessDenied);
+
+    final future = sut.load();
+
+    //Como é rethrow o erro repassado deve ser o mesmo do recebido
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }
