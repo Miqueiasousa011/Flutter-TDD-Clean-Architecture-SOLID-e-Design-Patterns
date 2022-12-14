@@ -18,15 +18,13 @@ class RemoteSurveyResultModel {
       throw HttpError.invalidData;
     }
 
-    final answers = <RemoteSurveyAnswerModel>[];
-    for (var answer in json['answers']) {
-      answers.add(RemoteSurveyAnswerModel.fromJson(answer));
-    }
-
     return RemoteSurveyResultModel(
       surveyId: json['surveyId'],
       question: json['question'],
-      answers: answers,
+      answers: json['answers']
+          .map<RemoteSurveyAnswerModel>(
+              (answer) => RemoteSurveyAnswerModel.fromJson(answer))
+          .toList(),
     );
   }
 

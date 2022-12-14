@@ -95,4 +95,31 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpextedError if HttpClient returns 404', () {
+    when(client.request(url: anyNamed('url'), method: anyNamed('method')))
+        .thenThrow(HttpError.badRequest);
+
+    final future = sut.loadBySurvey();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 500', () {
+    when(client.request(url: anyNamed('url'), method: anyNamed('method')))
+        .thenThrow(HttpError.serverError);
+
+    final future = sut.loadBySurvey();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw  AcessDenidError if HttpClient returns 403', () {
+    when(client.request(url: anyNamed('url'), method: anyNamed('method')))
+        .thenThrow(HttpError.forbiddenError);
+
+    final future = sut.loadBySurvey();
+
+    expect(future, throwsA(DomainError.accessDenied));
+  });
 }
