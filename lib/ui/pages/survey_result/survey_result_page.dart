@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
 
+import 'survey_result_presenter.dart';
+
 class SurveyResultPage extends StatefulWidget {
-  const SurveyResultPage({super.key});
+  const SurveyResultPage({super.key, required this.presenter});
+
+  final SurveyResultPresenter presenter;
 
   @override
   State<SurveyResultPage> createState() => _SurveyResultPageState();
 }
 
 class _SurveyResultPageState extends State<SurveyResultPage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.presenter.loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

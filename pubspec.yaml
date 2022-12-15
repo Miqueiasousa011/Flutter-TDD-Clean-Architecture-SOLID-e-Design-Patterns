@@ -37,3 +37,4 @@ flutter:
   uses-material-design: true
   assets:
     - lib/ui/assets/
+#flutter pub run build_runner build --delete-conflicting-outputs

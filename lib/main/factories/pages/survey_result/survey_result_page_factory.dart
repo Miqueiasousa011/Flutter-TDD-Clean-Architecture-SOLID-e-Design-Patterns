@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../ui/pages/pages.dart';
+// import '../../../../ui/pages/pages.dart';
 
 Widget makeSurveyResultPage() {
-  return const SurveyResultPage();
+  return Container();
+
+  ///SurveyResultPage();
 }
