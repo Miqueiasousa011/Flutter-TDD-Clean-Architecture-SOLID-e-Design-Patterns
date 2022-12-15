@@ -37,38 +37,55 @@ class _SurveyResultPageState extends State<SurveyResultPage> {
       body: Builder(builder: (context) {
         widget.presenter.isLoadingController.listen(handleLoadingWidgetbool);
 
-        return ListView.separated(
-          padding: const EdgeInsets.only(top: 20),
-          itemCount: 2,
-          separatorBuilder: (context, index) =>
-              index == 0 ? const SizedBox() : const Divider(),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  'Qual é o seu ola mundo?',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
+        return StreamBuilder<List>(
+            stream: widget.presenter.surveyResultController,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Column(
+                  children: [
+                    Text('${snapshot.error}'),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => widget.presenter.loadData(),
+                      child: Text(R.strings.reload),
+                    ),
+                  ],
+                );
+              }
+
+              return ListView.separated(
+                padding: const EdgeInsets.only(top: 20),
+                itemCount: 2,
+                separatorBuilder: (context, index) =>
+                    index == 0 ? const SizedBox() : const Divider(),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        'Qual é o seu ola mundo?',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                    );
+                  }
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Ract',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.grey[400],
+                      ),
+                    ],
+                  );
+                },
               );
-            }
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Ract',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.grey[400],
-                ),
-              ],
-            );
-          },
-        );
+            });
       }),
     );
   }
