@@ -76,4 +76,32 @@ void main() {
     expect(find.text(R.strings.msgUnexpectedError), findsOneWidget);
     expect(find.text(R.strings.reload), findsOneWidget);
   });
+
+  // testWidgets('Should present list if loadSurveysStream success',
+  //     (tester) async {
+  //   await loadPage(tester);
+
+  //   surveyResultController.add([]);
+
+  //   await tester.pump();
+
+  //   expect(find.byType(ListView), findsOneWidget);
+  //   expect(find.text('Enquete 1'), findsOneWidget);
+  //   expect(find.text('React'), findsOneWidget);
+  //   expect(find.text(R.strings.reload), findsNothing);
+  // });
+
+  testWidgets('Should call LoadSurveys on click reload button', (tester) async {
+    await loadPage(tester);
+
+    surveyResultController.addError(UIError.unexpected);
+
+    await tester.pump();
+
+    final button = find.byType(ElevatedButton);
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+
+    verify(presenter.loadData()).called(2);
+  });
 }
