@@ -38,7 +38,7 @@ void main() {
     return SurveyResultViewModel(
       surveyId: faker.guid.guid(),
       question: faker.randomGenerator.string(40),
-      answers: [
+      answers: const [
         SurveyAnswerViewModel(
           image: 'image 1',
           answer: 'React',

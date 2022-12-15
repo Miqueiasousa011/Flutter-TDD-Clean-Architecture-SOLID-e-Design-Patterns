@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../../ui/pages/pages.dart';
@@ -43,7 +42,7 @@ class GetxSurveysPresenter implements SurveysPresenter {
           .toList();
 
       _controller.add(value);
-    } on DomainError catch (e) {
+    } catch (e) {
       _controller.addError(UIError.unexpected.description);
     } finally {
       _isLoading.value = false;
