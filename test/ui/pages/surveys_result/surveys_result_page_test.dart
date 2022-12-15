@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
@@ -8,6 +9,7 @@ import 'package:fordev/utils/i18n/i18n.dart';
 import 'package:get/route_manager.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 
 import 'surveys_result_page_test.mocks.dart';
 
@@ -15,7 +17,7 @@ import 'surveys_result_page_test.mocks.dart';
 void main() {
   late MockSurveyResultPresenter presenter;
   late StreamController<bool> isLoadingController;
-  late StreamController<List> surveyResultController;
+  late StreamController<SurveyResultViewModel> surveyResultController;
 
   Future<void> loadPage(WidgetTester tester) async {
     final page = GetMaterialApp(
@@ -27,8 +29,30 @@ void main() {
         )
       ],
     );
+    await mockNetworkImagesFor(() async {
+      await tester.pumpWidget(page);
+    });
+  }
 
-    await tester.pumpWidget(page);
+  SurveyResultViewModel mockSurveyResult() {
+    return SurveyResultViewModel(
+      surveyId: faker.guid.guid(),
+      question: faker.randomGenerator.string(40),
+      answers: [
+        SurveyAnswerViewModel(
+          image: 'image 1',
+          answer: 'React',
+          isCurrentAnswer: false,
+          percent: '100%',
+        ),
+        SurveyAnswerViewModel(
+          image: '',
+          answer: 'Flutter',
+          isCurrentAnswer: true,
+          percent: '10%',
+        ),
+      ],
+    );
   }
 
   setUp(() {
@@ -77,20 +101,6 @@ void main() {
     expect(find.text(R.strings.reload), findsOneWidget);
   });
 
-  // testWidgets('Should present list if loadSurveysStream success',
-  //     (tester) async {
-  //   await loadPage(tester);
-
-  //   surveyResultController.add([]);
-
-  //   await tester.pump();
-
-  //   expect(find.byType(ListView), findsOneWidget);
-  //   expect(find.text('Enquete 1'), findsOneWidget);
-  //   expect(find.text('React'), findsOneWidget);
-  //   expect(find.text(R.strings.reload), findsNothing);
-  // });
-
   testWidgets('Should call LoadSurveys on click reload button', (tester) async {
     await loadPage(tester);
 
@@ -103,5 +113,28 @@ void main() {
     await tester.tap(button);
 
     verify(presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should present SurveysStream success', (tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(mockSurveyResult());
+
+    await mockNetworkImagesFor(() async {
+      await tester.pump();
+    });
+
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
+    expect(find.text('Flutter'), findsOneWidget);
+    expect(find.text('React'), findsOneWidget);
+    expect(find.text(R.strings.reload), findsNothing);
+
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisabledIcon), findsOneWidget);
+
+    final image =
+        tester.widget<Image>(find.byType(Image)).image as NetworkImage;
+
+    expect(image.url, equals('image 1'));
   });
 }

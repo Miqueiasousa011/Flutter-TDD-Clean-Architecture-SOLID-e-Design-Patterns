@@ -7,6 +7,8 @@ import 'dart:async' as _i3;
 
 import 'package:fordev/ui/pages/survey_result/survey_result_presenter.dart'
     as _i2;
+import 'package:fordev/ui/pages/survey_result/survey_result_view_model.dart'
+    as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -30,10 +32,11 @@ class MockSurveyResultPresenter extends _i1.Mock
   }
 
   @override
-  _i3.Stream<List<dynamic>> get surveyResultController => (super.noSuchMethod(
+  _i3.Stream<_i4.SurveyResultViewModel> get surveyResultController =>
+      (super.noSuchMethod(
         Invocation.getter(#surveyResultController),
-        returnValue: _i3.Stream<List<dynamic>>.empty(),
-      ) as _i3.Stream<List<dynamic>>);
+        returnValue: _i3.Stream<_i4.SurveyResultViewModel>.empty(),
+      ) as _i3.Stream<_i4.SurveyResultViewModel>);
   @override
   _i3.Stream<bool> get isLoadingController => (super.noSuchMethod(
         Invocation.getter(#isLoadingController),
