@@ -30,6 +30,11 @@ class MockSurveyResultPresenter extends _i1.Mock
   }
 
   @override
+  _i3.Stream<bool> get isLoadingController => (super.noSuchMethod(
+        Invocation.getter(#isLoadingController),
+        returnValue: _i3.Stream<bool>.empty(),
+      ) as _i3.Stream<bool>);
+  @override
   _i3.Future<void> loadData() => (super.noSuchMethod(
         Invocation.method(
           #loadData,
