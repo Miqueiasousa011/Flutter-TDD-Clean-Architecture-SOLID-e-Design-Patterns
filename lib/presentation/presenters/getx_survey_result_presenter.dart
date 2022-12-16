@@ -5,8 +5,9 @@ import 'package:fordev/presentation/mixins/mixins.dart';
 
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
+import 'package:get/get.dart';
 
-class GetxSurveyResultPresenter
+class GetxSurveyResultPresenter extends GetxController
     with LoadingManager, SessionManager
     implements SurveyResultPresenter {
   final LoadSurveyResultUsecase _loadSurveyResult;

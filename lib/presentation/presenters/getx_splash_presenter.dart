@@ -1,8 +1,11 @@
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/splash/splash.dart';
 import '../mixins/mixins.dart';
+import 'package:get/get.dart';
 
-class GetxSplashPresenter with NavigateManager implements SplashPresenter {
+class GetxSplashPresenter extends GetxController
+    with NavigateManager
+    implements SplashPresenter {
   GetxSplashPresenter({required LoadCurrentAccountUsecase loadCurrentAccount})
       : _loadCurrentAccount = loadCurrentAccount;
 

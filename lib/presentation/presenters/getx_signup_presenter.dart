@@ -8,7 +8,7 @@ import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../protocols/protocols.dart';
 
-class GetxSignUpPresenter
+class GetxSignUpPresenter extends GetxController
     with LoadingManager, NavigateManager
     implements SignUpPresenter {
   GetxSignUpPresenter({
