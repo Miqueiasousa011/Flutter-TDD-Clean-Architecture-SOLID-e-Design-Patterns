@@ -1,4 +1,6 @@
 import 'package:fordev/domain/helpers/helpers.dart';
+
+import 'package:fordev/presentation/mixins/mixins.dart';
 import 'package:fordev/ui/pages/signup/signup_presenter.dart';
 import 'package:get/get.dart';
 
@@ -6,7 +8,9 @@ import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../protocols/protocols.dart';
 
-class GetxSignUpPresenter implements SignUpPresenter {
+class GetxSignUpPresenter
+    with LoadingManager, NavigateManager
+    implements SignUpPresenter {
   GetxSignUpPresenter({
     required Validation validation,
     required AddAccountUsecase addAccountUsecase,
@@ -30,8 +34,6 @@ class GetxSignUpPresenter implements SignUpPresenter {
   final _passwordConfirmationError = Rx<UIError?>(null);
   final _isFormValid = RxBool(false);
   final _mainError = Rx<UIError?>(null);
-  final _isLoading = RxBool(false);
-  final _navigateTo = Rx<String?>(null);
 
   @override
   Stream<UIError?> get nameErrorController => _nameError.stream;
@@ -46,10 +48,6 @@ class GetxSignUpPresenter implements SignUpPresenter {
   Stream<bool> get isFormValidController => _isFormValid.stream;
   @override
   Stream<UIError?> get mainErrorStreamController => _mainError.stream;
-  @override
-  Stream<bool> get isLoadingController => _isLoading.stream;
-  @override
-  Stream<String?> get navigateToController => _navigateTo.stream;
 
   @override
   void validateEmail(String? email) {
@@ -86,7 +84,7 @@ class GetxSignUpPresenter implements SignUpPresenter {
   @override
   Future<void> signUp() async {
     try {
-      _isLoading.value = true;
+      isLoading = true;
       final account = await _addAccountUsecase.add(AddAccountParams(
         name: _name!,
         email: _email!,
@@ -95,7 +93,7 @@ class GetxSignUpPresenter implements SignUpPresenter {
       ));
 
       await _saveCurrentAccount.save(account);
-      _navigateTo.value = '/surveys';
+      navigateTo = '/surveys';
     } on DomainError catch (e) {
       switch (e) {
         case DomainError.emailInUse:
@@ -104,9 +102,9 @@ class GetxSignUpPresenter implements SignUpPresenter {
         default:
           _mainError.value = UIError.unexpected;
       }
-      _isLoading.value = false;
+      isLoading = false;
     } finally {
-      _isLoading.value = false;
+      isLoading = false;
     }
   }
 

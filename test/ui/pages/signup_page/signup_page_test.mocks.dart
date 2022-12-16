@@ -65,8 +65,8 @@ class MockSignUpPresenter extends _i1.Mock implements _i2.SignUpPresenter {
         returnValue: _i3.Stream<bool>.empty(),
       ) as _i3.Stream<bool>);
   @override
-  _i3.Stream<String?> get navigateToController => (super.noSuchMethod(
-        Invocation.getter(#navigateToController),
+  _i3.Stream<String?> get navigateToStream => (super.noSuchMethod(
+        Invocation.getter(#navigateToStream),
         returnValue: _i3.Stream<String?>.empty(),
       ) as _i3.Stream<String?>);
   @override

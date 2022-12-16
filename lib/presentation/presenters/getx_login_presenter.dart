@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fordev/domain/helpers/helpers.dart';
+import 'package:fordev/presentation/mixins/mixins.dart';
 import 'package:fordev/ui/helpers/ui_error.dart';
 import 'package:fordev/ui/pages/login/login.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,9 @@ import 'package:get/get.dart';
 import '../../domain/usecases/usecases.dart';
 import '../protocols/protocols.dart';
 
-class GetXLoginPresenter extends GetxController implements LoginPresenter {
+class GetXLoginPresenter extends GetxController
+    with LoadingManager, NavigateManager
+    implements LoginPresenter {
   GetXLoginPresenter({
     required Validation validation,
     required AuthenticationUsecase authenticationUsecase,
@@ -27,8 +30,7 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   final _emailError = Rx<UIError?>(null);
   final _passwordError = Rx<UIError?>(null);
   final _mainError = Rx<UIError?>(null);
-  final _navigateTo = Rx<String?>(null);
-  final _isLoading = RxBool(false);
+
   final _isFormValid = RxBool(false);
 
   @override
@@ -41,13 +43,7 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   Stream<bool> get isFormValidController => _isFormValid.stream.distinct();
 
   @override
-  Stream<bool> get isLoadingController => _isLoading.stream.distinct();
-
-  @override
   Stream<UIError?> get mainErrorController => _mainError.stream;
-
-  @override
-  Stream<String?> get navigateToStream => _navigateTo.stream;
 
   UIError? _validateField(String field) {
     final formData = {
@@ -89,12 +85,12 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
       email: _email!,
       password: _password!,
     );
-    _isLoading.value = true;
+    isLoading = true;
 
     try {
       final account = await _authenticationUsecase.auth(params);
       await _saveCurrentAccount.save(account);
-      _navigateTo.value = '/surveys';
+      navigateTo = '/surveys';
     } on DomainError catch (e) {
       switch (e) {
         case DomainError.invalidCredentialsError:
@@ -104,7 +100,7 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
           _mainError.value = UIError.unexpected;
       }
     } finally {
-      _isLoading.value = false;
+      isLoading = false;
     }
   }
 
@@ -121,5 +117,5 @@ class GetXLoginPresenter extends GetxController implements LoginPresenter {
   }
 
   @override
-  void goToSignUp() => _navigateTo.value = '/signup';
+  void goToSignUp() => navigateTo = '/signup';
 }

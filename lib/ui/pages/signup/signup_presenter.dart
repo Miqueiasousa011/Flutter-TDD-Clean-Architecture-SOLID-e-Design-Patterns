@@ -8,7 +8,7 @@ abstract class SignUpPresenter {
   Stream<UIError?> get mainErrorStreamController;
   Stream<bool> get isFormValidController;
   Stream<bool> get isLoadingController;
-  Stream<String?> get navigateToController;
+  Stream<String?> get navigateToStream;
 
   void validateName(String? name);
   void validateEmail(String? email);

@@ -68,7 +68,7 @@ void main() {
         .thenAnswer((_) => mainErrorStreamController.stream);
 
     navigateToController = StreamController();
-    when(presenter.navigateToController)
+    when(presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
   });
 

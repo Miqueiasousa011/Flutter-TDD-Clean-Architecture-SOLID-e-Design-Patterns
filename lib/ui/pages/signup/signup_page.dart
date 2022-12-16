@@ -36,7 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
           }
         });
 
-        widget.presenter.navigateToController.listen((route) {
+        widget.presenter.navigateToStream.listen((route) {
           if (route?.isNotEmpty == true) {
             Get.offAllNamed(route!);
           }
