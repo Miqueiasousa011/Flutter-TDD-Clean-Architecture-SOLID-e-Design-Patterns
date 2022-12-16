@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:fordev/ui/components/spinner_dialog.dart';
+import 'package:fordev/ui/mixins/mixins.dart';
 import 'package:fordev/ui/pages/surveys/surveys.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
 import 'package:get/get.dart';
@@ -17,7 +17,8 @@ class SurveyPage extends StatefulWidget {
   State<SurveyPage> createState() => _SurveyPageState();
 }
 
-class _SurveyPageState extends State<SurveyPage> {
+class _SurveyPageState extends State<SurveyPage>
+    with LoadingManager, SessionManager {
   @override
   void initState() {
     super.initState();
@@ -28,11 +29,7 @@ class _SurveyPageState extends State<SurveyPage> {
       }
     });
 
-    widget.presenter.isSessionExpiredStream.listen((sessionExpired) {
-      if (sessionExpired == true) {
-        Get.offAllNamed('/login');
-      }
-    });
+    handleSessionExpired(widget.presenter.isSessionExpiredStream);
   }
 
   @override
@@ -48,8 +45,7 @@ class _SurveyPageState extends State<SurveyPage> {
       ),
       body: Builder(
         builder: (context) {
-          widget.presenter.isLoadingController.listen(_isLoading);
-
+          handleLoading(context, widget.presenter.isLoadingController);
           return StreamBuilder<List<SurveyViewModel>>(
             stream: widget.presenter.surveysStream,
             builder: (context, snapshot) {
@@ -94,13 +90,5 @@ class _SurveyPageState extends State<SurveyPage> {
         },
       ),
     );
-  }
-
-  void _isLoading(bool isLoading) {
-    if (isLoading) {
-      showLoading(context);
-    } else {
-      hidenLoading(context);
-    }
   }
 }

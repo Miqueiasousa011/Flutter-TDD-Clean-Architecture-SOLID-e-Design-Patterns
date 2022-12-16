@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:get/get.dart';
 
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
+import '../../mixins/mixins.dart';
 import 'components/components.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,14 +17,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  void _hindeKeyBoard() {
-    FocusScopeNode currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
-  }
-
+class _LoginPageState extends State<LoginPage>
+    with KeyboardManager, LoadingManager, UIErrorManager {
   @override
   void dispose() {
     widget.loginPresenter.dispose();
@@ -36,19 +30,8 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.loginPresenter.isLoadingController.listen((isLoading) {
-            if (isLoading) {
-              showLoading(context);
-            } else {
-              hidenLoading(context);
-            }
-          });
-
-          widget.loginPresenter.mainErrorController.listen((error) {
-            if (error != null) {
-              showErrorMessage(context, error.description);
-            }
-          });
+          handleLoading(context, widget.loginPresenter.isLoadingController);
+          handleError(context, widget.loginPresenter.mainErrorController);
 
           widget.loginPresenter.navigateToStream.listen((page) {
             if (page?.isNotEmpty == true) {
@@ -57,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
           });
 
           return GestureDetector(
-            onTap: _hindeKeyBoard,
+            onTap: hindeKeyBoard,
             child: SingleChildScrollView(
               child: Column(
                 children: [

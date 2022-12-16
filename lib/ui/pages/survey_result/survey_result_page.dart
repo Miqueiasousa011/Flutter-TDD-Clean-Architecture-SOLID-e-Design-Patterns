@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/mixins/mixins.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
-import 'package:get/get.dart';
 
-import '../../components/components.dart';
 import 'survey_result_presenter.dart';
 import 'survey_result_view_model.dart';
 
@@ -15,25 +14,14 @@ class SurveyResultPage extends StatefulWidget {
   State<SurveyResultPage> createState() => _SurveyResultPageState();
 }
 
-class _SurveyResultPageState extends State<SurveyResultPage> {
+class _SurveyResultPageState extends State<SurveyResultPage>
+    with LoadingManager, SessionManager {
   @override
   void initState() {
     super.initState();
     widget.presenter.loadData();
 
-    widget.presenter.isSessionExpiredStream.listen((sessionExpired) {
-      if (sessionExpired == true) {
-        Get.offAllNamed('/login');
-      }
-    });
-  }
-
-  void handleLoadingWidgetbool(isLoading) {
-    if (isLoading) {
-      showLoading(context);
-    } else {
-      hidenLoading(context);
-    }
+    handleSessionExpired(widget.presenter.isSessionExpiredStream);
   }
 
   @override
@@ -44,7 +32,7 @@ class _SurveyResultPageState extends State<SurveyResultPage> {
       ),
       body: Builder(
         builder: (context) {
-          widget.presenter.isLoadingController.listen(handleLoadingWidgetbool);
+          handleLoading(context, widget.presenter.isLoadingController);
 
           return StreamBuilder<SurveyResultViewModel>(
             stream: widget.presenter.surveyResultController,

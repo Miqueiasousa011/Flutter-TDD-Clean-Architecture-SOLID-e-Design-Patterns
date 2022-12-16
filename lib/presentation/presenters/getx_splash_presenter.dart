@@ -13,6 +13,7 @@ class GetxSplashPresenter with NavigateManager implements SplashPresenter {
     try {
       final account = await _loadCurrentAccount.load();
       navigateTo = account == null ? '/login' : '/surveys';
+      navigateTo = '/login';
     } catch (e) {
       navigateTo = '/login';
     }

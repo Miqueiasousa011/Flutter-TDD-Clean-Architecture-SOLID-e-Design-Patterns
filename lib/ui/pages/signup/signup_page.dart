@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fordev/ui/helpers/helpers.dart';
+import 'package:fordev/ui/mixins/mixins.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -17,24 +17,14 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends State<SignUpPage>
+    with KeyboardManager, LoadingManager, UIErrorManager {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (context) {
-        widget.presenter.isLoadingController.listen((isLoading) {
-          if (isLoading) {
-            showLoading(context);
-          } else {
-            hidenLoading(context);
-          }
-        });
-
-        widget.presenter.mainErrorStreamController.listen((error) {
-          if (error != null) {
-            showErrorMessage(context, error.description);
-          }
-        });
+        handleLoading(context, widget.presenter.isLoadingController);
+        handleError(context, widget.presenter.mainErrorStreamController);
 
         widget.presenter.navigateToStream.listen((route) {
           if (route?.isNotEmpty == true) {
@@ -43,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
         });
 
         return GestureDetector(
-          onTap: _hindeKeyBoard,
+          onTap: hindeKeyBoard,
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Provider(
@@ -71,12 +61,5 @@ class _SignUpPageState extends State<SignUpPage> {
         );
       }),
     );
-  }
-
-  void _hindeKeyBoard() {
-    FocusScopeNode currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
   }
 }
