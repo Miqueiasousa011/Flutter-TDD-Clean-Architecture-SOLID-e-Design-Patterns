@@ -25,6 +25,8 @@ class GetxSurveysPresenter implements SurveysPresenter {
   @override
   Stream<List<SurveyViewModel>> get surveysStream => _controller.stream;
 
+  final _navigateTo = Rx<String?>(null);
+
   @override
   Future<void> loadData() async {
     try {
@@ -48,4 +50,12 @@ class GetxSurveysPresenter implements SurveysPresenter {
       _isLoading.value = false;
     }
   }
+
+  @override
+  void goToSurveyResult(String surveyId) {
+    _navigateTo.value = '/survey_result/$surveyId';
+  }
+
+  @override
+  Stream<String?> get navigateToStream => _navigateTo.stream;
 }

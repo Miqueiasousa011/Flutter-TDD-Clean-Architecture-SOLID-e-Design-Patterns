@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fordev/ui/components/spinner_dialog.dart';
 import 'package:fordev/ui/pages/surveys/surveys.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import 'components/components.dart';
 
@@ -16,6 +18,17 @@ class SurveyPage extends StatefulWidget {
 }
 
 class _SurveyPageState extends State<SurveyPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    widget.presenter.navigateToStream.listen((route) {
+      if (route != null) {
+        Get.toNamed(route);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.presenter.loadData();
@@ -56,7 +69,15 @@ class _SurveyPageState extends State<SurveyPage> {
                       enlargeCenterPage: true,
                     ),
                     items: snapshot.data!
-                        .map((viewModel) => SurveyItem(viewModel))
+                        .map(
+                          (viewModel) => Provider(
+                            create: (context) => widget.presenter,
+                            child: SurveyItem(
+                              viewModel,
+                              key: Key(viewModel.id),
+                            ),
+                          ),
+                        )
                         .toList(),
                   ),
                 );

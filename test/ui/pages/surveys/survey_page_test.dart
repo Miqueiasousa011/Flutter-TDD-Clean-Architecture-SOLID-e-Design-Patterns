@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -18,6 +18,7 @@ void main() {
   late MockSurveysPresenter presenter;
   late StreamController<bool> isLoadingController;
   late StreamController<List<SurveyViewModel>> surveysStream;
+  late StreamController<String> navigateToController;
 
   setUp(() {
     presenter = MockSurveysPresenter();
@@ -28,6 +29,10 @@ void main() {
 
     surveysStream = StreamController();
     when(presenter.surveysStream).thenAnswer((_) => surveysStream.stream);
+
+    navigateToController = StreamController();
+    when(presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
   });
 
   tearDown(() {
@@ -56,7 +61,8 @@ void main() {
     final page = GetMaterialApp(
       initialRoute: '/surveys',
       getPages: [
-        GetPage(name: '/surveys', page: () => SurveyPage(presenter: presenter))
+        GetPage(name: '/surveys', page: () => SurveyPage(presenter: presenter)),
+        GetPage(name: '/surveys_result/:id', page: () => Container())
       ],
     );
 
@@ -123,5 +129,27 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     //o segundo reload deve acontecer.
     verify(presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should call goToSurveyResult on survey click', (tester) async {
+    await loadPage(tester);
+
+    surveysStream.add(makeSurveys());
+    await tester.pump();
+
+    final card = find.text('question 1');
+    await tester.tap(card);
+    await tester.pump();
+
+    verify(presenter.goToSurveyResult('1')).called(1);
+  });
+
+  testWidgets('Should navigate to surveys result', (tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/surveys_result/1');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, equals('/surveys_result/1'));
   });
 }

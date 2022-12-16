@@ -5,4 +5,6 @@ abstract class SurveysPresenter {
   Stream<List<SurveyViewModel>> get surveysStream;
 
   Future<void> loadData();
+  void goToSurveyResult(String surveyId);
+  Stream<String?> get navigateToStream;
 }
