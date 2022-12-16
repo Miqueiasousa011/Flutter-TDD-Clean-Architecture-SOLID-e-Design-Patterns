@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fordev/data/cache/delete_secure_cache_storage.dart';
 import 'package:fordev/data/usecases/usecases.dart';
 import 'package:fordev/main/composites/composites.dart';
 import 'package:fordev/main/decorators/authorize_http_client_decorator.dart';
@@ -23,7 +22,7 @@ RemoteLoadSurveys makeRemoteLoadSurveys() {
   return RemoteLoadSurveys(
     client: AuthorizeHttpClientDecorator(
       fetchSecureCacheStorage: makeSecureStorageAdapter(),
-      deleteSecureCacheStorage: A(),
+      deleteSecureCacheStorage: makeSecureStorageAdapter(),
       decoratee: makeHttpAdapter(),
     ),
     url: makeApiUrl('surveys'),
@@ -39,9 +38,4 @@ RemoteLoadSurveysWithLocalFallback makeRemoteLoadSurveysWithLocalFallback() {
     remote: makeRemoteLoadSurveys(),
     local: makeLocalLoadSurveys(),
   );
-}
-
-class A implements DeleteSecureCacheStorage {
-  @override
-  Future<void> delete(String key) async {}
 }

@@ -68,4 +68,20 @@ void main() {
       expect(result, throwsA(const TypeMatcher<Exception>()));
     });
   });
+
+  group('deleteSecure', () {
+    test('Should call delete secure with correct key', () async {
+      await sut.delete('any_key');
+
+      verify(secureStorage.delete(key: 'any_key'));
+    });
+
+    test('Should throw if delete secure throws', () {
+      when(secureStorage.delete(key: anyNamed('key'))).thenThrow(Exception());
+
+      final future = sut.delete('key');
+
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
+  });
 }
