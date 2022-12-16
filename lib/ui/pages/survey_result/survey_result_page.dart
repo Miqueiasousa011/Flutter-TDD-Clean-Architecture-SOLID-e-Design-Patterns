@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fordev/utils/i18n/i18n.dart';
+import 'package:get/get.dart';
 
 import '../../components/components.dart';
 import 'survey_result_presenter.dart';
@@ -19,6 +20,12 @@ class _SurveyResultPageState extends State<SurveyResultPage> {
   void initState() {
     super.initState();
     widget.presenter.loadData();
+
+    widget.presenter.isSessionExpiredStream.listen((sessionExpired) {
+      if (sessionExpired == true) {
+        Get.offAllNamed('/login');
+      }
+    });
   }
 
   void handleLoadingWidgetbool(isLoading) {

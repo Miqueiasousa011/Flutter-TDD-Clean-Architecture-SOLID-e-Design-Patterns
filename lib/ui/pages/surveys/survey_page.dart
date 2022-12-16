@@ -27,6 +27,12 @@ class _SurveyPageState extends State<SurveyPage> {
         Get.toNamed(route);
       }
     });
+
+    widget.presenter.isSessionExpiredStream.listen((sessionExpired) {
+      if (sessionExpired == true) {
+        Get.offAllNamed('/login');
+      }
+    });
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -26,6 +27,7 @@ class GetxSurveysPresenter implements SurveysPresenter {
   Stream<List<SurveyViewModel>> get surveysStream => _controller.stream;
 
   final _navigateTo = Rx<String?>(null);
+  final _isSessionExpired = Rx<bool?>(null);
 
   @override
   Future<void> loadData() async {
@@ -44,8 +46,12 @@ class GetxSurveysPresenter implements SurveysPresenter {
           .toList();
 
       _controller.add(value);
-    } catch (e) {
-      _controller.addError(UIError.unexpected.description);
+    } on DomainError catch (e) {
+      if (e == DomainError.accessDenied) {
+        _isSessionExpired.value = true;
+      } else {
+        _controller.addError(UIError.unexpected.description);
+      }
     } finally {
       _isLoading.value = false;
     }
@@ -58,4 +64,7 @@ class GetxSurveysPresenter implements SurveysPresenter {
 
   @override
   Stream<String?> get navigateToStream => _navigateTo.stream;
+
+  @override
+  Stream<bool?> get isSessionExpiredStream => _isSessionExpired.stream;
 }

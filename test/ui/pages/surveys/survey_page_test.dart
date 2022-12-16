@@ -19,6 +19,7 @@ void main() {
   late StreamController<bool> isLoadingController;
   late StreamController<List<SurveyViewModel>> surveysStream;
   late StreamController<String> navigateToController;
+  late StreamController<bool?> isSessionExpiredController;
 
   setUp(() {
     presenter = MockSurveysPresenter();
@@ -33,11 +34,18 @@ void main() {
     navigateToController = StreamController();
     when(presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
+
+    isSessionExpiredController = StreamController();
+
+    when(presenter.isSessionExpiredStream)
+        .thenAnswer((_) => isSessionExpiredController.stream);
   });
 
   tearDown(() {
     isLoadingController.close();
     surveysStream.close();
+    isSessionExpiredController.close();
+    navigateToController.close();
   });
 
   List<SurveyViewModel> makeSurveys() {
@@ -62,7 +70,8 @@ void main() {
       initialRoute: '/surveys',
       getPages: [
         GetPage(name: '/surveys', page: () => SurveyPage(presenter: presenter)),
-        GetPage(name: '/surveys_result/:id', page: () => Container())
+        GetPage(name: '/surveys_result/:id', page: () => Container()),
+        GetPage(name: '/login', page: () => Container())
       ],
     );
 
@@ -151,5 +160,28 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(Get.currentRoute, equals('/surveys_result/1'));
+  });
+
+  testWidgets('Should logout', (tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, equals('/login'));
+  });
+
+  testWidgets('Should not logout', (tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(false);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, equals('/surveys'));
+
+    isSessionExpiredController.add(null);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, equals('/surveys'));
   });
 }

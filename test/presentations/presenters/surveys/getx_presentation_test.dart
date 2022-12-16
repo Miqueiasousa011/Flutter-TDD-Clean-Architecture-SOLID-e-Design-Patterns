@@ -93,4 +93,14 @@ void main() {
 
     sut.goToSurveyResult('1');
   });
+
+  test('Should logout if accessDeniedError', () async {
+    when(loadSurveys.load()).thenThrow(DomainError.accessDenied);
+
+    expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+
+    expectLater(sut.isSessionExpiredStream, emits(true));
+
+    sut.loadData();
+  });
 }

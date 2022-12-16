@@ -26,6 +26,8 @@ class GetxSurveyResultPresenter implements SurveyResultPresenter {
   Stream<SurveyResultViewModel> get surveyResultController =>
       _controller.stream;
 
+  final _isSessionExpired = Rx<bool?>(null);
+
   @override
   Future<void> loadData() async {
     _isLoading.value = true;
@@ -51,10 +53,17 @@ class GetxSurveyResultPresenter implements SurveyResultPresenter {
               .toList(),
         ),
       );
-    } catch (e) {
-      _controller.addError(DomainError.unexpected.description);
+    } on DomainError catch (e) {
+      if (e == DomainError.accessDenied) {
+        _isSessionExpired.value = true;
+      } else {
+        _controller.addError(DomainError.unexpected.description);
+      }
     } finally {
       _isLoading.value = false;
     }
   }
+
+  @override
+  Stream<bool?> get isSessionExpiredStream => _isSessionExpired.stream;
 }

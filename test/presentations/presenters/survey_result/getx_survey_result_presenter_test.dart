@@ -89,4 +89,15 @@ void main() {
 
     await sut.loadData();
   });
+
+  test('Should logout if accessDeniedError', () async {
+    when(loadSurveyResult.loadBySurvey(surveyId: anyNamed('surveyId')))
+        .thenThrow(DomainError.accessDenied);
+
+    expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+
+    expectLater(sut.isSessionExpiredStream, emits(true));
+
+    sut.loadData();
+  });
 }
