@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:fordev/data/cache/delete_secure_cache_storage.dart' as _i5;
 import 'package:fordev/data/cache/fetch_secure_cache_storage.dart' as _i4;
 import 'package:fordev/data/http/http_client.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -68,4 +69,24 @@ class MockFetchSecureCacheStorage extends _i1.Mock
         ),
         returnValue: _i3.Future<String?>.value(),
       ) as _i3.Future<String?>);
+}
+
+/// A class which mocks [DeleteSecureCacheStorage].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDeleteSecureCacheStorage extends _i1.Mock
+    implements _i5.DeleteSecureCacheStorage {
+  MockDeleteSecureCacheStorage() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<void> delete(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [key],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }

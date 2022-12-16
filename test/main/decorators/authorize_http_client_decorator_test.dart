@@ -9,11 +9,12 @@ import 'package:fordev/main/decorators/decorators.dart';
 
 import 'authorize_http_client_decorator_test.mocks.dart';
 
-@GenerateMocks([HttpClient, FetchSecureCacheStorage])
+@GenerateMocks([HttpClient, FetchSecureCacheStorage, DeleteSecureCacheStorage])
 void main() {
   late AuthorizeHttpClientDecorator sut;
   late MockHttpClient httpClient;
-  late MockFetchSecureCacheStorage secureCacheStorage;
+  late MockFetchSecureCacheStorage fetchSecureCacheStorage;
+  late MockDeleteSecureCacheStorage deleteSecureCacheStorage;
 
   late String url;
   late String method;
@@ -28,14 +29,17 @@ void main() {
     body = {'any': 'any'};
     response = faker.randomGenerator.string(10);
 
-    secureCacheStorage = MockFetchSecureCacheStorage();
+    deleteSecureCacheStorage = MockDeleteSecureCacheStorage();
+    fetchSecureCacheStorage = MockFetchSecureCacheStorage();
     httpClient = MockHttpClient();
     sut = AuthorizeHttpClientDecorator(
-      secureCacheStorage: secureCacheStorage,
+      fetchSecureCacheStorage: fetchSecureCacheStorage,
+      deleteSecureCacheStorage: deleteSecureCacheStorage,
       decoratee: httpClient,
     );
 
-    when(secureCacheStorage.fetchSecure(any)).thenAnswer((_) async => token);
+    when(fetchSecureCacheStorage.fetchSecure(any))
+        .thenAnswer((_) async => token);
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
@@ -52,7 +56,7 @@ void main() {
       body: body,
     );
 
-    verify(secureCacheStorage.fetchSecure('token')).called(1);
+    verify(fetchSecureCacheStorage.fetchSecure('token')).called(1);
   });
 
   test('Should call decoratee with access token on header', () async {
@@ -103,11 +107,14 @@ void main() {
 
   test('Should throw ForbiddenError if FetchSecureCacheStorage throws',
       () async {
-    when(secureCacheStorage.fetchSecure(any)).thenThrow(Exception());
+    when(fetchSecureCacheStorage.fetchSecure(any)).thenThrow(Exception());
 
     final future = sut.request(url: url, method: method);
 
     expect(future, throwsA(HttpError.forbiddenError));
+
+    //Deletendo o token do local storage
+    verify(deleteSecureCacheStorage.delete('token')).called(1);
   });
 
   test('Should rethrow  if HttpClient throws', () async {
@@ -121,5 +128,21 @@ void main() {
     final future = sut.request(url: url, method: method);
 
     expect(future, throwsA(HttpError.badRequest));
+  });
+
+  test('Should delete cache if HttpClient throws forbiddenError', () async {
+    when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+      headers: anyNamed('headers'),
+    )).thenThrow(HttpError.forbiddenError);
+
+    final future = sut.request(url: url, method: method);
+    expect(future, throwsA(HttpError.forbiddenError));
+
+    //mockito aguarda a execução do método, já que não tem o await na linha 141
+    await untilCalled(deleteSecureCacheStorage.delete('token'));
+    verify(deleteSecureCacheStorage.delete('token')).called(1);
   });
 }

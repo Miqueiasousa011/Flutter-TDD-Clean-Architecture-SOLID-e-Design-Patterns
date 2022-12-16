@@ -2,13 +2,16 @@ import '../../data/cache/cache.dart';
 import '../../data/http/http.dart';
 
 class AuthorizeHttpClientDecorator implements HttpClient {
-  final FetchSecureCacheStorage _secureCacheStorage;
+  final FetchSecureCacheStorage _fetchSecureCacheStorage;
+  final DeleteSecureCacheStorage _deleteSecureCacheStorage;
   final HttpClient _decoratee;
 
   AuthorizeHttpClientDecorator({
-    required FetchSecureCacheStorage secureCacheStorage,
+    required FetchSecureCacheStorage fetchSecureCacheStorage,
+    required DeleteSecureCacheStorage deleteSecureCacheStorage,
     required HttpClient decoratee,
-  })  : _secureCacheStorage = secureCacheStorage,
+  })  : _fetchSecureCacheStorage = fetchSecureCacheStorage,
+        _deleteSecureCacheStorage = deleteSecureCacheStorage,
         _decoratee = decoratee;
 
   @override
@@ -19,7 +22,7 @@ class AuthorizeHttpClientDecorator implements HttpClient {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final token = await _secureCacheStorage.fetchSecure('token') ?? '';
+      final token = await _fetchSecureCacheStorage.fetchSecure('token') ?? '';
 
       final authorizedHeader = {
         'x-access-token': token,
@@ -32,9 +35,13 @@ class AuthorizeHttpClientDecorator implements HttpClient {
         body: body,
         headers: authorizedHeader,
       );
-    } on HttpError {
+    } on HttpError catch (error) {
+      if (error == HttpError.forbiddenError) {
+        await _deleteSecureCacheStorage.delete('token');
+      }
       rethrow;
     } catch (e) {
+      await _deleteSecureCacheStorage.delete('token');
       throw HttpError.forbiddenError;
     }
   }
