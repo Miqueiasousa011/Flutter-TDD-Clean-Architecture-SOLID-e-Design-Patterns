@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
 
-class GetxSurveyResultPresenter {
+class GetxSurveyResultPresenter implements SurveyResultPresenter {
   final LoadSurveyResultUsecase _loadSurveyResult;
   final String _surveyId;
 
@@ -19,11 +19,14 @@ class GetxSurveyResultPresenter {
   final _isLoading = RxBool(false);
   final _controller = StreamController<SurveyResultViewModel>();
 
+  @override
   Stream<bool> get isLoadingController => _isLoading.stream;
 
+  @override
   Stream<SurveyResultViewModel> get surveyResultController =>
       _controller.stream;
 
+  @override
   Future<void> loadData() async {
     _isLoading.value = true;
 

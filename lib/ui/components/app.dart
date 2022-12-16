@@ -43,7 +43,7 @@ class App extends StatelessWidget {
       locale: const Locale('pt'),
       supportedLocales: const [Locale('pt', 'BR')],
       title: '4Dev',
-      initialRoute: '/survey_result/3',
+      initialRoute: '/',
       getPages: [
         GetPage(
           name: '/',
