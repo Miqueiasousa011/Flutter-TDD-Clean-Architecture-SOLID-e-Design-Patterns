@@ -44,10 +44,10 @@ class LocalSurveyModel {
         didAnswer: didAnswer,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, String> toMap() => {
         'id': id,
         'question': question,
         'date': date,
-        'didAnswer': didAnswer,
+        'didAnswer': didAnswer.toString(),
       };
 }
