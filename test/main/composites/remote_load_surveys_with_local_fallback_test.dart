@@ -51,7 +51,7 @@ main() {
     verify(remote.load()).called(1);
   });
 
-  test('Should call local save with remote dara', () async {
+  test('Should call local save with remote data', () async {
     await sut.load();
 
     verify(local.save(remoteSurveys)).called(1);
