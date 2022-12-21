@@ -227,13 +227,13 @@ void main() {
           'id': '1',
           'question': 'question 1',
           'date': '2020-02-02T00:00:00.000Z',
-          'didAnswer': true,
+          'didAnswer': 'true',
         },
         {
           'id': '2',
           'question': 'question 2',
           'date': '2018-12-20T00:00:00.000Z',
-          'didAnswer': false,
+          'didAnswer': 'false',
         },
       ];
 
