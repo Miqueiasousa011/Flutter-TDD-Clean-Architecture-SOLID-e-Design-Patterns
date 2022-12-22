@@ -170,4 +170,20 @@ void main() {
 
     expect(Get.currentRoute, equals('/surveys_result/1'));
   });
+
+  testWidgets('Should call save on  list item click', (tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(mockSurveyResult());
+
+    await mockNetworkImagesFor(() async {
+      await tester.pump();
+    });
+
+    final button = find.text('React');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+
+    verify(presenter.save(answer: 'React')).called(1);
+  });
 }

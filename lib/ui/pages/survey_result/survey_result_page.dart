@@ -67,22 +67,27 @@ class _SurveyResultPageState extends State<SurveyResultPage>
                       ),
                     ),
                     ...result.answers.map(
-                      (answer) => Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if (answer.image.isNotEmpty) ...[
-                            Image.network(answer.image)
+                      (answer) => InkWell(
+                        onTap: () {
+                          widget.presenter.save(answer: answer.answer);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (answer.image.isNotEmpty) ...[
+                              Image.network(answer.image)
+                            ],
+                            Text(
+                              answer.answer,
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                            answer.isCurrentAnswer
+                                ? const ActiveIcon()
+                                : const DisabledIcon(),
                           ],
-                          Text(
-                            answer.answer,
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                          answer.isCurrentAnswer
-                              ? const ActiveIcon()
-                              : const DisabledIcon(),
-                        ],
+                        ),
                       ),
                     ),
                   ],
