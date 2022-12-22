@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/presentation/mixins/mixins.dart';
 
+import '../../domain/entities/entities.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
 import 'package:get/get.dart';
@@ -30,45 +31,22 @@ class GetxSurveyResultPresenter extends GetxController
 
   @override
   Future<void> loadData() async {
-    isLoading = true;
-
-    try {
-      final surveyResultEntity = await _loadSurveyResult.loadBySurvey(
-        surveyId: _surveyId,
-      );
-
-      _controller.sink.add(
-        SurveyResultViewModel(
-          surveyId: surveyResultEntity.surveyId,
-          question: surveyResultEntity.question,
-          answers: surveyResultEntity.answers
-              .map(
-                (e) => SurveyAnswerViewModel(
-                  image: e.image ?? '',
-                  answer: e.answer,
-                  isCurrentAnswer: e.isCurrentAnswer,
-                  percent: '${e.percent}%',
-                ),
-              )
-              .toList(),
-        ),
-      );
-    } on DomainError catch (e) {
-      if (e == DomainError.accessDenied) {
-        isSessionExpired = true;
-      } else {
-        _controller.addError(DomainError.unexpected.description);
-      }
-    } finally {
-      isLoading = false;
-    }
+    await showResultOnAction(
+        () => _loadSurveyResult.loadBySurvey(surveyId: _surveyId));
   }
 
   @override
   Future<void> save({required String answer}) async {
+    await showResultOnAction(() => _saveSurveyResult.save(answer: answer));
+  }
+
+  //Trecho de código se repetia nos 2 métodos acima, então aplicamos o DRY
+  Future<void> showResultOnAction(
+    Future<SurveyResultEntity> Function() action,
+  ) async {
     try {
       isLoading = true;
-      final result = await _saveSurveyResult.save(answer: answer);
+      final result = await action();
 
       _controller.sink.add(
         SurveyResultViewModel(
@@ -79,7 +57,7 @@ class GetxSurveyResultPresenter extends GetxController
                   image: e.image ?? '',
                   answer: e.answer,
                   isCurrentAnswer: e.isCurrentAnswer,
-                  percent: '${e.percent}'))
+                  percent: '${e.percent}%'))
               .toList(),
         ),
       );

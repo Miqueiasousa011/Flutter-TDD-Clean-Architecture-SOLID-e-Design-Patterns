@@ -147,7 +147,7 @@ void main() {
                       image: e.image ?? '',
                       answer: answer,
                       isCurrentAnswer: e.isCurrentAnswer,
-                      percent: '${e.percent}'))
+                      percent: '${e.percent}%'))
                   .toList(),
             ),
           )));
