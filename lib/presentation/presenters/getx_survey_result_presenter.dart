@@ -11,12 +11,15 @@ class GetxSurveyResultPresenter extends GetxController
     with LoadingManager, SessionManager
     implements SurveyResultPresenter {
   final LoadSurveyResultUsecase _loadSurveyResult;
+  final SaveSurveyResultUsecase _saveSurveyResult;
   final String _surveyId;
 
   GetxSurveyResultPresenter({
     required LoadSurveyResultUsecase loadSurveyResult,
+    required SaveSurveyResultUsecase saveSurveyResult,
     required String surveyId,
   })  : _loadSurveyResult = loadSurveyResult,
+        _saveSurveyResult = saveSurveyResult,
         _surveyId = surveyId;
 
   final _controller = StreamController<SurveyResultViewModel>();
@@ -62,7 +65,32 @@ class GetxSurveyResultPresenter extends GetxController
   }
 
   @override
-  Future<void> save({required String answer}) {
-    throw UnimplementedError();
+  Future<void> save({required String answer}) async {
+    try {
+      isLoading = true;
+      final result = await _saveSurveyResult.save(answer: answer);
+
+      _controller.sink.add(
+        SurveyResultViewModel(
+          surveyId: result.surveyId,
+          question: result.question,
+          answers: result.answers
+              .map((e) => SurveyAnswerViewModel(
+                  image: e.image ?? '',
+                  answer: e.answer,
+                  isCurrentAnswer: e.isCurrentAnswer,
+                  percent: '${e.percent}'))
+              .toList(),
+        ),
+      );
+    } on DomainError catch (e) {
+      if (e == DomainError.accessDenied) {
+        isSessionExpired = true;
+      } else {
+        _controller.addError(DomainError.unexpected.description);
+      }
+    } finally {
+      isLoading = false;
+    }
   }
 }

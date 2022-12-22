@@ -10,27 +10,30 @@ import 'package:mockito/mockito.dart';
 
 import 'getx_survey_result_presenter_test.mocks.dart';
 
-@GenerateMocks([LoadSurveyResultUsecase])
+@GenerateMocks([LoadSurveyResultUsecase, SaveSurveyResultUsecase])
 void main() {
   late GetxSurveyResultPresenter sut;
   late MockLoadSurveyResultUsecase loadSurveyResult;
+  late MockSaveSurveyResultUsecase saveSurveyResult;
 
-  late SurveyResultEntity surveyResultEntity;
+  late SurveyResultEntity loadSurveyResultEntity;
   late SurveyResultViewModel surveyResultViewModel;
 
   late String surveyId;
 
   setUp(() {
     loadSurveyResult = MockLoadSurveyResultUsecase();
+    saveSurveyResult = MockSaveSurveyResultUsecase();
 
     surveyId = faker.guid.guid();
 
     sut = GetxSurveyResultPresenter(
       surveyId: surveyId,
       loadSurveyResult: loadSurveyResult,
+      saveSurveyResult: saveSurveyResult,
     );
 
-    surveyResultEntity = SurveyResultEntity(
+    loadSurveyResultEntity = SurveyResultEntity(
       surveyId: faker.guid.guid(),
       question: faker.randomGenerator.string(50),
       answers: [
@@ -44,9 +47,9 @@ void main() {
     );
 
     surveyResultViewModel = SurveyResultViewModel(
-      surveyId: surveyResultEntity.surveyId,
-      question: surveyResultEntity.question,
-      answers: surveyResultEntity.answers
+      surveyId: loadSurveyResultEntity.surveyId,
+      question: loadSurveyResultEntity.question,
+      answers: loadSurveyResultEntity.answers
           .map(
             (e) => SurveyAnswerViewModel(
               image: e.image ?? '',
@@ -59,7 +62,7 @@ void main() {
     );
 
     when(loadSurveyResult.loadBySurvey(surveyId: anyNamed('surveyId')))
-        .thenAnswer((_) async => surveyResultEntity);
+        .thenAnswer((_) async => loadSurveyResultEntity);
   });
 
   test('Should call loadSurveys on loadData', () async {
@@ -99,5 +102,81 @@ void main() {
     expectLater(sut.isSessionExpiredStream, emits(true));
 
     sut.loadData();
+  });
+
+  group('save', () {
+    late String answer;
+    late SurveyResultEntity saveSurveyResultEntity;
+
+    setUp(() {
+      answer = 'any_answer';
+
+      saveSurveyResultEntity = SurveyResultEntity(
+        surveyId: faker.guid.guid(),
+        question: faker.randomGenerator.string(50),
+        answers: [
+          SurveyAnswerEntity(
+            image: faker.internet.httpUrl(),
+            answer: answer,
+            isCurrentAnswer: false,
+            percent: 100,
+          ),
+        ],
+      );
+
+      when(saveSurveyResult.save(answer: anyNamed('answer')))
+          .thenAnswer((_) async => saveSurveyResultEntity);
+    });
+
+    test('Should call SaveResult on save', () async {
+      await sut.save(answer: answer);
+
+      verify(saveSurveyResult.save(answer: answer));
+    });
+
+    test('Should emit correct events on success', () async {
+      expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+
+      sut.surveyResultController.listen(expectAsync1((saveResult) => expect(
+            saveResult,
+            SurveyResultViewModel(
+              surveyId: saveSurveyResultEntity.surveyId,
+              question: saveSurveyResultEntity.question,
+              answers: saveSurveyResultEntity.answers
+                  .map((e) => SurveyAnswerViewModel(
+                      image: e.image ?? '',
+                      answer: answer,
+                      isCurrentAnswer: e.isCurrentAnswer,
+                      percent: '${e.percent}'))
+                  .toList(),
+            ),
+          )));
+
+      await sut.save(answer: answer);
+    });
+
+    test('Should emit correct events on failure', () async {
+      when(saveSurveyResult.save(answer: anyNamed('answer')))
+          .thenThrow(DomainError.unexpected);
+
+      expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+
+      sut.surveyResultController.listen(null,
+          onError: expectAsync1(
+              (error) => expect(error, DomainError.unexpected.description)));
+
+      await sut.save(answer: answer);
+    });
+
+    test('Should logout if accessDeniedError', () async {
+      when(saveSurveyResult.save(answer: anyNamed('answer')))
+          .thenThrow(DomainError.accessDenied);
+
+      expectLater(sut.isLoadingController, emitsInOrder([true, false]));
+
+      expectLater(sut.isSessionExpiredStream, emits(true));
+
+      await sut.save(answer: answer);
+    });
   });
 }

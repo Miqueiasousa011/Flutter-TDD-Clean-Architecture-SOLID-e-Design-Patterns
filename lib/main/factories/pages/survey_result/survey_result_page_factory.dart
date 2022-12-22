@@ -17,6 +17,7 @@ Widget makeSurveyResultPage() {
 SurveyResultPresenter makeGetxSurveyResultPresenter() {
   final surveyId = Get.parameters['survey_id'] ?? '';
   return GetxSurveyResultPresenter(
+    saveSurveyResult: makeRemoteLoadSurveyResult(surveyId),
     loadSurveyResult: makeRemoteLoadSurveyResult(surveyId),
     surveyId: surveyId,
   );
