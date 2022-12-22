@@ -1,14 +1,17 @@
 import 'package:faker/faker.dart';
-import 'package:fordev/data/http/http.dart';
-import 'package:fordev/data/models/remote_survey_result_model.dart';
-import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:fordev/data/models/remote_survey_result_model.dart';
+import 'package:fordev/data/http/http.dart';
+import 'package:fordev/domain/entities/entities.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
+import 'package:fordev/domain/usecases/save_survey_result.dart';
+
 import '../../../main/decorators/authorize_http_client_decorator_test.mocks.dart';
 
-class RemoteSaveSurveyResult {
+class RemoteSaveSurveyResult implements SaveSurveyResultUsecase {
   final HttpClient _httpClient;
   final String _url;
 
@@ -18,14 +21,15 @@ class RemoteSaveSurveyResult {
   })  : _httpClient = httpClient,
         _url = url;
 
-  Future save({required String answer}) async {
+  @override
+  Future<SurveyResultEntity> save({required String answer}) async {
     try {
       final response = await _httpClient.request(
         url: _url,
         method: 'put',
         body: {'answer': answer},
       );
-      RemoteSurveyResultModel.fromJson(response);
+      return RemoteSurveyResultModel.fromJson(response).toEntity();
     } on HttpError catch (error) {
       throw error == HttpError.forbiddenError
           ? DomainError.accessDenied
@@ -56,10 +60,10 @@ void main() {
       'answers': [
         {
           'image': faker.internet.httpUrl(),
-          'answer': faker.randomGenerator.string(110),
+          'answer': 'any_answer',
           'count': faker.randomGenerator.integer(50),
-          'percent': faker.randomGenerator.integer(100),
-          'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
+          'percent': 10,
+          'isCurrentAccountAnswer': false,
         }
       ],
       'date': faker.date.dateTime().toIso8601String(),
@@ -80,6 +84,25 @@ void main() {
       method: 'put',
       body: body,
     )).called(1);
+  });
+
+  test('Should return survey result on 200', () async {
+    final result = await sut.save(answer: 'any_answer');
+
+    final entity = SurveyResultEntity(
+      surveyId: response['surveyId'],
+      question: response['question'],
+      answers: [
+        SurveyAnswerEntity(
+          image: response['answers'][0]['image'],
+          answer: response['answers'][0]['answer'],
+          isCurrentAnswer: false,
+          percent: 10,
+        )
+      ],
+    );
+
+    expect(result, equals(entity));
   });
 
   test(
