@@ -300,4 +300,141 @@ void main() {
       expect(result, throwsA(HttpError.serverError));
     });
   });
+
+  group('put', () {
+    test('Should call put with correct values', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{}', 200));
+
+      await sut.request(
+        url: url,
+        method: 'put',
+        headers: {'any_header': 'any_value'},
+      );
+
+      final headers = {
+        ...defaultHeaders,
+        ...{'any_header': 'any_value'},
+      };
+
+      verify(httpClient.put(uri, headers: headers));
+    });
+
+    test('Should call put with correct body', () async {
+      when(httpClient.put(any,
+              headers: anyNamed('headers'), body: anyNamed('body')))
+          .thenAnswer((_) async => Response('{}', 200));
+
+      await sut.request(url: url, method: 'put', body: body);
+
+      verify(
+          httpClient.put(uri, headers: defaultHeaders, body: jsonEncode(body)));
+    });
+
+    test('Should call put without body', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{}', 200));
+
+      await sut.request(url: url, method: 'put');
+
+      verify(httpClient.put(uri, headers: defaultHeaders));
+    });
+
+    test('should return data if put returns 200', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response(jsonEncode({'any': 'any'}), 200));
+
+      final result = await sut.request(url: url, method: 'put');
+
+      expect(result, {'any': 'any'});
+    });
+
+    test('Should return null if put returns 200 without data', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 200));
+
+      final result = await sut.request(url: url, method: 'put');
+
+      expect(result, isNull);
+    });
+    test('should return null if put returns 204', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 204));
+
+      final result = await sut.request(url: url, method: 'put');
+
+      expect(result, isNull);
+    });
+
+    test('should return null id put returns 204 with data', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{any: "any"}', 204));
+
+      final result = await sut.request(url: url, method: 'put');
+
+      expect(result, isNull);
+    });
+
+    test('should return BadRequestError if put returns 400', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('any', 400));
+
+      final future = sut.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('should throw BadRequestError if put returns 400 with data', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 400));
+
+      final future = sut.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('should throw ServerError if httpAdapter retuns 500', () {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 500));
+
+      final future = sut.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+
+    test('should throw unauthorized if httpAdapter returns 401', () {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('any', 401));
+
+      final future = sut.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test('should throw ForbiddenError if httpAdapter returns 403', () {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 403));
+
+      final future = sut.request(url: url, method: 'put');
+      expect(future, throwsA(HttpError.forbiddenError));
+    });
+
+    test('should throw notFoundError if httpAdapter returns 404', () {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('', 404));
+
+      final future = sut.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.notFound));
+    });
+
+    test('should throw ServerError if put returns 500', () async {
+      when(httpClient.put(any, headers: anyNamed('headers')))
+          .thenThrow(Exception());
+
+      final future = sut.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
 }
