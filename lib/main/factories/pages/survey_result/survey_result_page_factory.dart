@@ -17,7 +17,7 @@ Widget makeSurveyResultPage() {
 SurveyResultPresenter makeGetxSurveyResultPresenter() {
   final surveyId = Get.parameters['survey_id'] ?? '';
   return GetxSurveyResultPresenter(
-    saveSurveyResult: makeRemoteLoadSurveyResult(surveyId),
+    saveSurveyResult: makeSaveLoadSurveyResult(surveyId),
     loadSurveyResult: makeRemoteLoadSurveyResult(surveyId),
     surveyId: surveyId,
   );
@@ -34,5 +34,12 @@ makeRemoteLoadSurveyResult(String surveyId) {
         localStorage: LocalStorage('forDev'),
       ),
     ),
+  );
+}
+
+makeSaveLoadSurveyResult(String surveyId) {
+  return RemoteSaveSurveyResult(
+    httpClient: makeHttpAdapter(),
+    url: makeApiUrl('/surveys/$surveyId/results'),
   );
 }

@@ -3,40 +3,12 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'package:fordev/data/models/remote_survey_result_model.dart';
-import 'package:fordev/data/http/http.dart';
 import 'package:fordev/domain/entities/entities.dart';
 import 'package:fordev/domain/helpers/helpers.dart';
-import 'package:fordev/domain/usecases/save_survey_result.dart';
+import 'package:fordev/data/usecases/usecases.dart';
+import 'package:fordev/data/http/http.dart';
 
 import '../../../main/decorators/authorize_http_client_decorator_test.mocks.dart';
-
-class RemoteSaveSurveyResult implements SaveSurveyResultUsecase {
-  final HttpClient _httpClient;
-  final String _url;
-
-  RemoteSaveSurveyResult({
-    required HttpClient httpClient,
-    required String url,
-  })  : _httpClient = httpClient,
-        _url = url;
-
-  @override
-  Future<SurveyResultEntity> save({required String answer}) async {
-    try {
-      final response = await _httpClient.request(
-        url: _url,
-        method: 'put',
-        body: {'answer': answer},
-      );
-      return RemoteSurveyResultModel.fromJson(response).toEntity();
-    } on HttpError catch (error) {
-      throw error == HttpError.forbiddenError
-          ? DomainError.accessDenied
-          : DomainError.unexpected;
-    }
-  }
-}
 
 @GenerateMocks([HttpClient])
 void main() {
