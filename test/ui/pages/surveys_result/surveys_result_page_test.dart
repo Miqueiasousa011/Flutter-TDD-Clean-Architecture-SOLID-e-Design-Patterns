@@ -186,4 +186,20 @@ void main() {
 
     verify(presenter.save(answer: 'React')).called(1);
   });
+
+  testWidgets('Should not call save on current answer click', (tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(mockSurveyResult());
+
+    await mockNetworkImagesFor(() async {
+      await tester.pump();
+    });
+
+    final button = find.text('Flutter');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+
+    verifyNever(presenter.save(answer: 'Flutter'));
+  });
 }

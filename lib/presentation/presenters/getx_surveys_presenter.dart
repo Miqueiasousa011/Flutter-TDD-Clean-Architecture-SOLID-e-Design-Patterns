@@ -54,7 +54,7 @@ class GetxSurveysPresenter extends GetxController
 
   @override
   void goToSurveyResult(String surveyId) {
-    _navigateTo.value = '/survey_result/$surveyId';
+    _navigateTo.subject.add('/survey_result/$surveyId');
   }
 
   @override

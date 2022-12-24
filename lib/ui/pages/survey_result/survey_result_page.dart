@@ -69,7 +69,9 @@ class _SurveyResultPageState extends State<SurveyResultPage>
                     ...result.answers.map(
                       (answer) => InkWell(
                         onTap: () {
-                          widget.presenter.save(answer: answer.answer);
+                          if (!answer.isCurrentAnswer) {
+                            widget.presenter.save(answer: answer.answer);
+                          }
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
