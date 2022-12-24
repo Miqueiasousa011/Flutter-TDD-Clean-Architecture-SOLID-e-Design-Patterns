@@ -4,18 +4,28 @@ import 'package:get/get.dart';
 
 import 'splash_presenter.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({super.key, required this.presenter});
 
   final SplashPresenter presenter;
 
   @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.presenter.checkAccount();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    presenter.checkAccount();
     return Scaffold(
       body: Builder(
         builder: (context) {
-          presenter.navigateToStream.listen(
+          widget.presenter.navigateToStream.listen(
             (page) {
               if (page?.isNotEmpty == true) {
                 Get.offAllNamed(page!);
