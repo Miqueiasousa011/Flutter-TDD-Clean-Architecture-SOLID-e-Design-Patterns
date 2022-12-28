@@ -20,12 +20,10 @@
 - Composite
 - Decorator
 - Dependency Injection
-- Abstract Server
 - Composition Root
 - Builder
 - Singleton
 - Observer
-- Strategy
 - AAA (Arrange, Act, Assert)
 
 > ## Metodologias e Designs
@@ -50,7 +48,6 @@
 - Mockito
 - Mocktail
 - Faker
-- Meta
 - Git
 - Flutter Secure Storage
 - LocalStorage
@@ -84,8 +81,6 @@
 - Testes Unitários
 - Testes de Widgets
 - Testes de Streams
-- Testes de Integração
-- Cobertura de Testes
 - Test Doubles
 - Mocks
 - Stubs
