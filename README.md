@@ -1,16 +1,92 @@
-# fordev
+> ## Princípios
 
-A new Flutter project.
+- Single Responsibility Principle (SRP)
+- Open Closed Principle (OCP)
+- Liskov Substitution Principle (LSP)
+- Interface Segregation Principle (ISP)
+- Dependency Inversion Principle (DIP)
+- Separation of Concerns (SOC)
+- Don't Repeat Yourself (DRY)
+- You Aren't Gonna Need It (YAGNI)
+- Keep It Simple, Silly (KISS)
+- Command Query Responsibility Segregation (CQRS)
+- Composition Over Inheritance
+- Small Commits
 
-## Getting Started
+> ## Design Patterns
 
-This project is a starting point for a Flutter application.
+- Factory
+- Adapter
+- Composite
+- Decorator
+- Dependency Injection
+- Abstract Server
+- Composition Root
+- Builder
+- Singleton
+- Observer
+- Strategy
+- AAA (Arrange, Act, Assert)
 
-A few resources to get you started if this is your first Flutter project:
+> ## Metodologias e Designs
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- TDD
+- BDD
+- Clean Architecture
+- Reactive Programming
+- GitFlow
+- Modular Design
+- Dependency Diagrams
+- Use Cases
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> ## Bibliotecas e Ferramentas
+
+- Flutter
+- Flutter Version Management
+- Http
+- Provider
+- GetX
+- Equatable
+- Mockito
+- Mocktail
+- Faker
+- Meta
+- Git
+- Flutter Secure Storage
+- LocalStorage
+- i18n
+- Image Test Utils
+- Network Image Mock
+
+> ## Features do Dart/Flutter
+
+- Null Safety
+- Classes
+- Abstract Classes
+- Functions
+- Constants
+- Mixins
+- Extensions
+- Enums
+- Exceptions
+- Futures
+- Streams
+- Constructors
+- Async/Await
+- Stateless Widgets
+- Stateful Widgets
+- Material Theme
+- Assets
+- App Icon
+
+> ## Features de Testes
+
+- Testes Unitários
+- Testes de Widgets
+- Testes de Streams
+- Testes de Integração
+- Cobertura de Testes
+- Test Doubles
+- Mocks
+- Stubs
+- Spies
